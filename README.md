@@ -1,50 +1,52 @@
-# DE2-AWS-2025
+# 📦 AWS Data Engineering Overview
 
-📚 Motivation: In life you can choose who you want to be; be very careful with that choice.
+> 📚 Motivation: In life you can choose who you want to be; be very careful with that choice.
 
-## 🌅 [**AWS Certified Data Engineer – Associate（DEA-C01）**](https://www.udemy.com/course/aws-certified-data-engineer-associate-dea-c01/?couponCode=ST16MT230625B)
+🌅 [**AWS Certified Data Engineer – Associate（DEA-C01）**](https://www.udemy.com/course/aws-certified-data-engineer-associate-dea-c01/?couponCode=ST16MT230625B)
 
----
+## 0. Preface
 
-Data Ingestion
+In modern data architecture, AWS provides a comprehensive set of tools to support the full data lifecycle — from ingestion and storage to processing and orchestration. Here's a quick overview of the core services and their roles:
 
-- **Batch Ingestion**:
-    - **AWS Glue**: Crawlers infer schema; Glue ETL jobs (Spark-based) transform data.
-    - **AWS DMS**: Migrate databases (CDC support) into Amazon S3, Redshift, or Aurora.
+### 🔁 Data Ingestion
 
-Data Storage
+- **Batch Ingestion**
+  - **AWS Glue**: Crawlers automatically infer schemas; Glue ETL jobs (Spark-based) handle transformations.
+  - **AWS DMS**: Supports full load and CDC (Change Data Capture) to migrate databases into **Amazon S3**, **Redshift**, or **Aurora**.
 
-- **Data Lake**:
-    - **Amazon S3**: Partitioning, versioning, lifecycle policies, integrated with Glue Data Catalog.
-    - **AWS Lake Formation**: Centralized access control and fine-grained permissions.
-- **Data Warehouse**:
-    - **Amazon Redshift**: Columnar storage, auto-vacuum, Spectrum for querying S3 data.
-- **Relational**:
-    - **Amazon RDS/Aurora**: OLTP with read replicas and global database options.
+### 🗃️ Data Storage
 
-Data Processing & ETL
+- **Data Lake**
+  - **Amazon S3**: Object storage with partitioning, versioning, and lifecycle policies. Works with the **Glue Data Catalog**.
+  - **AWS Lake Formation**: Provides centralized, fine-grained access control for lake data.
+  
+- **Data Warehouse**
+  - **Amazon Redshift**: Columnar, MPP architecture with Spectrum support for querying S3 directly.
+  
+- **Relational Databases**
+  - **Amazon RDS / Aurora**: Managed OLTP databases with support for read replicas and global deployments.
 
-- **Batch Processing**:
-    - **AWS Glue ETL**: Managed Spark—author in Python or Scala.
-    - **Amazon EMR**: Custom Hadoop/Spark/Hive clusters, spot instance support.
-- **Orchestration**:
-    - **AWS Step Functions**: State machine workflows orchestration.
-    - **Managed Workflows for Apache Airflow (MWAA)**: Schedule and monitor DAGs
+### ⚙️ Data Processing & ETL
 
-## ✅ **Data Services (7 hours)**
+- **Batch Processing**
+  - **AWS Glue ETL**: Managed serverless Spark for ETL development in **Python** or **Scala**.
+  - **Amazon EMR**: Customizable big data platform for **Spark**, **Hive**, and **Hadoop** with spot instance support.
 
----
+- **Orchestration**
+  - **AWS Step Functions**: Serverless state machine to orchestrate multi-step workflows.
+  - **Amazon MWAA (Managed Workflows for Apache Airflow)**: Fully managed Airflow environment for DAG-based scheduling.
+
+✅ **Data Services (7 hours)**
 
 [AWS Free- login](https://signin.aws.amazon.com/signin?client_id=arn%3Aaws%3Asignin%3A%3A%3Aconsole%2Fcanvas&redirect_uri=https%3A%2F%2Fconsole.aws.amazon.com%2Fconsole%2Fhome%3FhashArgs%3D%2523%26isauthcode%3Dtrue%26state%3DhashArgsFromTB_ap-southeast-2_4006ae5d2b7eed51&page=resolve&code_challenge=f9CZpqfFaFLi3LHpmKeNB0PfdFV7GbPKBE3FMsgIZqg&code_challenge_method=SHA-256&backwards_compatible=true) 
-
-
-[](https://www.udemy.com/course/aws-certified-data-engineer-associate-dea-c01/learn/lecture/43784612#overview)
 
 ## S1 - Introduction
 
 ## S2 - Data Ingestion
 
-![image.png](docs/image.png)
+<div align="center">
+  <img src="docs/image.png" alt="image" width="700">
+</div>
 
 S3 = Simple Storage Service, simple object storage
 
@@ -52,7 +54,9 @@ Buckets (containers for storage) and objects (files)
 
 [**our-first-bucket-202507**](https://ap-southeast-1.console.aws.amazon.com/s3/buckets/our-first-bucket-202507?region=ap-southeast-1&bucketType=general)
 
-![image.png](docs/image%201.png)
+<div align="center">
+  <img src="docs/image%201.png" alt="image" width="700">
+</div>
 
 ### 🧠 Glue ≈ Spark + Hive Metastore + Airflow
 
@@ -65,21 +69,31 @@ Buckets (containers for storage) and objects (files)
 
 AWS Glue is a **serverless data integration service** designed to help you **discover, prepare, move, and integrate data** from various sources for analytics and application development. It's primarily used for building **data warehouses**, **data lakes**, and **data pipelines**.
 
-![image.png](docs/image%202.png)
+<div align="center">
+  <img src="docs/image%202.png" alt="image" width="700">
+</div>
 
-![image.png](docs/image%203.png)
+<div align="center">
+  <img src="docs/image%203.png" alt="image" width="700">
+</div>
 
-![image.png](docs/image%204.png)
+<div align="center">
+  <img src="docs/image%204.png" alt="image" width="700">
+</div>
 
 > AWS Glue is a fully managed serverless data integration service. It helps you discover, prepare, transform, and combine data from multiple sources for analytics, machine learning, and application development.
 
-![AWS-Glue-1-structure.png](docs/AWS-Glue-1-structure.png)
+<div align="center">
+  <img src="docs/AWS-Glue-1-structure.png" alt="structure" width="700">
+</div>
 
 ### ✅ In One Sentence:
 
 > Glue is AWS’s serverless data engineering platform that handles ETL, metadata management, orchestration [ˌɔːkɪˈstreɪʃn], and connectivity, making it ideal for building data lakes and pipelines
 
-![df1fd758ba7182d09bf63c2f0e661b18.png](docs/df1fd758ba7182d09bf63c2f0e661b18.png)
+<div align="center">
+  <img src="docs/df1fd758ba7182d09bf63c2f0e661b18.png" alt="Glue Feature" width="700">
+</div>
 
 ### Key Features & Benefits
 
@@ -95,7 +109,7 @@ AWS Glue is a **serverless data integration service** designed to help you **dis
 | Component | Description |
 | --- | --- |
 | **AWS Glue Data Catalog** | Stores all **metadata**, including **table definitions**, **schemas**, and data **locations**. |
-| **AWS Glue Crawlers** | Automatically **scan data sources**, **infer 推断 schemas**, and **update the Data Catalog**. |
+| **AWS Glue Crawlers** | Automatically **scan data sources**, **infer schemas**, and **update the Data Catalog**. |
 | **AWS Glue ETL Jobs** | Execute **PySpark** or **Scala** scripts to perform **data transformations** and processing. |
 | **AWS Glue Studio** | A **visual interface** for building, running, and monitoring **ETL jobs**. |
 | **AWS Glue DataBrew** | (Part of the Glue suite) A **visual data preparation tool** for cleaning and normalising data **without code**. |
@@ -103,15 +117,15 @@ AWS Glue is a **serverless data integration service** designed to help you **dis
 
 ## S3 - Querying with Athena
 
-Serverless SQL querying on S3, SerDe, Partitionin
+Serverless SQL querying on S3, SerDe, Partitioning
 
-vedio1 - 2:35 截图需要
-
-S3 bucket → Crawler → Data Catalog → Athena → Quicksignt
+S3 bucket → Crawler → Data Catalog → Athena → Quicksight
 
 Federated Query
 
-![image.png](docs/image%205.png)
+<div align="center">
+  <img src="docs/image%205.png" alt="Athena" width="700">
+</div>
 
 | Topic | Key Point | Why It Matters for the Exam |
 | --- | --- | --- |
@@ -128,7 +142,9 @@ Federated Query
 
 ## S4 - AWS Glue Deep Dive
 
-![image.png](docs/image%206.png)
+<div align="center">
+  <img src="docs/image%206.png" alt="Glue Deep Dive" width="700">
+</div>
 
 1. Stateful vs Stateless
 
@@ -142,7 +158,7 @@ Data Ingestion in AWS
 | --- | --- | --- |
 | ✅ Data Lakes with S3 | Building data lakes with S3, lifecycle policies, versioning | S3 is the core of the data lake – **must-know** |
 | ✅ Glue Basics & ETL | Glue ETL concepts: Jobs, Crawlers, Scripts | Glue is **high-frequency** on the exam |
-| ✅ Athena [əˈθiːnə] | Serverless SQL querying on S3, SerDe, Partitionin | Common with S3 – fast, cost-effective querying |
+| ✅ Athena [əˈθiːnə] | Serverless SQL querying on S3, SerDe, Partitioning | Common with S3 – fast, cost-effective querying |
 | ✅ Redshift | Data warehousing, distribution/sort keys, Spectrum | Focus on storage architecture and **Redshift + S3** |
 
 ### AWS Action
@@ -151,22 +167,19 @@ AWS Glue Action Dashboard
 
 [ap-southeast-1.console.aws.amazon.com](https://ap-southeast-1.console.aws.amazon.com/glue/home?region=ap-southeast-1#/v2/getting-started)
 
-![image.png](docs/image%207.png)
+<div align="center">
+  <img src="docs/image%207.png" alt="AWS Console" width="700">
+</div>
 
-[Complete AWS Certified Data Engineer Associate  - DEA-C01](https://www.udemy.com/course/aws-certified-data-engineer-associate-dea-c01/?couponCode=LETSLEARNNOW)
+[Complete AWS Certified Data Engineer Associate - DEA-C01](https://www.udemy.com/course/aws-certified-data-engineer-associate-dea-c01/?couponCode=LETSLEARNNOW)
 
-
-- AWS Certified Data Engineer – Associate (DEA-C01)
-- AWS Certified Cloud Practitioner（常见代码 CLF-C02）- AWS entry-level certification intended to validate a candidate’s understanding of basic cloud computing concepts, the core value of the AWS platform and its foundational services, security and compliance, as well as billing and pricing models
-
-
-## 2.  AWS Certified Data Engineer – Associate (DEA-C01)
+## 2. AWS Certified Data Engineer – Associate (DEA-C01)
 
 [AWS Certified Data Engineer – Associate (DEA-C01)](https://www.coursera.org/specializations/exam-prep-aws-certified-data-engineer-associate?utm_source=chatgpt.com)
 
 | 排名 | 认证 | 市场认可度说明 |
 | --- | --- | --- |
-| 1 | [AWS Certified Cloud Practitioner](https://3lexw.medium.com/aws-certified-cloud-practitioner-clf-c01-%E8%AD%89%E7%85%A7%E8%80%83%E8%A9%A6%E5%BF%83%E5%BE%97-b3b9987b5d59)  | Entry-level certificates have the widest coverage and are required for many cross-functional or non-technical positions.  |
+| 1 | [AWS Certified Cloud Practitioner](https://3lexw.medium.com/aws-certified-cloud-practitioner-clf-c01-%E8%AD%89%E7%85%A7%E8%80%83%E8%A9%A6%E5%BF%83%E5%BE%97-b3b9987b5d59) | Entry-level certificates have the widest coverage and are required for many cross-functional or non-technical positions. |
 | 2 | AWS Certified Data Engineer – Associate (DEA-C01) | 2024 持证量仍在累积中；但在主流大厂的 Data Engineer 岗位中，认可度正快速提升。 |
 
 ## 3. Exam
