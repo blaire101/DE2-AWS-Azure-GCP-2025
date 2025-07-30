@@ -41,8 +41,8 @@ In modern data architecture, AWS provides a comprehensive set of tools to suppor
 
 ## S2 - Data Ingestion
 
-<div align="center">
-  <img src="docs/image.png" alt="image" width="700">
+<div align="left">
+  <img src="docs/image.png" alt="image" width="400">
 </div>
 
 S3 = Simple Storage Service, simple object storage
