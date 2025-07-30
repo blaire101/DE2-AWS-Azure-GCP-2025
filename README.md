@@ -8,13 +8,13 @@
 
 In modern data architecture, AWS provides a comprehensive set of tools to support the full data lifecycle — from ingestion and storage to processing and orchestration. Here's a quick overview of the core services and their roles:
 
-### 🔁 Data Ingestion
+**🔁 Data Ingestion**
 
 - **Batch Ingestion**
   - **AWS Glue**: Crawlers automatically infer schemas; Glue ETL jobs (Spark-based) handle transformations.
   - **AWS DMS**: Supports full load and CDC (Change Data Capture) to migrate databases into **Amazon S3**, **Redshift**, or **Aurora**.
 
-### 🗃️ Data Storage
+**🗃️ Data Storage**
 
 - **Data Lake**
   - **Amazon S3**: Object storage with partitioning, versioning, and lifecycle policies. Works with the **Glue Data Catalog**.
@@ -26,7 +26,7 @@ In modern data architecture, AWS provides a comprehensive set of tools to suppor
 - **Relational Databases**
   - **Amazon RDS / Aurora**: Managed OLTP databases with support for read replicas and global deployments.
 
-### ⚙️ Data Processing & ETL
+**⚙️ Data Processing & ETL**
 
 - **Batch Processing**
   - **AWS Glue ETL**: Managed serverless Spark for ETL development in **Python** or **Scala**.
