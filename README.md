@@ -120,8 +120,8 @@ S3 bucket → Crawler → Data Catalog → Athena → Quicksight
 
 Federated Query
 
-<div align="center">
-  <img src="docs/image%205.png" alt="Athena" width="700">
+<div align="left">
+  <img src="docs/image%205.png" alt="Athena" width="350">
 </div>
 
 | Topic | Key Point | Why It Matters for the Exam |
@@ -139,8 +139,8 @@ Federated Query
 
 ## S4 - AWS Glue Deep Dive
 
-<div align="center">
-  <img src="docs/image%206.png" alt="Glue Deep Dive" width="700">
+<div align="left">
+  <img src="docs/image%206.png" alt="Glue Deep Dive" width="350">
 </div>
 
 1. Stateful vs Stateless
@@ -165,7 +165,7 @@ AWS Glue Action Dashboard
 [ap-southeast-1.console.aws.amazon.com](https://ap-southeast-1.console.aws.amazon.com/glue/home?region=ap-southeast-1#/v2/getting-started)
 
 <div align="center">
-  <img src="docs/image%207.png" alt="AWS Console" width="700">
+  <img src="docs/image%207.png" alt="AWS Console" width="750">
 </div>
 
 [Complete AWS Certified Data Engineer Associate - DEA-C01](https://www.udemy.com/course/aws-certified-data-engineer-associate-dea-c01/?couponCode=LETSLEARNNOW)
