@@ -42,13 +42,9 @@ Data Processing & ETL
 
 ## S1 - Introduction
 
----
-
 ALL Slides, Signup for AWS Free Trial
 
 ## S2 - Data Ingestion
-
----
 
 ![image.png](docs/image.png)
 
@@ -78,20 +74,14 @@ AWS Glue is a **serverless data integration service** designed to help you **dis
 ![image.png](docs/image%204.png)
 
 > AWS Glue is a fully managed serverless data integration service. It helps you discover, prepare, transform, and combine data from multiple sources for analytics, machine learning, and application development.
-> 
 
 ![AWS-Glue-1-structure.png](docs/AWS-Glue-1-structure.png)
 
 ### ✅ In One Sentence:
 
 > Glue is AWS’s serverless data engineering platform that handles ETL, metadata management, orchestration [ˌɔːkɪˈstreɪʃn], and connectivity, making it ideal for building data lakes and pipelines
-> 
-
-Hands-on
 
 ![df1fd758ba7182d09bf63c2f0e661b18.png](docs/df1fd758ba7182d09bf63c2f0e661b18.png)
-
----
 
 ### Key Features & Benefits
 
@@ -113,21 +103,13 @@ Hands-on
 | **AWS Glue DataBrew** | (Part of the Glue suite) A **visual data preparation tool** for cleaning and normalising data **without code**. |
 | **AWS Glue Data Quality** | Helps **assess and improve** the **quality of your data**. |
 
----
-
 ## S3 - Querying with Athena
 
----
-
 Serverless SQL querying on S3, SerDe, Partitionin
-
----
 
 vedio1 - 2:35 截图需要
 
 S3 bucket → Crawler → Data Catalog → Athena → Quicksignt
-
----
 
 Federated Query
 
@@ -158,8 +140,6 @@ Data Ingestion in AWS
 - AWS Data Pipeline
 - AWS Glue
 
----
-
 | Module | Description | Why Learn It |
 | --- | --- | --- |
 | ✅ Data Lakes with S3 | Building data lakes with S3, lifecycle policies, versioning | S3 is the core of the data lake – **must-know** |
@@ -173,18 +153,14 @@ AWS Glue Action Dashboard
 
 [ap-southeast-1.console.aws.amazon.com](https://ap-southeast-1.console.aws.amazon.com/glue/home?region=ap-southeast-1#/v2/getting-started)
 
----
-
 ![image.png](docs/image%207.png)
 
 [Complete AWS Certified Data Engineer Associate  - DEA-C01](https://www.udemy.com/course/aws-certified-data-engineer-associate-dea-c01/?couponCode=LETSLEARNNOW)
 
----
 
 - AWS Certified Data Engineer – Associate (DEA-C01)
 - AWS Certified Cloud Practitioner（常见代码 CLF-C02）- AWS entry-level certification intended to validate a candidate’s understanding of basic cloud computing concepts, the core value of the AWS platform and its foundational services, security and compliance, as well as billing and pricing models
 
----
 
 ## 2.  AWS Certified Data Engineer – Associate (DEA-C01)
 
