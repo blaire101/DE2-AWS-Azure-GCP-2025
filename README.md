@@ -51,7 +51,7 @@ ALL Slides, Signup for AWS Free Trial
 
 ---
 
-![image.png](7%202%20AWS%202%20-%20Data%20Engineer%2021b94e330a45803a82f3f4c16df051fc/image.png)
+![image.png](docs/image.png)
 
 S3 = Simple Storage Service, simple object storage
 
@@ -59,7 +59,7 @@ Buckets (containers for storage) and objects (files)
 
 [**our-first-bucket-202507**](https://ap-southeast-1.console.aws.amazon.com/s3/buckets/our-first-bucket-202507?region=ap-southeast-1&bucketType=general)
 
-![image.png](7%202%20AWS%202%20-%20Data%20Engineer%2021b94e330a45803a82f3f4c16df051fc/image%201.png)
+![image.png](docs/image%201.png)
 
 ### 🧠 Glue ≈ Spark + Hive Metastore + Airflow
 
@@ -72,16 +72,16 @@ Buckets (containers for storage) and objects (files)
 
 AWS Glue is a **serverless data integration service** designed to help you **discover, prepare, move, and integrate data** from various sources for analytics and application development. It's primarily used for building **data warehouses**, **data lakes**, and **data pipelines**.
 
-![image.png](7%202%20AWS%202%20-%20Data%20Engineer%2021b94e330a45803a82f3f4c16df051fc/image%202.png)
+![image.png](docs/image%202.png)
 
-![image.png](7%202%20AWS%202%20-%20Data%20Engineer%2021b94e330a45803a82f3f4c16df051fc/image%203.png)
+![image.png](docs/image%203.png)
 
-![image.png](7%202%20AWS%202%20-%20Data%20Engineer%2021b94e330a45803a82f3f4c16df051fc/image%204.png)
+![image.png](docs/image%204.png)
 
 > AWS Glue is a fully managed serverless data integration service. It helps you discover, prepare, transform, and combine data from multiple sources for analytics, machine learning, and application development.
 > 
 
-![AWS-Glue-1-structure.png](7%202%20AWS%202%20-%20Data%20Engineer%2021b94e330a45803a82f3f4c16df051fc/AWS-Glue-1-structure.png)
+![AWS-Glue-1-structure.png](docs/AWS-Glue-1-structure.png)
 
 ### ✅ In One Sentence:
 
@@ -90,7 +90,7 @@ AWS Glue is a **serverless data integration service** designed to help you **dis
 
 Hands-on
 
-![df1fd758ba7182d09bf63c2f0e661b18.png](7%202%20AWS%202%20-%20Data%20Engineer%2021b94e330a45803a82f3f4c16df051fc/df1fd758ba7182d09bf63c2f0e661b18.png)
+![df1fd758ba7182d09bf63c2f0e661b18.png](docs/df1fd758ba7182d09bf63c2f0e661b18.png)
 
 ---
 
@@ -132,7 +132,7 @@ S3 bucket → Crawler → Data Catalog → Athena → Quicksignt
 
 Federated Query
 
-![image.png](7%202%20AWS%202%20-%20Data%20Engineer%2021b94e330a45803a82f3f4c16df051fc/image%205.png)
+![image.png](docs/image%205.png)
 
 | Topic | Key Point | Why It Matters for the Exam |
 | --- | --- | --- |
@@ -149,7 +149,7 @@ Federated Query
 
 ## S4 - AWS Glue Deep Dive
 
-![image.png](7%202%20AWS%202%20-%20Data%20Engineer%2021b94e330a45803a82f3f4c16df051fc/image%206.png)
+![image.png](docs/image%206.png)
 
 1. Stateful vs Stateless
 
@@ -176,7 +176,7 @@ AWS Glue Action Dashboard
 
 ---
 
-![image.png](7%202%20AWS%202%20-%20Data%20Engineer%2021b94e330a45803a82f3f4c16df051fc/image%207.png)
+![image.png](docs/image%207.png)
 
 [Complete AWS Certified Data Engineer Associate  - DEA-C01](https://www.udemy.com/course/aws-certified-data-engineer-associate-dea-c01/?couponCode=LETSLEARNNOW)
 
