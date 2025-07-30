@@ -19,10 +19,10 @@ In modern data architecture, AWS provides a comprehensive set of tools to suppor
 
 | Category         | Service               | Description |
 |------------------|------------------------|-------------|
-| **Data Lake**     | **Amazon S3**          | Object storage with partitioning, versioning, and lifecycle policies. Integrated with **Glue Data Catalog**. |
+| Data Lake     | **Amazon S3**          | Object storage with partitioning, versioning, and lifecycle policies. Integrated with **Glue Data Catalog**. |
 |                  | **AWS Lake Formation** | Centralized access control with fine-grained permissions. |
-| **Data Warehouse**| **Amazon Redshift**    | Columnar storage, MPP engine, Spectrum enables direct querying of S3 data. |
-| **Relational**    | **Amazon RDS / Aurora**| Managed OLTP databases with read replicas and global database support. |
+| Data_Warehouse| **Amazon Redshift**    | Columnar storage, MPP engine, Spectrum enables direct querying of S3 data. |
+| Relational    | **Amazon RDS / Aurora**| Managed OLTP databases with read replicas and global database support. |
 
 **⚙️ Data Processing & ETL**
 
@@ -42,7 +42,7 @@ In modern data architecture, AWS provides a comprehensive set of tools to suppor
 ## S2 - Data Ingestion
 
 <div align="left">
-  <img src="docs/image.png" alt="image" width="400">
+  <img src="docs/image.png" alt="image" width="350">
 </div>
 
 S3 = Simple Storage Service, simple object storage
