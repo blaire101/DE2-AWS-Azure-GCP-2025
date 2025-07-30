@@ -10,31 +10,28 @@ In modern data architecture, AWS provides a comprehensive set of tools to suppor
 
 **🔁 Data Ingestion**
 
-- **Batch Ingestion**
-  - **AWS Glue**: Crawlers automatically infer schemas; Glue ETL jobs (Spark-based) handle transformations.
-  - **AWS DMS**: Supports full load and CDC (Change Data Capture) to migrate databases into **Amazon S3**, **Redshift**, or **Aurora**.
+| Type            | Service     | Description |
+|-----------------|-------------|-------------|
+| **Batch**       | **AWS Glue** | Crawlers automatically infer schemas; Glue ETL jobs (Spark-based) handle transformations. |
+|                 | **AWS DMS**  | Supports full load and CDC (Change Data Capture) to migrate databases into **Amazon S3**, **Redshift**, or **Aurora**. |
 
 **🗃️ Data Storage**
 
-- **Data Lake**
-  - **Amazon S3**: Object storage with partitioning, versioning, and lifecycle policies. Works with the **Glue Data Catalog**.
-  - **AWS Lake Formation**: Provides centralized, fine-grained access control for lake data.
-  
-- **Data Warehouse**
-  - **Amazon Redshift**: Columnar, MPP architecture with Spectrum support for querying S3 directly.
-  
-- **Relational Databases**
-  - **Amazon RDS / Aurora**: Managed OLTP databases with support for read replicas and global deployments.
+| Category         | Service               | Description |
+|------------------|------------------------|-------------|
+| **Data Lake**     | **Amazon S3**          | Object storage with partitioning, versioning, and lifecycle policies. Integrated with **Glue Data Catalog**. |
+|                  | **AWS Lake Formation** | Centralized access control with fine-grained permissions. |
+| **Data Warehouse**| **Amazon Redshift**    | Columnar storage, MPP engine, Spectrum enables direct querying of S3 data. |
+| **Relational**    | **Amazon RDS / Aurora**| Managed OLTP databases with read replicas and global database support. |
 
 **⚙️ Data Processing & ETL**
 
-- **Batch Processing**
-  - **AWS Glue ETL**: Managed serverless Spark for ETL development in **Python** or **Scala**.
-  - **Amazon EMR**: Customizable big data platform for **Spark**, **Hive**, and **Hadoop** with spot instance support.
-
-- **Orchestration**
-  - **AWS Step Functions**: Serverless state machine to orchestrate multi-step workflows.
-  - **Amazon MWAA (Managed Workflows for Apache Airflow)**: Fully managed Airflow environment for DAG-based scheduling.
+| Category           | Service                  | Description |
+|--------------------|---------------------------|-------------|
+| **Batch Processing**| **AWS Glue ETL**          | Serverless Spark for ETL in **Python** or **Scala**. |
+|                    | **Amazon EMR**            | Custom big data platform with **Spark**, **Hive**, **Hadoop**, and spot instance support. |
+| **Orchestration**   | **AWS Step Functions**     | Serverless state machine for orchestrating workflows. |
+|                    | **Amazon MWAA (Airflow)** | Fully managed Airflow for DAG-based job scheduling. |
 
 ✅ **Data Services (7 hours)**
 
