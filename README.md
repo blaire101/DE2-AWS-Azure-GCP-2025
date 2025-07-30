@@ -41,13 +41,13 @@ In modern data architecture, AWS provides a comprehensive set of tools to suppor
 
 ## S2 - Data Ingestion
 
+- S3 = Simple Storage Service, simple object storage  
+- Buckets (containers for storage) and objects (files)
+
 <div align="left">
   <img src="docs/image.png" alt="image" width="350">
 </div>
 
-S3 = Simple Storage Service, simple object storage
-
-Buckets (containers for storage) and objects (files)
 
 [**our-first-bucket-202507**](https://ap-southeast-1.console.aws.amazon.com/s3/buckets/our-first-bucket-202507?region=ap-southeast-1&bucketType=general)
 
@@ -55,14 +55,14 @@ Buckets (containers for storage) and objects (files)
   <img src="docs/image%201.png" alt="image" width="700">
 </div>
 
-### 🧠 Glue ≈ Spark + Hive Metastore + Airflow
+#### 🧠 Glue ≈ Spark + Hive Metastore + Airflow
 
 - After finishing each service module, **take the quiz immediately**.
 - Draw architecture diagrams like:
 - `Glue ➝ S3 ➝ Athena`
 - `S3 ➝ Redshift Spectrum`
 
-### AWS Glue?
+#### AWS Glue?
 
 AWS Glue is a **serverless data integration service** designed to help you **discover, prepare, move, and integrate data** from various sources for analytics and application development. It's primarily used for building **data warehouses**, **data lakes**, and **data pipelines**.
 
@@ -84,7 +84,7 @@ AWS Glue is a **serverless data integration service** designed to help you **dis
   <img src="docs/AWS-Glue-1-structure.png" alt="structure" width="700">
 </div>
 
-### ✅ In One Sentence:
+#### ✅ In One Sentence:
 
 > Glue is AWS’s serverless data engineering platform that handles ETL, metadata management, orchestration [ˌɔːkɪˈstreɪʃn], and connectivity, making it ideal for building data lakes and pipelines
 
@@ -92,7 +92,7 @@ AWS Glue is a **serverless data integration service** designed to help you **dis
   <img src="docs/df1fd758ba7182d09bf63c2f0e661b18.png" alt="Glue Feature" width="700">
 </div>
 
-### Key Features & Benefits
+#### Key Features & Benefits
 
 - **Serverless:** No servers to provision or manage. Glue **auto-scales** based on your workload, and you **pay only for consumption**.
 - **ETL  Capabilities:** Offers robust ETL functionalities, supporting diverse **data sources** and **targets**. You can use **PySpark** or **Scala** for ETL scripts or the visual interface in **Glue Studio**.
@@ -101,7 +101,7 @@ AWS Glue is a **serverless data integration service** designed to help you **dis
 - **Glue Studio:** A **graphical interface** for visually creating, running, and monitoring ETL jobs with minimal code.
 - **AWS Service Integration:** Seamlessly integrates with other AWS services like **S3**, **Redshift**, **RDS**, **Lake Formation**, and **SageMaker** for end-to-end data solutions.
 
-### Core Components
+#### Core Components
 
 | Component | Description |
 | --- | --- |
