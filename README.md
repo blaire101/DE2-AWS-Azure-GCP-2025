@@ -42,8 +42,6 @@ Data Processing & ETL
 
 ## S1 - Introduction
 
-ALL Slides, Signup for AWS Free Trial
-
 ## S2 - Data Ingestion
 
 ![image.png](docs/image.png)
