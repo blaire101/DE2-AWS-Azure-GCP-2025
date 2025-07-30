@@ -35,7 +35,7 @@ Data Processing & ETL
 
 ---
 
-[AWS Free- login](https://signin.aws.amazon.com/signin?client_id=arn%3Aaws%3Asignin%3A%3A%3Aconsole%2Fcanvas&redirect_uri=https%3A%2F%2Fconsole.aws.amazon.com%2Fconsole%2Fhome%3FhashArgs%3D%2523%26isauthcode%3Dtrue%26state%3DhashArgsFromTB_ap-southeast-2_4006ae5d2b7eed51&page=resolve&code_challenge=f9CZpqfFaFLi3LHpmKeNB0PfdFV7GbPKBE3FMsgIZqg&code_challenge_method=SHA-256&backwards_compatible=true) | Aw@141517
+[AWS Free- login](https://signin.aws.amazon.com/signin?client_id=arn%3Aaws%3Asignin%3A%3A%3Aconsole%2Fcanvas&redirect_uri=https%3A%2F%2Fconsole.aws.amazon.com%2Fconsole%2Fhome%3FhashArgs%3D%2523%26isauthcode%3Dtrue%26state%3DhashArgsFromTB_ap-southeast-2_4006ae5d2b7eed51&page=resolve&code_challenge=f9CZpqfFaFLi3LHpmKeNB0PfdFV7GbPKBE3FMsgIZqg&code_challenge_method=SHA-256&backwards_compatible=true) 
 
 AWS DE - Udemy - Link
 
