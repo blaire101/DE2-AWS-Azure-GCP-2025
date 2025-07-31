@@ -41,7 +41,12 @@ In modern data architecture, AWS provides a comprehensive set of tools to suppor
 
 - Signup for AWS Free Trial
 
-<center><embed src="docs/pdf/AllSlides_v3.3_Data+Engineer.pdf" width="800" height="600"></center>
+<div align="center">
+  <a href="docs/pdf/AllSlides_v3.3_Data+Engineer.pdf" target="_blank">
+    <img src="docs/images/pdf-cover.jpg" alt="Slides Preview" width="700">
+  </a>
+</div>
+
 
 ## S2 - Data Ingestion
 
