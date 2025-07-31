@@ -6,7 +6,7 @@
 
 ## 0. Preface
 
-In modern data architecture, AWS provides a comprehensive set of tools to support the full data lifecycle — from ingestion and storage to processing and orchestration. Here's a quick overview of the core services and their roles:
+In modern data architecture, AWS provides a comprehensive set of tools to support the full data lifecycle — from ingestion and storage to processing and orchestration. 
 
 **🔁 Data Ingestion**
 
