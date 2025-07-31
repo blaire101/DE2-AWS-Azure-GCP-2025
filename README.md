@@ -47,6 +47,19 @@ In modern data architecture, AWS provides a comprehensive set of tools to suppor
   </a>
 </div>
 
+<div align="center">
+  <a href="docs/pdf/AllSlides_v3.3_Data+Engineer.pdf" target="_blank">
+    <img src="docs/images/pdf-cover.jpg" alt="View PDF" width="800">
+  </a>
+</div>
+
+<div align="center">
+  <a href="docs/pdf/AllSlides_v3.3_Data+Engineer.pdf" target="_blank">
+    📄 Click to view the PDF slide deck
+  </a>
+</div>
+
+
 
 ## S2 - Data Ingestion
 
