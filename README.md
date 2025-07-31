@@ -41,7 +41,7 @@ In modern data architecture, AWS provides a comprehensive set of tools to suppor
 
 - Signup for AWS Free Trial
 
-<center><embed src="/docs/pdf/AllSlides_v3.3_Data+Engineer.pdf" width="800" height="600"></center>
+<center><embed src="docs/pdf/AllSlides_v3.3_Data+Engineer.pdf" width="800" height="600"></center>
 
 ## S2 - Data Ingestion
 
@@ -49,7 +49,7 @@ In modern data architecture, AWS provides a comprehensive set of tools to suppor
 - Buckets (containers for storage) and objects (files)
 
 <div align="left">
-  <img src="docs/AWS-DI-S3.webp" alt="image" width="350">
+  <img src="docs/AWS-DI-S3.webp" alt="image" width="300">
 </div>
 
 
