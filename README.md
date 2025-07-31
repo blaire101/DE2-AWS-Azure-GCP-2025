@@ -39,13 +39,17 @@ In modern data architecture, AWS provides a comprehensive set of tools to suppor
 
 ## S1 - Introduction
 
+- Signup for AWS Free Trial
+
+<center><embed src="/docs/pdf/AllSlides_v3.3_Data+Engineer.pdf" width="800" height="600"></center>
+
 ## S2 - Data Ingestion
 
 - S3 = Simple Storage Service, simple object storage  
 - Buckets (containers for storage) and objects (files)
 
 <div align="left">
-  <img src="docs/image.png" alt="image" width="350">
+  <img src="docs/AWS-DI-S3.webp" alt="image" width="350">
 </div>
 
 
