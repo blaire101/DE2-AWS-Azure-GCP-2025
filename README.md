@@ -61,7 +61,7 @@ In modern data architecture, AWS provides a comprehensive set of tools to suppor
 
 [**our-first-bucket-202507**](https://ap-southeast-1.console.aws.amazon.com/s3/buckets/our-first-bucket-202507?region=ap-southeast-1&bucketType=general)
 
-<div align="center">
+<div align="left">
   <img src="docs/image%201.png" alt="image" width="700">
 </div>
 
@@ -76,21 +76,21 @@ In modern data architecture, AWS provides a comprehensive set of tools to suppor
 
 AWS Glue is a **serverless data integration service** designed to help you **discover, prepare, move, and integrate data** from various sources for analytics and application development. It's primarily used for building **data warehouses**, **data lakes**, and **data pipelines**.
 
-<div align="center">
+<div align="left">
   <img src="docs/image%202.png" alt="image" width="700">
 </div>
 
-<div align="center">
+<div align="left">
   <img src="docs/image%203.png" alt="image" width="700">
 </div>
 
-<div align="center">
+<div align="left">
   <img src="docs/image%204.png" alt="image" width="700">
 </div>
 
 > AWS Glue is a fully managed serverless data integration service. It helps you discover, prepare, transform, and combine data from multiple sources for analytics, machine learning, and application development.
 
-<div align="center">
+<div align="left">
   <img src="docs/AWS-Glue-1-structure.png" alt="structure" width="700">
 </div>
 
@@ -98,7 +98,7 @@ AWS Glue is a **serverless data integration service** designed to help you **dis
 
 > Glue is AWS’s serverless data engineering platform that handles ETL, metadata management, orchestration [ˌɔːkɪˈstreɪʃn], and connectivity, making it ideal for building data lakes and pipelines
 
-<div align="center">
+<div align="left">
   <img src="docs/df1fd758ba7182d09bf63c2f0e661b18.png" alt="Glue Feature" width="700">
 </div>
 
