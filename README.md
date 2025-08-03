@@ -161,6 +161,57 @@ Data Ingestion in AWS
 - AWS Data Pipeline
 - AWS Glue
 
+
+## S5 - Serverless Compute with
+
+```
+flowchart TD
+    subgraph EventSource
+        A1[S3 Upload:::green]
+        A2[DynamoDB Change:::orange]
+        A3[Kinesis Stream:::purple]
+    end
+
+    subgraph AWSLambda
+        L1[Trigger:::gray]
+        L2[Lambda Function:::blue]
+        L3[Process Data:::blue]
+    end
+
+    subgraph TargetServices
+        T1[Store in S3:::green]
+        T2[Update DynamoDB:::orange]
+        T3[Send Notification via SNS or SQS:::pink]
+    end
+
+    A1 --> L1
+    A2 --> L1
+    A3 --> L1
+    L1 --> L2
+    L2 --> L3
+    L3 --> T1
+    L3 --> T2
+    L3 --> T3
+
+    classDef green fill:#b5e7a0,stroke:#2e8b57,stroke-width:2px;
+    classDef orange fill:#ffe6b3,stroke:#e67e00,stroke-width:2px;
+    classDef purple fill:#dabfff,stroke:#6a0dad,stroke-width:2px;
+    classDef blue fill:#cfe2ff,stroke:#0056b3,stroke-width:2px;
+    classDef gray fill:#e0e0e0,stroke:#888888,stroke-width:2px;
+    classDef pink fill:#ffd6e7,stroke:#cc3366,stroke-width:2px;
+
+    class A1 green;
+    class A2 orange;
+    class A3 purple;
+    class L1 gray;
+    class L2,L3 blue;
+    class T1 green;
+    class T2 orange;
+    class T3 pink;
+```
+
+---
+
 | Module | Description | Why Learn It |
 | --- | --- | --- |
 | ✅ Data Lakes with S3 | Building data lakes with S3, lifecycle policies, versioning | S3 is the core of the data lake – **must-know** |
