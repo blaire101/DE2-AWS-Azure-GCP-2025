@@ -164,7 +164,7 @@ Data Ingestion in AWS
 
 ## S5 - Serverless Compute with
 
-```
+```mermaid
 flowchart TD
     subgraph EventSource
         A1[S3 Upload:::green]
