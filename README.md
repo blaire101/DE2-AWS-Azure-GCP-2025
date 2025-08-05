@@ -264,3 +264,83 @@ AWS Glue Action Dashboard
 | **Connectors** | JDBC, MongoDB, Kafka, Redshift, S3 | Wide range via Spark or custom setup |
 | **Skill Level Needed** | Beginner to Intermediate | Intermediate to Advanced |
 | **Best For** | Fast serverless ETL, less infrastructure hassle | Complex, large-scale data pipelines with full control |
+
+---
+
+
+## 📊 Amazon Redshift  
+
+### ✅ 1. Basic Concepts
+- **Definition**: AWS-managed distributed columnar data warehouse (MPP architecture)
+- **Use Case**: Ideal for large-scale OLAP queries, BI reporting, data analysis
+- **Architecture**:
+  - Leader Node: Accepts queries, generates execution plans
+  - Compute Nodes: Execute queries in parallel and process data
+
+---
+
+### ✅ 2. Key Optimization Mechanisms
+
+#### 📌 1. Distribution Style
+Controls how data is distributed across compute nodes:
+
+| Type | Description | When to Use |
+|------|-------------|-------------|
+| KEY | Hash by a specific column | For frequently joined columns |
+| EVEN | Even distribution | When no obvious key or to avoid skew |
+| ALL | Full copy on each node | For small dimension tables (broadcast joins) |
+
+---
+
+#### 📌 2. Sort Key
+Defines physical row ordering to improve scan speed:
+
+- Single-column Sort Key: For time or filter fields
+- Compound Sort Key: Multiple columns in order of filter priority
+- INTERLEAVED Sort Key: For multiple filter paths (more overhead)
+
+---
+
+#### 📌 3. Compression Encoding
+- Set manually or auto-chosen (ZSTD, LZO, etc.)
+- Boosts query performance and reduces storage
+
+---
+
+#### 📌 4. Vacuum & Analyze
+- `VACUUM`: Removes deleted row remnants and reorganizes storage
+- `ANALYZE`: Updates table stats for query planner
+
+---
+
+### ✅ 3. Data Loading
+
+#### 📥 COPY Command Example
+
+```sql
+COPY target_table
+FROM 's3://bucket/path/file.csv'
+CREDENTIALS 'aws_access_key_id=...;aws_secret_access_key=...'
+DELIMITER ',' IGNOREHEADER 1;
+```
+
+- Formats supported: CSV, JSON, Parquet
+- Sources: S3, EMR, DynamoDB, DataStreams
+
+---
+
+### ✅ 4. Redshift Spectrum (External Querying)
+- Use Glue Data Catalog to manage external tables in S3
+- Enables direct querying of raw S3 data (no loading)
+- Best for separating hot/cold data in data lake architecture
+
+---
+
+### ✅ 5. Redshift vs Hive vs SparkSQL
+
+| Feature | Redshift | Hive | SparkSQL |
+|--------|----------|------|----------|
+| Type | Managed MPP(Massively Parallel Processing) Data Warehouse | Hadoop SQL Engine | In-memory distributed SQL |
+| Storage | Internal columnar store | HDFS | HDFS/S3/other external |
+| Latency | Fast | Slow | Fast |
+| Deployment | Fully managed | Self-hosted Hadoop | Self-host
