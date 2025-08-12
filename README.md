@@ -8,7 +8,7 @@
 
 In modern data architecture, AWS provides a comprehensive set of tools to support the full data lifecycle — from ingestion and storage to processing and orchestration. 
 
-> Solid line → main path (core data flow), Dashed line → optional/supplementary path; CDC: Change Data Capture
+> Solid line → main path (core data flow), Dashed line → optional/supplementary path; CDC: Data Capture
 
 ### simple version:
 
