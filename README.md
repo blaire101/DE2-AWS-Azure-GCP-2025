@@ -63,6 +63,8 @@ flowchart LR
     classDef gov  fill:#efe6ff,stroke:#7e3ff2,stroke-width:2px,color:#000;
 ```
 
+> Solid line → main path (core data flow), Dashed line → optional/supplementary path
+
 middle version:
 
 ```mermaid
