@@ -10,7 +10,7 @@ In modern data architecture, AWS provides a comprehensive set of tools to suppor
 
 > Solid line → main path (core data flow), Dashed line → optional/supplementary path; CDC: Change Data Capture
 
-simple version:
+### simple version:
 
 ```mermaid
 flowchart LR
@@ -65,7 +65,7 @@ flowchart LR
     classDef gov  fill:#efe6ff,stroke:#7e3ff2,stroke-width:2px,color:#000;
 ```
 
-middle version:
+### middle version
 
 ```mermaid
 flowchart LR
@@ -131,7 +131,7 @@ flowchart LR
     class ATH,QS,API srv
 ```
 
-detailed version:
+### detailed version
 
 ```mermaid
 flowchart LR
