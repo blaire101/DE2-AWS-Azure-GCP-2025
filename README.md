@@ -8,6 +8,62 @@
 
 In modern data architecture, AWS provides a comprehensive set of tools to support the full data lifecycle — from ingestion and storage to processing and orchestration. 
 
+
+```mermaid
+flowchart LR
+    %% ===== Layers =====
+    subgraph L1[🔁 Data Ingestion]
+        DMS[[🛢️ AWS DMS<br>（CDC／Batch）]]:::ing
+        KIN[[📡 Amazon Kinesis<br>（Streaming）]]:::ing
+    end
+
+    subgraph L2[🗃️ Data Lake]
+        S3[(🪣 Amazon S3<br>（Data Lake）)]:::stor
+    end
+
+    subgraph L3[⚙️ Transform]
+        GETL[[🧪 AWS Glue ETL<br>（Transform）]]:::proc
+    end
+
+    subgraph L4[🏛️ Warehouse]
+        RS[(Amazon Redshift<br>（Warehouse）)]:::wh
+    end
+
+    subgraph L5[📊 Serving]
+        ATH[[🔎 Amazon Athena<br>（SQL on S3）]]:::srv
+        QS[[📈 Amazon QuickSight<br>（Dashboards）]]:::srv
+        OS[[🔍 Amazon OpenSearch<br>（Real-time Search）]]:::srv
+    end
+
+    %% ===== Governance (minimal) =====
+    CATALOG[[📚 AWS Glue Data Catalog<br>（Schemas／Tables）]]:::gov
+
+    %% ===== Core paths (minimal) =====
+    DMS --> S3
+    S3 --> GETL
+    GETL --> RS
+    S3 --> ATH
+    RS --> QS
+
+    %% ===== Streaming (optional & dashed) =====
+    KIN -.-> GETL
+    KIN -.-> OS
+
+    %% ===== Governance wiring (dashed) =====
+    CATALOG -.-> S3
+    CATALOG -.-> RS
+
+    %% ===== Styles =====
+    classDef ing  fill:#d0f0fd,stroke:#007acc,stroke-width:2px,color:#000;
+    classDef stor fill:#fde2d0,stroke:#cc5200,stroke-width:2px,color:#000;
+    classDef proc fill:#e6d0fd,stroke:#7e3ff2,stroke-width:2px,color:#000;
+    classDef wh   fill:#ffe8b3,stroke:#aa7a00,stroke-width:2px,color:#000;
+    classDef srv  fill:#d9f7be,stroke:#237804,stroke-width:2px,color:#000;
+    classDef gov  fill:#efe6ff,stroke:#7e3ff2,stroke-width:2px,color:#000;
+```
+
+detailed version:
+
 ```mermaid
 flowchart LR
     %% ===== L1: Ingestion =====
