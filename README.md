@@ -12,8 +12,8 @@ In modern data architecture, AWS provides a comprehensive set of tools to suppor
 
 | Type            | Service     | Description |
 |-----------------|-------------|-------------|
-| **Batch**       | AWS Glue | Crawlers automatically infer schemas; Glue ETL jobs (Spark-based) handle transformations. |
-|                 | AWS DMS  | Supports full load and CDC (Change Data Capture) to migrate databases into **Amazon S3**, **Redshift**, or **Aurora**. |
+| **Batch**       | AWS Glue - Fully managed ETL Service | Crawlers automatically infer schemas; Glue ETL jobs (Spark-based) handle transformations. |
+|                 | AWS DMS - Database Migration Service  | Supports full load and CDC (Change Data Capture) to migrate databases into **Amazon S3**, **Redshift**, or **Aurora**. |
 
 **🗃️ Data Storage**
 
