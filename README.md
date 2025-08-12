@@ -8,6 +8,8 @@
 
 In modern data architecture, AWS provides a comprehensive set of tools to support the full data lifecycle — from ingestion and storage to processing and orchestration. 
 
+> Solid line → main path (core data flow), Dashed line → optional/supplementary path
+
 simple version:
 
 ```mermaid
@@ -62,8 +64,6 @@ flowchart LR
     classDef srv  fill:#d9f7be,stroke:#237804,stroke-width:2px,color:#000;
     classDef gov  fill:#efe6ff,stroke:#7e3ff2,stroke-width:2px,color:#000;
 ```
-
-> Solid line → main path (core data flow), Dashed line → optional/supplementary path
 
 middle version:
 
