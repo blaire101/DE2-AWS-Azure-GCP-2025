@@ -62,6 +62,72 @@ flowchart LR
     classDef gov  fill:#efe6ff,stroke:#7e3ff2,stroke-width:2px,color:#000;
 ```
 
+middle version:
+
+```mermaid
+flowchart LR
+    %% ===== Layers =====
+    subgraph L1["Data Ingestion"]
+        DMS["AWS DMS <br> (Full Load + CDC)"]
+        KIN["Amazon Kinesis <br> (Streaming)"]
+    end
+
+    subgraph L2["Raw Zone (S3)"]
+        RAW["Raw Data"]
+    end
+
+    subgraph L3["Staging Zone (S3 / ODS)"]
+        STG["Staging Data"]
+    end
+
+    subgraph L4["Curated Zone (S3)"]
+        DIL["DIL - Detailed Facts"]
+        DIM["DIM - Dimensions"]
+        DWS["DWS - Aggregates"]
+    end
+
+    subgraph L5["Amazon Redshift (Warehouse / Serving)"]
+        RS["DIM & DWS for BI"]
+    end
+
+    subgraph L6["Serving & Analytics"]
+        ATH["Amazon Athena"]
+        QS["Amazon QuickSight"]
+    end
+
+    %% ===== Paths =====
+    DMS --> RAW
+    RAW --> GETL1["AWS Glue ETL"] --> STG
+    STG --> GETL2["AWS Glue ETL"] --> DIL
+    STG --> GETL2 --> DIM
+    STG --> GETL2 --> DWS
+
+    DIL --> RS
+    DIM --> RS
+    DWS --> RS
+
+    DIL --> ATH
+    DIM --> ATH
+    DWS --> ATH
+    RS --> QS
+
+    %% ===== Optional streaming path =====
+    KIN -.-> RT1["Lambda / KDA (Real-time Processing)"] -.-> API["API / OpenSearch"]
+
+    %% ===== Styles =====
+    classDef ing  fill:#d0f0fd,stroke:#007acc,stroke-width:2px,color:#000;
+    classDef stor fill:#fde2d0,stroke:#cc5200,stroke-width:2px,color:#000;
+    classDef proc fill:#e6d0fd,stroke:#7e3ff2,stroke-width:2px,color:#000;
+    classDef wh   fill:#ffe8b3,stroke:#aa7a00,stroke-width:2px,color:#000;
+    classDef srv  fill:#d9f7be,stroke:#237804,stroke-width:2px,color:#000;
+
+    class DMS,KIN ing
+    class RAW,STG,DIL,DIM,DWS stor
+    class GETL1,GETL2,RT1 proc
+    class RS wh
+    class ATH,QS,API srv
+```
+
 detailed version:
 
 ```mermaid
