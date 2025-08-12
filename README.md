@@ -157,6 +157,25 @@ flowchart LR
     classDef src  fill:#fff1f0,stroke:#cf1322,stroke-width:2px,rx:10,ry:10;
 ```
 
+1. **Raw Zone (S3)**  
+   - Exact copy of source data, no changes.  
+   - For audit and reprocessing.  
+
+2. **Staging Zone (S3) → ODS**  
+   - Lightly cleaned, standardized format.  
+   - Temporary storage before main ETL.  
+
+3. **Curated Zone (S3 / Redshift)**  
+   - **DIL**: detailed, cleaned facts.  
+   - **DIM**: dimensions for joins.  
+   - **DWS**: aggregated, business-ready tables.  
+   - Stored in S3 for Athena or in Redshift for faster analytics and BI serving.  
+
+4. **Redshift**  
+   - Stores DIM and DWS for high-performance queries.  
+   - Acts as the serving layer for dashboards, APIs, and analytics.  
+
+
 ✅ 5. Redshift vs Hive vs SparkSQL
 
 | Feature | Redshift | Hive | SparkSQL |
