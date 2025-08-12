@@ -176,6 +176,8 @@ flowchart LR
    - Acts as the serving layer for dashboards, APIs, and analytics.  
 
 
+---
+
 ✅ 5. Redshift vs Hive vs SparkSQL
 
 | Feature | Redshift | Hive | SparkSQL |
