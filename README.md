@@ -208,6 +208,17 @@ flowchart TD
     class T3 pink;
 ```
 
+#### AWS Lambda
+
+- Data processing tasks on data in Amazon S3 or DynamoDB
+- Event-driven ingestion：
+    
+         S3 / DymanoDB / Kinesis
+    
+- Automation：
+
+         Automate tasks and workflows by triggering Lambda functions in response to events
+  
 ---
 
 | Module | Description | Why Learn It |
@@ -216,6 +227,98 @@ flowchart TD
 | ✅ Glue Basics & ETL | Glue ETL concepts: Jobs, Crawlers, Scripts | Glue is **high-frequency** on the exam |
 | ✅ Athena [əˈθiːnə] | Serverless SQL querying on S3, SerDe, Partitioning | Common with S3 – fast, cost-effective querying |
 | ✅ Redshift | Data warehousing, distribution/sort keys, Spectrum | Focus on storage architecture and **Redshift + S3** |
+
+## S11 - Database Service
+
+| **Aspect** | Amazon RDS  |
+| --- | --- |
+| **Service** | Amazon RDS – fully managed relational database |
+| **Engines** | MySQL, PostgreSQL, MariaDB, Oracle, SQL Server, Aurora |
+| **Use Cases** | OLTP workloads, web/mobile app backends, ERP/CRM databases |
+| **Key Features** | Automated backups, Multi-AZ HA, read replicas, monitoring |
+| **Security** | IAM + KMS encryption + VPC isolation |
+| **Scaling** | Vertical (compute/storage), read replicas for horizontal scaling |
+| **Integrations** | Works with Lambda, Glue, DMS(Migration), S3, Redshift |
+
+### ✅ Key Services Comparison
+
+| Service | Type | Use Case | Engine/Model | Notes |
+| --- | --- | --- | --- | --- |
+| **RDS** | Relational DB | OLTP, transactional apps | MySQL, PostgreSQL, Oracle, etc. | Fully managed traditional SQL databases |
+| **Aurora** | Relational DB | High-performance, scalable SQL | MySQL / PostgreSQL compatible | Better performance, serverless option |
+| **Neptune** | Graph DB | Knowledge graph, social graph | Property Graph (Gremlin), RDF (SPARQL) | Graph traversal queries |
+| **Keyspaces** | Wide-column (NoSQL) | Time-series / log data w/ high writes | Apache Cassandra compatible | Serverless Cassandra |
+| **MemoryDB** | In-memory DB | Low latency cache & durable session | Redis-compatible | Durable Redis, multi-AZ |
+| **Timestream** | Time-series DB | IoT telemetry, DevOps metrics | Purpose-built | Optimized for time-series queries |
+
+### 📊 Architecture Classification Diagram
+
+```mermaid
+flowchart TB
+    RDS[RDS]:::relational
+    Aurora[Aurora]:::relational
+    Keyspaces[Keyspaces - Cassandra]:::nosql
+    MemoryDB[MemoryDB - Redis]:::nosql
+    Neptune[Neptune - Graph DB]:::special
+    Timestream[Timestream - Time-series DB]:::special
+
+    subgraph Relational
+        RDS
+        Aurora
+    end
+
+    subgraph NoSQL
+        Keyspaces
+        MemoryDB
+    end
+
+    subgraph Specialized
+        Neptune
+        Timestream
+    end
+
+    RDS -->|Compatible| Aurora
+
+    %% Style Definitions
+    classDef relational fill:#d0f0fd,stroke:#007acc,stroke-width:2px;
+    classDef nosql fill:#fde2d0,stroke:#cc5200,stroke-width:2px;
+    classDef special fill:#e6d0fd,stroke:#7e3ff2,stroke-width:2px;
+```
+
+## S12 - Computer Services
+
+✅ AWS Compute Services Summary
+
+| **Service** | **Purpose** | **Key Point** | **Use Cases** |
+| --- | --- | --- | --- |
+| **EC2** | Virtual servers | Full control over OS & network | Web servers, backend apps, custom setup |
+| **AWS Batch** | Batch job execution | Auto-manages compute for large workloads | ML training, ETL jobs, simulations |
+| **AWS SAM** | Deploy serverless applications | CLI to build/deploy Lambda-based apps | APIs, automation, microservices |
+| **App Auto Scaling** | Dynamic resource scaling | Scales ECS, DynamoDB, Aurora based on metrics | Traffic spikes, cost optimization |
+
+### ✅ Architecture Diagram (EC2 + Auto Scaling)
+
+```mermaid
+flowchart TD
+    ALB[Application Load Balancer]
+    ALB --> EC1[EC2 Instance 1]
+    ALB --> EC2[EC2 Instance 2]
+    ASG[Auto Scaling Group] --> EC1
+    ASG --> EC2
+    EC1 --> DB[(RDS)]
+    EC2 --> DB
+
+```
+
+---
+
+| Module | Description | Why Learn It |
+| --- | --- | --- |
+| ✅ Data Lakes with S3 | Building data lakes with S3, lifecycle policies, versioning | S3 is the core of the data lake – **must-know** |
+| ✅ Glue Basics & ETL | Glue ETL concepts: Jobs, Crawlers, Scripts | Glue is **high-frequency** on the exam |
+| ✅ Athena [əˈθiːnə] | Serverless SQL querying on S3, SerDe, Partitionin | Common with S3 – fast, cost-effective querying |
+| ✅ Redshift | Data warehousing, distribution/sort keys, Spectrum | Focus on storage architecture and **Redshift + S3** |
+
 
 ### AWS Action
 
