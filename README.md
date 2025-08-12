@@ -244,7 +244,7 @@ flowchart TD
 
 | Service | Type | Use Case | Engine/Model | Notes |
 | --- | --- | --- | --- | --- |
-| **RDS** | Relational DB | OLTP, transactional apps | MySQL, PostgreSQL, Oracle, etc. | Fully managed traditional SQL databases |
+| **RDS** | Relational DB | OLTP, transactional apps | MySQL, Oracle, etc. | Fully managed traditional SQL databases |
 | **Aurora** | Relational DB | High-performance, scalable SQL | MySQL / PostgreSQL compatible | Better performance, serverless option |
 | **Neptune** | Graph DB | Knowledge graph, social graph | Property Graph (Gremlin), RDF (SPARQL) | Graph traversal queries |
 | **Keyspaces** | Wide-column (NoSQL) | Time-series / log data w/ high writes | Apache Cassandra compatible | Serverless Cassandra |
