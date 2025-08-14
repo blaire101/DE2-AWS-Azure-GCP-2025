@@ -4,16 +4,14 @@ In modern data architecture, AWS provides a comprehensive set of tools to suppor
 
 [AWS Certified Data Engineer – Associate（DEA-C01）](https://www.udemy.com/course/aws-certified-data-engineer-associate-dea-c01/?couponCode=ST16MT230625B)
 
-## 1. S3
+## 1. S3 = Simple Storage Service
 
-S3 = Simple Storage Service
+- Buckets (containers for storage)
+- Objects (files)
 
 <div align="center">
   <img src="docs/AWS-S3-logo.jpg" alt="structure" width="300">
 </div>
-
-- Buckets (containers for storage)
-- Objects (files)
 
 ## 2. Glue
 
