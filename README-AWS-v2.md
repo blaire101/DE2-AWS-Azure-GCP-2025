@@ -6,8 +6,8 @@ In modern data architecture, AWS provides a comprehensive set of tools to suppor
 
 ## 1. S3
 
-<div align="left">
-  <img src="docs/AWS-S3-logo.jpg" alt="structure" width="160">
+<div align="center">
+  <img src="docs/AWS-S3-logo.jpg" alt="structure" width="200">
 </div>
 
 - Buckets (containers for storage)
