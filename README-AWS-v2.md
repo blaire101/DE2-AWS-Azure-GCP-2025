@@ -6,12 +6,14 @@ In modern data architecture, AWS provides a comprehensive set of tools to suppor
 
 ## 1. S3
 
-<div align="center">
-  <img src="docs/AWS-S3-logo.jpg" alt="structure" width="200">
-</div>
+S3 = Simple Storage Service
 
 - Buckets (containers for storage)
 - Objects (files)
+
+<div align="center">
+  <img src="docs/AWS-S3-logo.jpg" alt="structure" width="200">
+</div>
 
 ## 2. Glue
 
