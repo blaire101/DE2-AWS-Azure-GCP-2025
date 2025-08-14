@@ -243,15 +243,3 @@ flowchart LR
 4. **Redshift**  
    - Stores DIM and DWS for high-performance queries.  
    - Acts as the serving layer for dashboards, APIs, and analytics.  
-
-
----
-
-✅ 5. Redshift vs Hive vs SparkSQL
-
-| Feature | Redshift | Hive | SparkSQL |
-|--------|----------|------|----------|
-| Type | Managed MPP(Massively Parallel Processing) Data Warehouse | Hadoop SQL Engine | In-memory distributed SQL |
-| Storage | Internal columnar store | HDFS | HDFS/S3/other external |
-| Latency | Fast | Slow | Fast |
-| Deployment | Fully managed | Self-hosted Hadoop | Self-host
