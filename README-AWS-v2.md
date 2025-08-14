@@ -13,12 +13,14 @@ In modern data architecture, AWS provides a comprehensive set of tools to suppor
   <img src="docs/AWS-S3-logo.jpg" alt="structure" width="300">
 </div>
 
-## 2. Glue
+## 2. AWS Glue
 
 AWS Glue is a **serverless data integration service** designed to help you **discover, prepare, move, and integrate data** from various sources for analytics and application development. It's primarily used for building **data warehouses**, **data lakes**, and **data pipelines**.
 
-- Fully-managed ETL service
-- load and transform data
+- **Fully-managed ETL service**
+- Designed to make it easy to **load and transform data**
+- **Visual interface**: Easily create ETL jobs without code
+- **Various integrations**: Amazon S3, Amazon Redshift, and Amazon RDS
 
 <div align="center">
   <img src="docs/AWS-Glue-1-structure.png" alt="structure" width="700">
@@ -39,7 +41,6 @@ AWS Athena is an interactive **Serverless service** that can be used to query an
   <img src="docs/AWS-Athena-1.webp" alt="structure" width="600">
 </div>
 
-
 | Topic | Key Point | Why It Matters for the Exam |
 | --- | --- | --- |
 | **1. Querying Data** | SQL on S3 | Athena lets you run SQL directly on S3 data (no ETL needed) |
@@ -54,7 +55,39 @@ AWS Athena is an interactive **Serverless service** that can be used to query an
 |  | Query metrics & audit logs | For governance and troubleshooting |
 
 
-## 5. Serverless Compute with
+## 4. AWS Glue Deep Dive
+
+### Glue Costs
+
+### Stateful vs. Stateless
+
+> Stateful: Systems remember past interactions for influencing future ones.
+> Stateless: Systems process each request independently without relying on past interactions.
+
+Data Ingestion in AWS:
+
+- Amazon Kinesis: Supports both stateful (Data Streams) and stateless (Data Firehose) data processing.
+- AWS Data Pipeline: Orchestrates workflows for both stateful and stateless data ingestion.
+- AWS Glue: Offers stateful or stateless ETL jobs with features like job bookmarks for tracking progress.
+
+### Glue Transformations
+
+**AWS Glue - Extract Transform Load**
+
+### Glue Worfklows
+
+### Glue Job Types
+
+### AWS Glue – Partitioning
+
+### AWS Glue DataBrew
+
+- Data preparation tool with visual interface.
+- Cleaning and data format processes. & Automate data preparations.
+
+## 5. Serverless Compute with Lambda
+
+Use cases： 
 
 ```mermaid
 flowchart TD
@@ -102,14 +135,45 @@ flowchart TD
     class T3 pink;
 ```
 
-## 6. Redshift
+## 6. Data Streaming
+
+- Amazon Kinesis
+- Throughput and Latency
+- Enhanced Fan-Out
+- Troubleshooting & Performance in Kinesis
+- Amazon Kinesis Data Firehose
+- Kinesis Data Streams **VS** Kinesis Firehose
+- Managed Service for Apache Flink
+- Amazon Managed Streaming for Apache Kafka (MSK)
+
+## 7. Storage with S3
+
+- Partitioning
+- Storage Classes and Lifecycle configuration
+- Versioning
+- Encryption and Bucket Policy
+- Access Points and Object Lambda
+- S3 Event Notification
+
+
+## 8. Other Storage Services
+
+- Amazon EBS
+- Amazon EFS
+- AWS Backup
+
+## 9. AWS DynamoDB
+
+- Serverless NoSQL database
+- NoSQL ⇒ "Not Only SQL" or "non-relational" database
+
+## 10. Redshift Datawarehouse
 
 AWS Redshift is a fully managed, petabyte-scale data warehouse service in the cloud. 
 
 <div align="center">
   <img src="docs/AWS-Redshift-4.webp" alt="Diagram" width="700">
 </div>
-
 
 ✅ Redshift vs Hive vs SparkSQL
 
@@ -120,6 +184,24 @@ AWS Redshift is a fully managed, petabyte-scale data warehouse service in the cl
 | Latency | Fast | Slow | Fast |
 | Deployment | Fully managed | Self-hosted Hadoop | Self-host
 
+- Amazon Redshift Cluster
+- RA3 and DC2 Node types
+- Amazon Redshift snapshots
+- Sharing data across AWS Regions
+- Distribution Styles
+- Vacuum and Workload Management
+- Redshift Integration
+- Data Transformation using Amazon Redshift
+- Amazon Redshift Federated Queries
+- Materialized Views
+- Amazon Redshift Spectrum
+- System Tables and Views
+- Redshift Data API
+- Data Sharing
+- Workload Management (WLM)
+- Redshift Serverless
+- Security in Amazon Redshift
+- Access Control In Redshift
 
 
 ```mermaid
@@ -183,7 +265,7 @@ flowchart TB
 
 ```
 
-## 11. Database Service
+## 11. Other Database Services
 
 ```mermaid
 flowchart TB
