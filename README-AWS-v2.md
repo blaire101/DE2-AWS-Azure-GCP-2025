@@ -11,7 +11,7 @@ S3 = Simple Storage Service
 - Buckets (containers for storage)
 - Objects (files)
 
-<div align="center">
+<div align="left">
   <img src="docs/AWS-S3-logo.jpg" alt="structure" width="200">
 </div>
 
@@ -22,7 +22,7 @@ AWS Glue is a **serverless data integration service** designed to help you **dis
 - Fully-managed ETL service
 - load and transform data
 
-<div align="left">
+<div align="center">
   <img src="docs/AWS-Glue-1-structure.png" alt="structure" width="700">
 </div>
 
@@ -37,7 +37,7 @@ AWS Glue is a **serverless data integration service** designed to help you **dis
 
 AWS Athena is an interactive **Serverless service** that can be used to query and analyze raw data using standard SQL. 
 
-<div align="left">
+<div align="center">
   <img src="docs/AWS-Athena-1.webp" alt="structure" width="600">
 </div>
 
@@ -108,8 +108,7 @@ flowchart TD
 
 AWS Redshift is a fully managed, petabyte-scale data warehouse service in the cloud. 
 
-
-<div align="left">
+<div align="center">
   <img src="docs/AWS-Redshift-4.webp" alt="Diagram" width="700">
 </div>
 
