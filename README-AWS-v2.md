@@ -5,7 +5,7 @@ In modern data architecture, AWS provides a comprehensive set of tools to suppor
 [AWS Certified Data Engineer – Associate（DEA-C01）](https://www.udemy.com/course/aws-certified-data-engineer-associate-dea-c01/?couponCode=ST16MT230625B)
 
 | Exam - Domain | Weight | Key Services & Topics |
-| --- | --- | --- |
+| :--- | --- | --- |
 | **Data Ingestion** | 20% | Batch vs. streaming; AWS Glue; AWS DMS; Kinesis Data Streams & Firehose |
 | **Data Storage** | 20% | Data lake vs. data warehouse; Amazon S3; Redshift; DynamoDB; RDS/Aurora |
 | **Data Processing & ETL** | 30% | AWS Glue ETL; EMR (Hive, Spark); Lambda; Step Functions; MWAA |
