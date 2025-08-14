@@ -63,14 +63,16 @@ flowchart LR
 
 ## 1. S3
 
-S3 = Simple Storage Service
+<div align="left">
+  <img src="docs/AWS-S3-logo.jpg" alt="structure" width="300">
+</div>
 
 - Buckets (containers for storage)
 - Objects (files)
 
 ## 2. Glue
 
-AWS Glue is a serverless data integration service designed to help you integrate data from various sources for analytics and application development. It's primarily used for building **data warehouses, data lakes, and data pipelines**.
+AWS Glue is a **serverless data integration service** designed to help you **discover, prepare, move, and integrate data** from various sources for analytics and application development. It's primarily used for building **data warehouses**, **data lakes**, and **data pipelines**.
 
 - Fully-managed ETL service
 - load and transform data
@@ -85,19 +87,14 @@ AWS Glue is a serverless data integration service designed to help you integrate
 | **AWS Glue Crawlers** | Automatically **scan data sources**, **infer schemas**, and **update the Data Catalog**. |
 | **AWS Glue ETL Jobs** | Execute **PySpark** or **Scala** scripts to perform **data transformations** and processing. |
 | **AWS Glue Studio** | A **visual interface** for building, running, and monitoring **ETL jobs**. |
-| **AWS Glue DataBrew** | (Part of the Glue suite) A **visual data preparation tool** for cleaning and normalising data **without code**. |
-| **AWS Glue Data Quality** | Helps **assess and improve** the **quality of your data**. |
 
 ## 3. Querying with Athena
 
 AWS Athena is an interactive **Serverless service** that can be used to query and analyze raw data using standard SQL. 
 
 <div align="left">
-  <img src="docs/AWS-Athena-1.webp" alt="structure" width="700">
+  <img src="docs/AWS-Athena-1.webp" alt="structure" width="600">
 </div>
-
-
-Federated Query
 
 
 | Topic | Key Point | Why It Matters for the Exam |
@@ -114,11 +111,73 @@ Federated Query
 |  | Query metrics & audit logs | For governance and troubleshooting |
 
 
-## 4. Redshift
+## 5. Serverless Compute with
 
-<div align="center">
+```mermaid
+flowchart TD
+    subgraph EventSource
+        A1[S3 Upload:::green]
+        A2[DynamoDB Change:::orange]
+        A3[Kinesis Stream:::purple]
+    end
+
+    subgraph AWSLambda
+        L1[Trigger:::gray]
+        L2[Lambda Function:::blue]
+        L3[Process Data:::blue]
+    end
+
+    subgraph TargetServices
+        T1[Store in S3:::green]
+        T2[Update DynamoDB:::orange]
+        T3[Send Notification via SNS or SQS:::pink]
+    end
+
+    A1 --> L1
+    A2 --> L1
+    A3 --> L1
+    L1 --> L2
+    L2 --> L3
+    L3 --> T1
+    L3 --> T2
+    L3 --> T3
+
+    classDef green fill:#b5e7a0,stroke:#2e8b57,stroke-width:2px;
+    classDef orange fill:#ffe6b3,stroke:#e67e00,stroke-width:2px;
+    classDef purple fill:#dabfff,stroke:#6a0dad,stroke-width:2px;
+    classDef blue fill:#cfe2ff,stroke:#0056b3,stroke-width:2px;
+    classDef gray fill:#e0e0e0,stroke:#888888,stroke-width:2px;
+    classDef pink fill:#ffd6e7,stroke:#cc3366,stroke-width:2px;
+
+    class A1 green;
+    class A2 orange;
+    class A3 purple;
+    class L1 gray;
+    class L2,L3 blue;
+    class T1 green;
+    class T2 orange;
+    class T3 pink;
+```
+
+## 6. Redshift
+
+AWS Redshift is a fully managed, petabyte-scale data warehouse service in the cloud. 
+
+
+<div align="left">
   <img src="docs/AWS-Redshift-4.webp" alt="Diagram" width="700">
 </div>
+
+
+✅ Redshift vs Hive vs SparkSQL
+
+| Feature | Redshift | Hive | SparkSQL |
+|--------|----------|------|----------|
+| Type | Managed MPP(Massively Parallel Processing) Data Warehouse | Hadoop SQL Engine | In-memory distributed SQL |
+| Storage | Internal columnar store | HDFS | HDFS/S3/other external |
+| Latency | Fast | Slow | Fast |
+| Deployment | Fully managed | Self-hosted Hadoop | Self-host
+
 
 
 ```mermaid
@@ -182,12 +241,50 @@ flowchart TB
 
 ```
 
+## 11. Database Service
 
-✅ 5. Redshift vs Hive vs SparkSQL
+```mermaid
+flowchart TB
+    RDS[RDS]:::relational
+    Aurora[Aurora]:::relational
+    Keyspaces[Keyspaces - Cassandra]:::nosql
+    MemoryDB[MemoryDB - Redis]:::nosql
+    Neptune[Neptune - Graph DB]:::special
+    Timestream[Timestream - Time-series DB]:::special
 
-| Feature | Redshift | Hive | SparkSQL |
-|--------|----------|------|----------|
-| Type | Managed MPP(Massively Parallel Processing) Data Warehouse | Hadoop SQL Engine | In-memory distributed SQL |
-| Storage | Internal columnar store | HDFS | HDFS/S3/other external |
-| Latency | Fast | Slow | Fast |
-| Deployment | Fully managed | Self-hosted Hadoop | Self-host
+    subgraph Relational
+        RDS
+        Aurora
+    end
+
+    subgraph NoSQL
+        Keyspaces
+        MemoryDB
+    end
+
+    subgraph Specialized
+        Neptune
+        Timestream
+    end
+
+    RDS -->|Compatible| Aurora
+
+    %% Style Definitions
+    classDef relational fill:#d0f0fd,stroke:#007acc,stroke-width:2px;
+    classDef nosql fill:#fde2d0,stroke:#cc5200,stroke-width:2px;
+    classDef special fill:#e6d0fd,stroke:#7e3ff2,stroke-width:2px;
+```
+
+
+## 12. Computer Services
+
+```mermaid
+flowchart TD
+    ALB[Application Load Balancer]
+    ALB --> EC1[EC2 Instance 1]
+    ALB --> EC2[EC2 Instance 2]
+    ASG[Auto Scaling Group] --> EC1
+    ASG --> EC2
+    EC1 --> DB[(RDS)]
+    EC2 --> DB
+```
