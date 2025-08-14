@@ -8,12 +8,12 @@ In modern data architecture, AWS provides a comprehensive set of tools to suppor
 
 S3 = Simple Storage Service
 
+<div align="center">
+  <img src="docs/AWS-S3-logo.jpg" alt="structure" width="300">
+</div>
+
 - Buckets (containers for storage)
 - Objects (files)
-
-<div align="left">
-  <img src="docs/AWS-S3-logo.jpg" alt="structure" width="200">
-</div>
 
 ## 2. Glue
 
