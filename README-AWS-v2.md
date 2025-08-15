@@ -100,21 +100,21 @@ Use cases：
 ```mermaid
 flowchart TD
     subgraph EventSource
-        A1[S3 Upload:::green]
-        A2[DynamoDB Change:::orange]
-        A3[Kinesis Stream:::purple]
+        A1[S3 Upload]
+        A2[DynamoDB Change]
+        A3[Kinesis Stream]
     end
 
     subgraph AWSLambda
-        L1[Trigger:::gray]
-        L2[Lambda Function:::blue]
-        L3[Process Data:::blue]
+        L1[Trigger]
+        L2[Lambda Function]
+        L3[Process Data]
     end
 
     subgraph TargetServices
-        T1[Store in S3:::green]
-        T2[Update DynamoDB:::orange]
-        T3[Send Notification via SNS or SQS:::pink]
+        T1[Store in S3]
+        T2[Update DynamoDB]
+        T3[Send Notification via SNS or SQS]
     end
 
     A1 --> L1
@@ -133,13 +133,11 @@ flowchart TD
     classDef gray fill:#e0e0e0,stroke:#888888,stroke-width:2px;
     classDef pink fill:#ffd6e7,stroke:#cc3366,stroke-width:2px;
 
-    class A1 green;
-    class A2 orange;
+    class A1,T1 green;
+    class A2,T2 orange;
     class A3 purple;
     class L1 gray;
     class L2,L3 blue;
-    class T1 green;
-    class T2 orange;
     class T3 pink;
 ```
 
