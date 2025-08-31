@@ -20,7 +20,7 @@ In modern data architecture, GCP provides a comprehensive set of tools to suppor
 - Objects (files/blobs)
 
 <div align="center">
-  <img src="docs/GCP-data-fusion.png" alt="structure" width="700">
+  <img src="docs/GCP-Cloud-Storage.png" alt="structure" width="700">
 </div>
 
 ---
@@ -50,7 +50,7 @@ Cloud Data Fusion is a **serverless data integration service** designed to help 
 BigQuery is a **serverless, petabyte-scale data warehouse** with SQL interface.  
 
 <div align="center">
-  <img src="docs/GCP-BigQuery.svg" alt="structure" width="200">
+  <img src="docs/GCP-data-fusion.png" alt="structure" width="300">
 </div>
 
 | Topic | Key Point | Why It Matters |
