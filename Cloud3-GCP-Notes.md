@@ -20,7 +20,7 @@ In modern data architecture, GCP provides a comprehensive set of tools to suppor
 - Objects (files/blobs)
 
 <div align="center">
-  <img src="docs/GCP-Cloud-Storage.png" alt="structure" width="300">
+  <img src="docs/GCP-Cloud-Storage.png" alt="structure" width="700">
 </div>
 
 ---
