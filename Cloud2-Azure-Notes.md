@@ -35,7 +35,7 @@ Azure Data Factory is a **serverless data integration service** designed to help
 - **Integrations**: ADLS, Synapse, Azure SQL, Cosmos DB
 
 <div align="center">
-  <img src="docs/Azure-DataFactory.png" alt="structure" width="700">
+  <img src="docs/Azure-DataFactory.png" alt="structure" width="300">
 </div>
 
 | Component | Description |
@@ -52,7 +52,7 @@ Azure Data Factory is a **serverless data integration service** designed to help
 Azure Synapse provides **serverless + dedicated** SQL pools for analytics. 
 
 <div align="center">
-  <img src="docs/Azure-Synapse.png" alt="structure" width="600">
+  <img src="docs/Azure-Synapse.png" alt="structure" width="300">
 </div>
 
 | Topic | Key Point | Why It Matters for the Exam |
