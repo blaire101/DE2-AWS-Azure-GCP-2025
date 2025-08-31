@@ -50,7 +50,7 @@ Cloud Data Fusion is a **serverless data integration service** designed to help 
 BigQuery is a **serverless, petabyte-scale data warehouse** with SQL interface.  
 
 <div align="center">
-  <img src="docs/GCP-data-fusion.png" alt="structure" width="300">
+  <img src="docs/GCP-Data-Fusion.png" alt="structure" width="300">
 </div>
 
 | Topic | Key Point | Why It Matters |
