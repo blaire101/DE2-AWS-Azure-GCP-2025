@@ -20,7 +20,7 @@ In modern data architecture, Azure provides a comprehensive set of tools to supp
 - Blobs (objects/files)
 
 <div align="center">
-  <img src="docs/Azure-ADLS.png" alt="structure" width="300">
+  <img src="docs/Azure-Data-Lake-Gen2-Logo-Large.svg" alt="structure" width="300">
 </div>
 
 ---
@@ -168,7 +168,7 @@ flowchart TD
 Azure Synapse is a fully managed **MPP** data warehouse. 
 
 <div align="center">
-  <img src="docs/Azure-Synapse-DW.png" alt="Diagram" width="700">
+  <img src="docs/Azure-Synapse-DW.jpg" alt="Diagram" width="700">
 </div>
 
 ✅ Synapse vs Hive vs SparkSQL
