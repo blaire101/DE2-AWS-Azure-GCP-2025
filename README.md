@@ -9,8 +9,8 @@
 | **Layer**        | AWS                           | Azure                              | GCP                               | Traditional          |
 |------------------|-------------------------------|------------------------------------|-----------------------------------|----------------------|
 | **Data Lake**    | Amazon S3                     | Azure Data Lake Storage (ADLS)     | Google Cloud Storage (GCS)        | HDFS (cloudified)    |
-| **Data Warehouse** | Amazon Redshift             | Azure Synapse Analytics            | BigQuery                          | Hive / Impala (DW)   |
 | **Batch ETL**    | AWS Glue / EMR                | Azure Data Factory / HDInsight     | Dataflow / Dataproc               | Spark                |
+| **Data Warehouse** | Amazon Redshift             | Azure Synapse Analytics            | BigQuery                          | Hive / Impala (DW)   |
 | **Streaming ETL**| Kinesis / MSK / KDA           | Event Hubs / Stream Analytics      | Pub/Sub + Dataflow (streaming)    | Flink / Storm        |
 
 ## Preface
