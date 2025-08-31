@@ -7,8 +7,8 @@ In modern data architecture, Azure provides a comprehensive set of tools to supp
 | Exam - Domain | Weight | Key Services & Topics |
 | :--- | --- | --- |
 | **Data Ingestion** | 20% | Batch vs. streaming; Azure Data Factory; Event Hubs; Data Share |
-| **Data Storage** | 20% | Data lake vs. data warehouse; Azure Data Lake Storage (ADLS); Synapse; Cosmos DB; Azure SQL Database |
-| **Data Processing & ETL** | 30% | Data Factory pipelines; Synapse Spark pools; HDInsight; Azure Functions; Azure Databricks |
+| **Data Storage** | 20% | Data lake vs. data warehouse; Azure Data Lake Storage (ADLS); Synapse; Cosmos DB; Azure SQL |
+| **Data Processing & ETL** | 30% | Data Factory pipelines; Synapse Spark; Azure Functions; Azure Databricks; HDInsight |
 | **Analytics & Machine Learning** | 15% | Synapse SQL; Power BI; Azure Machine Learning |
 | **Security, Monitoring & Optimization** | 15% | RBAC & Managed Identity; Key Vault; Azure Monitor; Cost Management |
 
@@ -16,22 +16,23 @@ In modern data architecture, Azure provides a comprehensive set of tools to supp
 
 ## 1. ADLS = Azure Data Lake Storage
 
-- Containers (similar to buckets)
+- Containers (like buckets)
 - Blobs (objects/files)
 
 <div align="center">
-  <img src="docs/Azure-ADLS-logo.png" alt="structure" width="300">
+  <img src="docs/Azure-ADLS.png" alt="structure" width="300">
 </div>
 
 ---
 
 ## 2. Azure Data Factory
 
-Azure Data Factory is a **serverless data integration service** designed to help you **discover, prepare, move, and integrate data** from various sources for analytics and application development. It's widely used for building **data lakes**, **data warehouses**, and **data pipelines**.
+Azure Data Factory is a **serverless data integration service** designed to help you **discover, prepare, move, and integrate data** from various sources for analytics and application development. It's primarily used for building **data warehouses**, **data lakes**, and **data pipelines**.
 
 - **Fully-managed ETL/ELT service**
-- Visual drag-and-drop pipeline builder
-- Rich **integration**: ADLS, Synapse, Azure SQL, Cosmos DB
+- Designed to make it easy to **load and transform data**
+- **Visual interface**: Easily create pipelines without code
+- **Integrations**: ADLS, Synapse, Azure SQL, Cosmos DB
 
 <div align="center">
   <img src="docs/Azure-DataFactory.png" alt="structure" width="700">
@@ -39,16 +40,16 @@ Azure Data Factory is a **serverless data integration service** designed to help
 
 | Component | Description |
 | --- | --- |
-| **Data Catalog (Purview)** | Centralized **metadata**, schema registry, governance. |
-| **Integration Runtimes** | Compute used to move/transform data. |
-| **Mapping Data Flows** | Visual, Spark-based transformation. |
-| **ADF Studio** | Browser UI for building pipelines. |
+| **Microsoft Purview** | Central **metadata**, lineage, governance. |
+| **Integration Runtime** | Compute used by pipelines. |
+| **Mapping Data Flows** | Visual Spark-based transformations. |
+| **ADF Studio** | Web UI for pipelines and monitoring. |
 
 ---
 
 ## 3. Querying with Synapse SQL
 
-Azure Synapse Analytics provides a **serverless + dedicated SQL pool** to query and analyze data across data lake and warehouse.  
+Azure Synapse provides **serverless + dedicated** SQL pools for analytics. 
 
 <div align="center">
   <img src="docs/Azure-Synapse.png" alt="structure" width="600">
@@ -56,24 +57,23 @@ Azure Synapse Analytics provides a **serverless + dedicated SQL pool** to query 
 
 | Topic | Key Point | Why It Matters for the Exam |
 | --- | --- | --- |
-| **1. Querying Data** | SQL on ADLS (serverless pool) | Run SQL directly on Parquet/CSV without ingestion |
-|  | Partitioning & Clustering | Reduces data scanned and cost |
-|  | Parquet / ORC | Columnar formats = faster queries |
-| **2. Federated Queries** | Query across Azure SQL, Cosmos DB | Integration with Synapse SQL pools |
-| **3. Performance & Cost** | Dedicated pool vs. serverless | Exam often asks about workload isolation, cost models |
-| **4. Governance** | Purview integration | Metadata, lineage, security |
+| **1. Querying Data** | SQL on ADLS (serverless) | Query Parquet/CSV directly |
+|  | Partitioning & File Layout | Reduce data scanned and cost |
+| **2. Federated Queries** | Azure SQL, Cosmos DB | Unified analytics via linked services |
+| **3. Performance & Cost** | Dedicated DWU vs. serverless | Workload isolation, elasticity |
+| **4. Governance** | Purview | Catalog, PII classification, RBAC |
 
 ---
 
-## 4. Azure Databricks & Synapse Spark
+## 4. Databricks & Synapse Spark
 
 ### Azure Databricks
-- Collaborative Spark platform for **advanced ETL/ML**.  
-- Supports **batch + streaming**.  
+- Collaborative Spark for **advanced ETL/ML**  
+- Batch + Structured Streaming  
 
 ### Synapse Spark Pools
-- Integrated Spark runtime within Synapse.  
-- Great for **big data transformations** without separate cluster mgmt.  
+- Integrated Spark in Synapse  
+- No separate cluster management  
 
 ---
 
@@ -123,3 +123,166 @@ flowchart TD
     class L1 gray;
     class L2,L3 blue;
     class T3 pink;
+```
+
+---
+
+## 6. Data Streaming
+
+- Event Hubs (Kafka-compatible)  
+- Stream Analytics (SQL on streams)  
+- Functions for lightweight transforms  
+- Databricks Structured Streaming  
+
+---
+
+## 7. Storage with ADLS
+
+- Partitioning  
+- Tiers (Hot/Cool/Archive) & Lifecycle  
+- Blob snapshots (versioning)  
+- Encryption with Key Vault  
+- RBAC + ACLs  
+- Event Grid notifications  
+
+---
+
+## 8. Other Storage Services
+
+- Managed Disks  
+- Azure Files  
+- Backup & Site Recovery  
+
+---
+
+## 9. Azure Cosmos DB
+
+- Serverless NoSQL multi-model  
+- Global distribution, low latency  
+- Change Feed for event-driven pipelines  
+
+---
+
+## 10. Synapse Data Warehouse
+
+Azure Synapse is a fully managed **MPP** data warehouse. 
+
+<div align="center">
+  <img src="docs/Azure-Synapse-DW.png" alt="Diagram" width="700">
+</div>
+
+✅ Synapse vs Hive vs SparkSQL
+
+| Feature | Synapse | Hive | SparkSQL |
+|--------|----------|------|----------|
+| Type | Managed MPP Data Warehouse | Hadoop SQL Engine | In-memory distributed SQL |
+| Storage | Internal columnar store | HDFS | HDFS/S3/ADLS |
+| Latency | Fast | Slow | Fast |
+| Deployment | Fully managed | Self-hosted Hadoop | Self-hosted Spark |
+
+```mermaid
+flowchart TB
+    %% ===== Color classes =====
+    classDef core fill:#ffe5e5,stroke:#cc0000,stroke-width:2px,color:#000;
+    classDef ops fill:#fff2cc,stroke:#aa7a00,stroke-width:2px,color:#000;
+    classDef features fill:#e6ffe6,stroke:#1b7f1b,stroke-width:2px,color:#000;
+    classDef bg_clients fill:#e6f3ff,stroke:none;
+    classDef bg_cluster fill:#fff8f0,stroke:none;
+    classDef bg_ops fill:#f4e6ff,stroke:none;
+    classDef bg_features fill:#f0fff4,stroke:none;
+
+    %% ===== Clients =====
+    subgraph C["Clients & Connectivity"]
+        BI["🧑‍💻 Power BI / SQL tools"]
+        ODBC["🔌 ODBC / JDBC"]
+    end
+    class C bg_clients
+
+    %% ===== Synapse Cluster =====
+    subgraph SYN["Azure Synapse Dedicated Pool"]
+        L["🧠 Control Node<br>(Parsing/Planning<br>Aggregation)"]
+        CN1["🧩 Compute Node 1<br>(Columnar storage<br>Execution)"]
+        CN2["🧩 Compute Node 2<br>(Columnar storage<br>Execution)"]
+        CN3["🧩 Compute Node 3<br>(Columnar storage<br>Execution)"]
+    end
+    class SYN bg_cluster
+
+    %% ===== Features =====
+    subgraph F["Key Features"]
+        F1["📦 Columnar storage"]
+        F2["⚡ MPP execution"]
+    end
+    class F bg_features
+
+    %% ===== Ops =====
+    subgraph G["Security & Operations"]
+        SEC["🔐 RBAC / VNet / Key Vault / TLS"]
+        BAK["🧷 Geo-backups & DR"]
+        SHARE["🔁 Linked Services / External Tables"]
+    end
+    class G bg_ops
+
+    BI --> ODBC --> SYN
+    L --> CN1
+    L --> CN2
+    L --> CN3
+
+    SEC --- SYN
+    BAK --- SYN
+    SHARE --- L
+
+    class BI,ODBC,L,CN1,CN2,CN3 core
+    class SEC,BAK,SHARE ops
+    class F1,F2 features
+```
+
+---
+
+## 11. Other Database Services
+
+```mermaid
+flowchart TB
+    SQLDB[Azure SQL Database]:::relational
+    SynapseSQL[Synapse Serverless SQL]:::relational
+    Cosmos[Cosmos DB]:::nosql
+    Redis[Azure Cache for Redis]:::nosql
+    Graph[Cosmos Gremlin (Graph)]:::special
+    Time[Time Series Insights]:::special
+
+    subgraph Relational
+        SQLDB
+        SynapseSQL
+    end
+
+    subgraph NoSQL
+        Cosmos
+        Redis
+    end
+
+    subgraph Specialized
+        Graph
+        Time
+    end
+
+    SQLDB -->|Integrated| SynapseSQL
+
+    %% Styles
+    classDef relational fill:#d0f0fd,stroke:#007acc,stroke-width:2px;
+    classDef nosql fill:#fde2d0,stroke:#cc5200,stroke-width:2px;
+    classDef special fill:#e6d0fd,stroke:#7e3ff2,stroke-width:2px;
+```
+
+---
+
+## 12. Compute Services
+
+```mermaid
+flowchart TD
+    ALB[Azure Load Balancer / App Gateway]
+    ALB --> VM1[VM Scale Set Instance 1]
+    ALB --> VM2[VM Scale Set Instance 2]
+    ASG[VM Scale Set] --> VM1
+    ASG --> VM2
+    VM1 --> DB[(Azure SQL Database)]
+    VM2 --> DB
+```
