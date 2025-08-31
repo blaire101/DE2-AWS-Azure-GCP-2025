@@ -242,13 +242,15 @@ flowchart TB
 
 ```mermaid
 flowchart TB
+    %% ===== Nodes =====
     SQLDB[Azure SQL Database]:::relational
     SynapseSQL[Synapse Serverless SQL]:::relational
     Cosmos[Cosmos DB]:::nosql
     Redis[Azure Cache for Redis]:::nosql
-    Graph[Cosmos Gremlin (Graph)]:::special
+    Graph[Cosmos Gremlin Graph]:::special
     Time[Time Series Insights]:::special
 
+    %% ===== Groups =====
     subgraph Relational
         SQLDB
         SynapseSQL
@@ -264,9 +266,10 @@ flowchart TB
         Time
     end
 
+    %% ===== Relationships =====
     SQLDB -->|Integrated| SynapseSQL
 
-    %% Styles
+    %% ===== Styles =====
     classDef relational fill:#d0f0fd,stroke:#007acc,stroke-width:2px;
     classDef nosql fill:#fde2d0,stroke:#cc5200,stroke-width:2px;
     classDef special fill:#e6d0fd,stroke:#7e3ff2,stroke-width:2px;
