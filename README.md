@@ -4,12 +4,6 @@
 
 🌅 [**AWS Certified Data Engineer – Associate（DEA-C01）**](https://www.udemy.com/course/aws-certified-data-engineer-associate-dea-c01/?couponCode=ST16MT230625B)
 
-## Preface
-
-In modern data architecture, AWS provides a comprehensive set of tools to support the full data lifecycle — from ingestion and storage to processing and orchestration. 
-
-> Solid line → main path (core data flow), Dashed line → optional/supplementary path; CDC: Data Capture
-
 ## ✅ Cloud Data Platform Comparison
 
 | **Layer**        | AWS                           | Azure                              | GCP                               | Traditional          |
@@ -18,6 +12,12 @@ In modern data architecture, AWS provides a comprehensive set of tools to suppor
 | **Data Warehouse** | Amazon Redshift             | Azure Synapse Analytics            | BigQuery                          | Hive / Impala (DW)   |
 | **Batch ETL**    | AWS Glue / EMR                | Azure Data Factory / HDInsight     | Dataflow / Dataproc               | Spark                |
 | **Streaming ETL**| Kinesis / MSK / KDA           | Event Hubs / Stream Analytics      | Pub/Sub + Dataflow (streaming)    | Flink / Storm        |
+
+## Preface
+
+In modern data architecture, AWS provides a comprehensive set of tools to support the full data lifecycle — from ingestion and storage to processing and orchestration. 
+
+> Solid line → main path (core data flow), Dashed line → optional/supplementary path; CDC: Data Capture
 
 ### simple version :
 
