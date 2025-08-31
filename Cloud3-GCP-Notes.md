@@ -34,7 +34,7 @@ Cloud Data Fusion is a **serverless data integration service** designed to help 
 - **Integrations**: GCS, BigQuery, Cloud SQL, Pub/Sub
 
 <div align="center">
-  <img src="docs/GCP-Data-Fusion.svg" alt="structure" width="700">
+  <img src="docs/GCP-Data-Fusion.svg" alt="structure" width="300">
 </div>
 
 | Component | Description |
@@ -50,7 +50,7 @@ Cloud Data Fusion is a **serverless data integration service** designed to help 
 BigQuery is a **serverless, petabyte-scale data warehouse** with SQL interface.  
 
 <div align="center">
-  <img src="docs/GCP-BigQuery.svg" alt="structure" width="600">
+  <img src="docs/GCP-BigQuery.svg" alt="structure" width="300">
 </div>
 
 | Topic | Key Point | Why It Matters |
@@ -170,7 +170,7 @@ flowchart TD
 BigQuery is a fully managed **MPP** analytics warehouse.  
 
 <div align="center">
-  <img src="docs/GCP-BigQuery-Architecture.svg" alt="Diagram" width="700">
+  <img src="docs/GCP-BigQuery.png" alt="Diagram" width="700">
 </div>
 
 ✅ BigQuery vs Hive vs SparkSQL
