@@ -10,6 +10,15 @@ In modern data architecture, AWS provides a comprehensive set of tools to suppor
 
 > Solid line → main path (core data flow), Dashed line → optional/supplementary path; CDC: Data Capture
 
+## ✅ Cloud Data Platform Comparison
+
+| **Layer**        | AWS                           | Azure                              | GCP                               | Traditional          |
+|------------------|-------------------------------|------------------------------------|-----------------------------------|----------------------|
+| **Data Lake**    | Amazon S3                     | Azure Data Lake Storage (ADLS)     | Google Cloud Storage (GCS)        | HDFS (cloudified)    |
+| **Data Warehouse** | Amazon Redshift             | Azure Synapse Analytics            | BigQuery                          | Hive / Impala (DW)   |
+| **Batch ETL**    | AWS Glue / EMR                | Azure Data Factory / HDInsight     | Dataflow / Dataproc               | Spark                |
+| **Streaming ETL**| Kinesis / MSK / KDA           | Event Hubs / Stream Analytics      | Pub/Sub + Dataflow (streaming)    | Flink / Storm        |
+
 ### simple version :
 
 ```mermaid
