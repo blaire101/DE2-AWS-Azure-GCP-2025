@@ -9,7 +9,7 @@
 | **Layer**        | AWS                           | Azure                              | GCP                               | Traditional          |
 |------------------|-------------------------------|------------------------------------|-----------------------------------|----------------------|
 | **Storage Layer** <br> (for Data Lake)    | Amazon S3                     | Azure Data Lake Storage (ADLS)     | Google Cloud Storage (GCS)        | HDFS (cloudified)    |
-| **Batch ETL**    | AWS Glue / EMR                | Azure Data Factory / HDInsight     | Dataflow / Dataproc               | Spark                |
+| **Batch ETL**    | **AWS Glue Studio** → Visual pipeline design<br>**AWS Glue Jobs** → Serverless Spark ETL<br>**Amazon EMR** → Managed Hadoop/Spark for large-scale jobs | **Azure Data Factory (ADF)** → Orchestration & visual pipelines<br>**Mapping Data Flows** → Spark-based serverless ETL<br>**HDInsight / Databricks** → Managed Hadoop/Spark clusters | **Cloud Data Fusion** → Visual pipeline orchestration (CDAP-based)<br>**Dataflow** → Serverless batch ETL (Apache Beam)<br>**Dataproc** → Managed Hadoop/Spark clusters | **Apache Spark / Hadoop** (self-managed, on-premise) |
 | **Data Warehouse** | Amazon Redshift             | Azure Synapse Analytics            | BigQuery                          | Hive / Impala (DW)   |
 | **Streaming ETL**| Kinesis / MSK / KDA           | Event Hubs / Stream Analytics      | Pub/Sub + Dataflow (streaming)    | Flink / Storm        |
 
