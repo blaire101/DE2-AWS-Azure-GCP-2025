@@ -163,7 +163,37 @@ flowchart TD
 - Cloud SQL = Managed MySQL/Postgres/SQL Server  
 - AlloyDB = Advanced PostgreSQL-compatible  
 
----
+```mermaid
+flowchart TB
+    CloudSQL[Cloud SQL<br>（Managed traditional RDBMS）]:::relational
+    AlloyDB[AlloyDB<br>（cloud-native,Relation）]:::relational
+    Firestore[Firestore<br>（Like MongoDB）]:::nosql
+    Bigtable[Bigtable<br>（Like Hbase）]:::nosql
+    Spanner[Cloud Spanner<br>（Distributed RDBMS）]:::special
+    Memorystore[Memorystore - Redis/Memcached]:::nosql
+
+    subgraph Relational
+        CloudSQL
+        AlloyDB
+    end
+
+    subgraph NoSQL
+        Firestore
+        Bigtable
+        Memorystore
+    end
+
+    subgraph Specialized
+        Spanner
+    end
+
+    CloudSQL -->|Migration| AlloyDB
+
+    %% Styles
+    classDef relational fill:#d0f0fd,stroke:#007acc,stroke-width:2px;
+    classDef nosql fill:#fde2d0,stroke:#cc5200,stroke-width:2px;
+    classDef special fill:#e6d0fd,stroke:#7e3ff2,stroke-width:2px;
+```
 
 ## 10. BigQuery Data Warehouse
 
@@ -240,41 +270,6 @@ flowchart TB
 
 ---
 
-## 11. Other Database Services
-
-```mermaid
-flowchart TB
-    CloudSQL[Cloud SQL<br>（Managed traditional RDBMS）]:::relational
-    AlloyDB[AlloyDB<br>（cloud-native,Relational）]:::relational
-    Firestore[Firestore<br>（Like MongoDB:Document-oriented）]:::nosql
-    Bigtable[Bigtable<br>（Like Hbase:Wide-column NoSQL）]:::nosql
-    Spanner[Cloud Spanner<br>（Distributed RDBMS）]:::special
-    Memorystore[Memorystore - Redis/Memcached]:::nosql
-
-    subgraph Relational
-        CloudSQL
-        AlloyDB
-    end
-
-    subgraph NoSQL
-        Firestore
-        Bigtable
-        Memorystore
-    end
-
-    subgraph Specialized
-        Spanner
-    end
-
-    CloudSQL -->|Migration| AlloyDB
-
-    %% Styles
-    classDef relational fill:#d0f0fd,stroke:#007acc,stroke-width:2px;
-    classDef nosql fill:#fde2d0,stroke:#cc5200,stroke-width:2px;
-    classDef special fill:#e6d0fd,stroke:#7e3ff2,stroke-width:2px;
-```
-
----
 
 ## 12. Compute Services
 
