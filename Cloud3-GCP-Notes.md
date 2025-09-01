@@ -244,10 +244,10 @@ flowchart TB
 
 ```mermaid
 flowchart TB
-    CloudSQL[Cloud SQL]:::relational
-    AlloyDB[AlloyDB]:::relational
-    Firestore[Firestore]:::nosql
-    Bigtable[Bigtable]:::nosql
+    CloudSQL[Cloud SQL-（Managed traditional RDBMS）]:::relational
+    AlloyDB[AlloyDB-（cloud-native,Relational）]:::relational
+    Firestore[Firestore -（Like MongoDB:Document-oriented）]:::nosql
+    Bigtable[Bigtable-（Like Hbase:Wide-column NoSQL）]:::nosql
     Spanner[Cloud Spanner]:::special
     Memorystore[Memorystore - Redis/Memcached]:::nosql
 
