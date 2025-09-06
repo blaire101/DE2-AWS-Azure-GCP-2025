@@ -67,13 +67,13 @@ flowchart TB
     classDef cache fill:#fdf5e6,stroke:#8e44ad,stroke-width:1.5px
 
     %% ===== Main Node =====
-    A[BigQuery]:::main
+    A[🏛️ BigQuery]:::main
 
     %% ===== Sub Nodes =====
-    B[Storage<br>Colossus + Capacitor]:::storage
-    C[Compute<br>Dremel + Slots]:::compute
-    D[Schema<br>Partition + Clustering]:::schema
-    E[Caching & Views<br>Materialized / Scheduled]:::cache
+    B[💾 Storage<br>Colossus + Capacitor]:::storage
+    C[⚡ Compute<br>Dremel + Slots]:::compute
+    D[🗂️ Schema<br>Partition + Clustering]:::schema
+    E[📊 Caching & Views<br>Materialized / Scheduled]:::cache
 
     %% ===== Layout =====
     A --> B
@@ -188,6 +188,28 @@ Dremel tree → fan-out parallelism → fan-in aggregation.
 
 ## 2. Cost & Security
 
+```mermaid
+flowchart TB
+    %% ===== Styles =====
+    classDef main fill:#ffe8cc,stroke:#b03a2e,stroke-width:2px,font-weight:bold,color:#000
+    classDef pricing fill:#eaf4ff,stroke:#2874a6,stroke-width:1.5px
+    classDef saving fill:#f0fff0,stroke:#229954,stroke-width:1.5px
+    classDef security fill:#fff0f6,stroke:#8e44ad,stroke-width:1.5px
+
+    %% ===== Main Node =====
+    A[💰 Cost & 🔒 Security]:::main
+
+    %% ===== Sub Nodes =====
+    B[💵 Pricing<br>On-demand / Flat-rate / Storage]:::pricing
+    C[📉 Cost-saving<br>Partition / Avoid SELECT * / Monitor]:::saving
+    D[🛡️ Security<br>IAM / Row / Column / CMEK / VPC-SC]:::security
+
+    %% ===== Layout =====
+    A --> B
+    A --> C
+    A --> D
+```
+
 ### Q11. Pricing Models
 
 * **On-demand**: \$5/TB scanned
@@ -209,6 +231,31 @@ Dremel tree → fan-out parallelism → fan-in aggregation.
 * **VPC-SC** for perimeter security
 
 ## 3. Data Modeling & ETL
+
+```mermaid
+flowchart TB
+    %% ===== Styles =====
+    classDef main fill:#ffe8cc,stroke:#6c3483,stroke-width:2px,font-weight:bold,color:#000
+    classDef schema fill:#eaf4ff,stroke:#2874a6,stroke-width:1.5px
+    classDef scd fill:#f0fff0,stroke:#27ae60,stroke-width:1.5px
+    classDef cdc fill:#fff0f6,stroke:#c2185b,stroke-width:1.5px
+    classDef batch fill:#fdf5e6,stroke:#8e44ad,stroke-width:1.5px
+
+    %% ===== Main Node =====
+    A[🧩 Data Modeling & ETL]:::main
+
+    %% ===== Sub Nodes =====
+    B[📐 Schema Evolution<br>Add columns / Views]:::schema
+    C[🕰️ SCD<br>Type 1 / 2 / 3]:::scd
+    D[🔄 CDC<br>Datastream / Dataflow]:::cdc
+    E[📥 Batch Load<br>Parquet / Avro / GCS]:::batch
+
+    %% ===== Layout =====
+    A --> B
+    A --> C
+    A --> D
+    A --> E
+```
 
 ### Q14. Schema Evolution in BigQuery
 
@@ -233,6 +280,34 @@ Use **Dataflow or Datastream** to capture DB changes and apply into BigQuery.
 * Recommended: Parquet/Avro (compressed, schema support)
 
 ## 4. Dataflow (ETL/Streaming Layer)
+
+```mermaid
+flowchart TB
+    %% ===== Styles =====
+    classDef main fill:#ffe8cc,stroke:#196f3d,stroke-width:2px,font-weight:bold,color:#000
+    classDef beam fill:#eaf4ff,stroke:#1f618d,stroke-width:1.5px
+    classDef window fill:#f0fff0,stroke:#27ae60,stroke-width:1.5px
+    classDef state fill:#fff0f6,stroke:#c2185b,stroke-width:1.5px
+    classDef shuffle fill:#fdf5e6,stroke:#8e44ad,stroke-width:1.5px
+    classDef monitor fill:#e8f8f5,stroke:#148f77,stroke-width:1.5px
+
+    %% ===== Main Node =====
+    A[⚙️ Dataflow]:::main
+
+    %% ===== Sub Nodes =====
+    B[🌊 Apache Beam<br>Batch + Streaming]:::beam
+    C[⏱️ Windowing & Triggers]:::window
+    D[📈 Stateful Processing]:::state
+    E[🔀 Shuffle Service & Streaming Engine]:::shuffle
+    F[📡 Monitoring<br>Stackdriver / Metrics]:::monitor
+
+    %% ===== Layout =====
+    A --> B
+    A --> C
+    A --> D
+    A --> E
+    A --> F
+```
 
 ### Q18. What is Dataflow?
 
@@ -310,6 +385,34 @@ Maintain counters per key (e.g., number of clicks per user in last 5 mins).
 ---
 
 ## 5. Integration & Real-time
+
+```mermaid
+flowchart TB
+    %% ===== Styles =====
+    classDef main fill:#ffe8cc,stroke:#154360,stroke-width:2px,font-weight:bold,color:#000
+    classDef pubsub fill:#eaf4ff,stroke:#1f618d,stroke-width:1.5px
+    classDef pipeline fill:#f0fff0,stroke:#27ae60,stroke-width:1.5px
+    classDef batch fill:#fff0f6,stroke:#c2185b,stroke-width:1.5px
+    classDef migrate fill:#fdf5e6,stroke:#8e44ad,stroke-width:1.5px
+    classDef usecase fill:#e8f8f5,stroke:#148f77,stroke-width:1.5px
+
+    %% ===== Main Node =====
+    A[🔗 Integration & Real-time]:::main
+
+    %% ===== Sub Nodes =====
+    B[📩 Pub/Sub<br>Real-time ingestion]:::pubsub
+    C[⚡ Pipeline<br>Pub/Sub → Dataflow → BigQuery]:::pipeline
+    D[📂 Batch ETL<br>GCS → Dataflow → BigQuery]:::batch
+    E[🚚 Migration<br>HDFS → GCS / Hive → Dataproc]:::migrate
+    F[🛒 Use Case<br>E-commerce Analytics]:::usecase
+
+    %% ===== Layout =====
+    A --> B
+    A --> C
+    A --> D
+    A --> E
+    A --> F
+```
 
 ### Q26. Pub/Sub Basics
 
