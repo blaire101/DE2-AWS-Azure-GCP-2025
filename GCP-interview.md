@@ -110,6 +110,9 @@ linkStyle 4 stroke-width:0px,fill:none
 * **Clustering**: sort by customer\_id, product\_id
 * **Schema design**: star schema (fact + dimension) recommended
 
+> **Partitioning**:  = Splitting the table into “big chunks” (e.g., by date).
+> **Clustering**:  = Within each chunk, sorting the data (e.g., by user, product) to make “precise lookups” faster.
+
 ### Q4. Query Execution & Slots
 
 ```mermaid
