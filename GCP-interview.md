@@ -85,7 +85,7 @@ flowchart LR
 - [Q29. Migration from Hadoop](#q29-migration-from-hadoop)
 - [Q30. E-commerce Analytics Pipeline](#q30-e-commerce-analytics-pipeline)
 
-## [✅ Final Summary](#-final-summary)
+- [✅ Final Summary](#-final-summary)
 
 * BigQuery = **Data Warehouse Core**
 * Dataflow = **ETL Engine (Batch & Streaming)**
