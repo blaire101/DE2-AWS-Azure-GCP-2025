@@ -1,4 +1,4 @@
-# 📚 GCP Data Engineering Interview Q&A (30 Essential Questions)
+# 📚 GCP Data Engineering Interview Q&A
 
 ## 🎯 Goal
 For a **Data Engineer role focusing on GCP Data Warehouse & ETL**.  
