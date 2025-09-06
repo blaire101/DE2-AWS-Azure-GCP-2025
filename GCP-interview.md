@@ -1,5 +1,64 @@
 # 📚 GCP Data Engineering Interview Q&A
 
+## 🎯 Goal
+
+* Role focus: **GCP Data Warehouse & ETL**
+* Emphasis: **BigQuery, Dataflow, Pub/Sub, Batch & Streaming**
+
+## 1. BigQuery (Core Data Warehouse)
+
+* **Q1. What is BigQuery?**
+* **Q2. BigQuery Architecture**
+* **Q3. Storage & Data Modeling**
+* **Q4. Query Execution & Slots**
+* **Q5. Partitioning vs Clustering**
+* **Q6. External vs Native Tables**
+* **Q7. BigQuery Caching**
+* **Q8. Materialized Views vs Scheduled Queries**
+* **Q9. Query Optimization Best Practices**
+* **Q10. Common Pitfalls**
+
+## 2. Cost & Security
+
+* **Q11. Pricing Models**
+* **Q12. Cost-saving Techniques**
+* **Q13. Security in BigQuery**
+
+## 3. Data Modeling & ETL
+
+* **Q14. Schema Evolution in BigQuery**
+* **Q15. Slowly Changing Dimensions (SCD)**
+* **Q16. CDC (Change Data Capture)**
+* **Q17. Batch Loading into BigQuery**
+
+## 4. Dataflow (ETL/Streaming Layer)
+
+* **Q18. What is Dataflow?**
+* **Q19. Dataflow Architecture**
+* **Q20. Batch vs Streaming in Dataflow**
+* **Q21. Event-time vs Processing-time**
+* **Q22. Windowing & Triggers**
+* **Q23. Stateful Processing Example**
+* **Q24. Dataflow Shuffle & Streaming Engine**
+* **Q25. Monitoring & Debugging**
+
+## 5. Integration & Real-time
+
+* **Q26. Pub/Sub Basics**
+* **Q27. Pub/Sub → Dataflow → BigQuery Pipeline**
+* **Q28. Batch ETL Pipeline**
+* **Q29. Migration from Hadoop**
+* **Q30. E-commerce Analytics Pipeline**
+
+## ✅ Final Summary
+
+* BigQuery = **Data Warehouse Core**
+* Dataflow = **ETL Engine (Batch & Streaming)**
+* Pub/Sub = **Real-time Ingestion**
+* Dataproc = **Legacy Bridge (Spark/Hadoop)**
+* Combined: **End-to-end GCP Data Platform**
+
+
 ```mermaid
 flowchart LR
     classDef src fill:#d0f0fd,stroke:#007acc,stroke-width:2px,color:#000,font-weight:bold
@@ -338,14 +397,11 @@ flowchart TD
     Source --> Pipeline --> Sink
 ```
 
----
-
 ### Q20. Batch vs Streaming in Dataflow
 
 * **Batch**: GCS → Dataflow → BigQuery (daily/hourly)
 * **Streaming**: Pub/Sub → Dataflow → BigQuery (near real-time)
 
----
 
 ### Q21. Event-time vs Processing-time
 
@@ -353,7 +409,6 @@ flowchart TD
 * **Processing-time**: when processed
 * Important for late-arriving data
 
----
 
 ### Q22. Windowing & Triggers
 
@@ -362,27 +417,19 @@ flowchart TD
 * **Session windows** (user activity gaps)
 * Triggers decide when partial results are emitted
 
----
-
 ### Q23. Stateful Processing Example
 
 Maintain counters per key (e.g., number of clicks per user in last 5 mins).
-
----
 
 ### Q24. Dataflow Shuffle & Streaming Engine
 
 * Shuffle service → offloads shuffle to backend
 * Streaming engine → moves state/shuffle from workers to service → autoscaling
 
----
-
 ### Q25. Monitoring & Debugging
 
 * **Stackdriver (Cloud Logging)**
 * **Cloud Monitoring** for metrics (latency, throughput, backlogs)
-
----
 
 ## 5. Integration & Real-time
 
@@ -419,7 +466,34 @@ flowchart TB
 Pub/Sub is GCP’s **<mark>real-time messaging service</mark>** for ingestion.
 Producers publish → Subscribers consume → Dataflow processes → BigQuery stores.
 
----
+```mermaid
+flowchart LR
+    %% ===== Styles =====
+    classDef pubsub fill:#eaf4ff,stroke:#1f618d,stroke-width:1.5px,color:#000
+    classDef sub fill:#eef7ff,stroke:#2874a6,stroke-width:1.5px,color:#000
+    classDef dataflow fill:#f0fff0,stroke:#27ae60,stroke-width:1.5px,color:#000
+    classDef bq fill:#fff0f6,stroke:#c2185b,stroke-width:1.5px,color:#000
+    classDef note fill:#fdf5e6,stroke:#8e44ad,stroke-width:1px,color:#000
+
+    %% ===== Nodes =====
+    P[📩 Producers<br/>Publish events]:::pubsub
+    T[🧵 Pub/Sub Topic<br/>Message queue]:::pubsub
+    S[👥 Subscribers<br/>Pull/Push subscriptions]:::sub
+    D[⚙️ Dataflow<br/>Beam pipeline processes]:::dataflow
+    BQ[🏛️ BigQuery<br/>Stores & queries]:::bq
+
+    %% ===== Flow =====
+    P --> T --> S --> D --> BQ
+
+    %% ===== Optional notes (detach if too busy) =====
+    N1[fan-out / replay / at-least-once]:::note
+    N2[windowing • triggers • stateful • exactly-once sinks]:::note
+    N3[cost control • partition & cluster]:::note
+
+    T --- N1
+    D --- N2
+    BQ --- N3
+```
 
 ### Q27. Pub/Sub → Dataflow → BigQuery Pipeline
 
@@ -430,15 +504,11 @@ flowchart LR
     D --> M[Monitoring/Alerts]
 ```
 
----
-
 ### Q28. Batch ETL Pipeline
 
 * Source: GCS (daily files)
 * Process: Dataflow batch / Dataproc Spark
 * Sink: BigQuery (fact & dimension tables)
-
----
 
 ### Q29. Migration from Hadoop
 
@@ -446,16 +516,12 @@ flowchart LR
 * Hive/Spark → Dataproc
 * Move reporting → BigQuery
 
----
-
 ### Q30. E-commerce Analytics Pipeline
 
 * Ingest: Pub/Sub (real-time orders)
 * Transform: Dataflow (ETL, sessionization)
 * Store: BigQuery star schema (orders, customers, products)
 * Visualize: Looker / BI Engine
-
----
 
 # ✅ Final Summary
 
