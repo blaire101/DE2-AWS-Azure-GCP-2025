@@ -26,6 +26,8 @@ subgraph Client["🧑‍💻 Client Layer"]
 U1["BI Tools - Looker, Data Studio"]:::client
 U2["APIs and SDKs"]:::client
 U3["Console or CLI"]:::client
+U1 --- U2
+U2 --- U3
 end
 
 %% ===== Compute Layer =====
