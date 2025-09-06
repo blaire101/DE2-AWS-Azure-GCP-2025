@@ -14,28 +14,69 @@ It uses the **<mark>Dremel execution engine</mark>** for massively parallel proc
 ### Q2. BigQuery Architecture
 
 ```mermaid
-flowchart LR
-    subgraph Storage["☁️ Colossus Storage"]
-        T1[Tables - Capacitor Columnar]
-        P1[Partitions and Clusters]
-    end
-
-    subgraph Compute["⚡ Dremel Execution Engine"]
-        Q1[SQL Parser]
-        Q2[Execution Tree - Fan-out/Fan-in]
-        Q3[Slots - Virtual CPUs]
-    end
-
-    subgraph Client["🧑‍💻 Client Layer"]
-        U1[BI Tools - Looker, Data Studio]
-        U2[APIs and SDKs]
-        U3[Console or CLI]
-    end
-
+flowchart TD
+ subgraph Client["🧑‍💻 Client Layer"]
+        U1["BI Tools - Looker, Data Studio"]
+        U2["APIs and SDKs"]
+        U3["Console or CLI"]
+  end
+ subgraph Compute["⚡ Dremel Execution Engine"]
+        Q1["SQL Parser"]
+        Q2["Execution Tree - Fan-out/Fan-in"]
+        Q3["Slots - Virtual CPUs"]
+  end
+ subgraph Storage["☁️ Colossus Storage"]
+        T1["Tables - Capacitor Columnar"]
+        P1["Partitions and Clusters"]
+  end
     Client --> Compute
     Compute --> Storage
+
+     U1:::client
+     U2:::client
+     U3:::client
+     Q1:::compute
+     Q2:::compute
+     Q3:::compute
+     T1:::storage
+     P1:::storage
+     Client:::linkstroke
+     Compute:::linkstroke
+     Storage:::linkstroke
+    classDef storage fill:#e6f2ff,stroke:#004080,stroke-width:2px,color:#000,font-weight:bold
+    classDef compute fill:#fff0e6,stroke:#993300,stroke-width:2px,color:#000,font-weight:bold
+    classDef client fill:#e6ffe6,stroke:#006600,stroke-width:2px,color:#000,font-weight:bold
+    classDef linkstroke stroke:#333,stroke-width:2px
+
 ```
 
+**Spark VS Dremel**
+
+```mermaid
+flowchart TD
+    %% ==== Style Definitions ====
+    classDef spark fill:#ffe6cc,stroke:#ff9933,stroke-width:2px,color:#000,font-weight:bold
+    classDef dremel fill:#e6f0ff,stroke:#3366cc,stroke-width:2px,color:#000,font-weight:bold
+    classDef title fill:#ffffff,stroke:none,color:#000,font-size:18px,font-weight:bold
+
+    %% ==== Spark Execution ====
+    subgraph Spark["🔥 Spark Execution (DAG)"]
+        direction TB
+        A[SQL / RDD Job]:::spark --> B[Stage 1: Map Tasks]:::spark
+        B --> C[Stage 2: Shuffle + Reduce]:::spark
+        C --> D[Stage 3: Output Result]:::spark
+    end
+
+    %% ==== Dremel Execution ====
+    subgraph Dremel["⚡ Dremel Execution Engine (BigQuery)"]
+        direction TB
+        Q[SQL Query]:::dremel --> T1[Fan-out Tree<br>Split tasks to many slots]:::dremel
+        T1 --> T2[Parallel Execution<br>on Slots]:::dremel
+        T2 --> T3[Fan-in Tree<br>Aggregate Results]:::dremel
+        T3 --> R[Final Result]:::dremel
+    end
+
+```
 
 
 ### Q3. Storage & Data Modeling
