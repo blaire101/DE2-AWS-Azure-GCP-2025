@@ -15,39 +15,45 @@ It uses the **<mark>Dremel execution engine</mark>** for massively parallel proc
 
 ```mermaid
 flowchart TD
- subgraph Client["🧑‍💻 Client Layer"]
-        U1["BI Tools - Looker, Data Studio"]
-        U2["APIs and SDKs"]
-        U3["Console or CLI"]
-  end
- subgraph Compute["⚡ Dremel Execution Engine"]
-        Q1["SQL Parser"]
-        Q2["Execution Tree - Fan-out/Fan-in"]
-        Q3["Slots - Virtual CPUs"]
-  end
- subgraph Storage["☁️ Colossus Storage"]
-        T1["Tables - Capacitor Columnar"]
-        P1["Partitions and Clusters"]
-  end
-    Client --> Compute
-    Compute --> Storage
 
-     U1:::client
-     U2:::client
-     U3:::client
-     Q1:::compute
-     Q2:::compute
-     Q3:::compute
-     T1:::storage
-     P1:::storage
-     Client:::linkstroke
-     Compute:::linkstroke
-     Storage:::linkstroke
-    classDef storage fill:#e6f2ff,stroke:#004080,stroke-width:2px,color:#000,font-weight:bold
-    classDef compute fill:#fff0e6,stroke:#993300,stroke-width:2px,color:#000,font-weight:bold
-    classDef client fill:#e6ffe6,stroke:#006600,stroke-width:2px,color:#000,font-weight:bold
-    classDef linkstroke stroke:#333,stroke-width:2px
+%% ===== Styles =====
+classDef storage fill:#e6f2ff,stroke:#004080,stroke-width:2px,color:#000,font-weight:bold
+classDef compute fill:#fff0e6,stroke:#993300,stroke-width:2px,color:#000,font-weight:bold
+classDef client  fill:#e6ffe6,stroke:#006600,stroke-width:2px,color:#000,font-weight:bold
 
+%% ===== Client Layer: subgraph with nodes forced horizontal via hidden links =====
+subgraph Client["🧑‍💻 Client Layer"]
+U1["BI Tools - Looker, Data Studio"]:::client
+U2["APIs and SDKs"]:::client
+U3["Console or CLI"]:::client
+end
+
+%% ===== Compute Layer =====
+subgraph Compute["⚡ Dremel Execution Engine"]
+Q1["SQL Parser"]:::compute
+Q2["Execution Tree - Fan-out/Fan-in"]:::compute
+Q3["Slots - Virtual CPUs"]:::compute
+Q1 --- Q2
+Q2 --- Q3
+end
+
+%% ===== Storage Layer =====
+subgraph Storage["☁️ Colossus Storage"]
+T1["Tables - Capacitor Columnar"]:::storage
+P1["Partitions and Clusters"]:::storage
+T1 --- P1
+end
+
+%% ===== Vertical flow between the three frames =====
+Client --> Compute
+Compute --> Storage
+
+%% ===== Hide the helper horizontal links so only the frames and vertical arrows remain =====
+linkStyle 0 stroke-width:0px,fill:none
+linkStyle 1 stroke-width:0px,fill:none
+linkStyle 2 stroke-width:0px,fill:none
+linkStyle 3 stroke-width:0px,fill:none
+linkStyle 4 stroke-width:0px,fill:none
 ```
 
 **Spark VS Dremel**
