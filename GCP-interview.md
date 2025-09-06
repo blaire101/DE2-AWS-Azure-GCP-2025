@@ -1,49 +1,50 @@
-# 📚 GCP Data Engineering Q&A 
+# 📚 GCP Data Engineering Q&A  📑 Table of Contents
 
 - [📚 GCP Data Engineering Interview Q&A](#gcp-data-engineering-interview-qa)
-- [🎯 Goal](#goal)
+- [🎯 Goal](#-goal)
 
 ## 1. BigQuery (Core Data Warehouse)
-- [Q1. What is BigQuery?](#q1)
-- [Q2. BigQuery Architecture](#q2)
-- [Q3. Storage & Data Modeling](#q3)
-- [Q4. Query Execution & Slots](#q4)
-- [Q5. Partitioning vs Clustering](#q5)
-- [Q6. External vs Native Tables](#q6)
-- [Q7. BigQuery Caching](#q7)
-- [Q8. Materialized Views vs Scheduled Queries](#q8)
-- [Q9. Query Optimization Best Practices](#q9)
-- [Q10. Common Pitfalls](#q10)
+- [Q1. What is BigQuery?](#q1-what-is-bigquery)
+- [Q2. BigQuery Architecture](#q2-bigquery-architecture)
+- [Q3. Storage & Data Modeling](#q3-storage--data-modeling)
+- [Q4. Query Execution & Slots](#q4-query-execution--slots)
+- [Q5. Partitioning vs Clustering](#q5-partitioning-vs-clustering)
+- [Q6. External vs Native Tables](#q6-external-vs-native-tables)
+- [Q7. BigQuery Caching](#q7-bigquery-caching)
+- [Q8. Materialized Views vs Scheduled Queries](#q8-materialized-views-vs-scheduled-queries)
+- [Q9. Query Optimization Best Practices](#q9-query-optimization-best-practices)
+- [Q10. Common Pitfalls](#q10-common-pitfalls)
 
 ## 2. Cost & Security
-- [Q11. Pricing Models](#q11)
-- [Q12. Cost-saving Techniques](#q12)
-- [Q13. Security in BigQuery](#q13)
+- [Q11. Pricing Models](#q11-pricing-models)
+- [Q12. Cost-saving Techniques](#q12-cost-saving-techniques)
+- [Q13. Security in BigQuery](#q13-security-in-bigquery)
 
 ## 3. Data Modeling & ETL
-- [Q14. Schema Evolution in BigQuery](#q14)
-- [Q15. Slowly Changing Dimensions (SCD)](#q15)
-- [Q16. CDC (Change Data Capture)](#q16)
-- [Q17. Batch Loading into BigQuery](#q17)
+- [Q14. Schema Evolution in BigQuery](#q14-schema-evolution-in-bigquery)
+- [Q15. Slowly Changing Dimensions (scd)](#q15-slowly-changing-dimensions-scd)
+- [Q16. Cdc (Change Data Capture)](#q16-cdc-change-data-capture)
+- [Q17. Batch Loading into BigQuery](#q17-batch-loading-into-bigquery)
 
 ## 4. Dataflow (ETL/Streaming Layer)
-- [Q18. What is Dataflow?](#q18)
-- [Q19. Dataflow Architecture](#q19)
-- [Q20. Batch vs Streaming in Dataflow](#q20)
-- [Q21. Event-time vs Processing-time](#q21)
-- [Q22. Windowing & Triggers](#q22)
-- [Q23. Stateful Processing Example](#q23)
-- [Q24. Dataflow Shuffle & Streaming Engine](#q24)
-- [Q25. Monitoring & Debugging](#q25)
+- [Q18. What is Dataflow?](#q18-what-is-dataflow)
+- [Q19. Dataflow Architecture](#q19-dataflow-architecture)
+- [Q20. Batch vs Streaming in Dataflow](#q20-batch-vs-streaming-in-dataflow)
+- [Q21. Event-time vs Processing-time](#q21-event-time-vs-processing-time)
+- [Q22. Windowing & Triggers](#q22-windowing--triggers)
+- [Q23. Stateful Processing Example](#q23-stateful-processing-example)
+- [Q24. Dataflow Shuffle & Streaming Engine](#q24-dataflow-shuffle--streaming-engine)
+- [Q25. Monitoring & Debugging](#q25-monitoring--debugging)
 
 ## 5. Integration & Real-time
-- [Q26. Pub/Sub Basics](#q26)
-- [Q27. Pub/Sub → Dataflow → BigQuery Pipeline](#q27)
-- [Q28. Batch ETL Pipeline](#q28)
-- [Q29. Migration from Hadoop](#q29)
-- [Q30. E-commerce Analytics Pipeline](#q30)
+- [Q26. Pub/Sub Basics](#q26-pubsub-basics)
+- [Q27. Pub/Sub → Dataflow → BigQuery Pipeline](#q27-pubsub--dataflow--bigquery-pipeline)
+- [Q28. Batch ETL Pipeline](#q28-batch-etl-pipeline)
+- [Q29. Migration from Hadoop](#q29-migration-from-hadoop)
+- [Q30. E-commerce Analytics Pipeline](#q30-e-commerce-analytics-pipeline)
 
-- [✅ Final Summary](#final-summary)
+- [✅ Final Summary](#-final-summary)
+
 
 * BigQuery = **Data Warehouse Core**
 * Dataflow = **ETL Engine (Batch & Streaming)**
