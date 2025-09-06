@@ -364,38 +364,57 @@ A **<mark>serverless</mark>** data processing service for **batch & streaming ET
 ### Q19. Dataflow Architecture
 
 ```mermaid
+%%{init: {'flowchart': {'rankSpacing': 50, 'nodeSpacing': 30}}}%%
 flowchart TB
     %% ===== Styles =====
     classDef source fill:#eaf4ff,stroke:#1f618d,stroke-width:2px,color:#000,font-weight:bold
     classDef pipeline fill:#f0fff0,stroke:#27ae60,stroke-width:2px,color:#000,font-weight:bold
     classDef sink fill:#fff0f6,stroke:#c2185b,stroke-width:2px,color:#000,font-weight:bold
 
-    %% ===== Source Layer =====
+    %% ===== Source Layer (subgraph 内部横排) =====
     subgraph Source["📥 Sources"]
         direction LR
         Pub[📩 Pub/Sub]:::source
         GCS[🗂️ GCS]:::source
         DB[🗄️ Cloud SQL / Bigtable]:::source
+        %% 隐形连线，强制同一行
+        Pub --- GCS
+        GCS --- DB
     end
 
-    %% ===== Pipeline Layer =====
+    %% ===== Pipeline Layer (subgraph 内部横排) =====
     subgraph Pipeline["⚡ Apache Beam Pipeline"]
         direction LR
         PC[📦 PCollections]:::pipeline
         PT[🔧 PTransforms]:::pipeline
         WN[⏱️ Windowing & Triggers]:::pipeline
+        %% 隐形连线，强制同一行
+        PC --- PT
+        PT --- WN
     end
 
-    %% ===== Sink Layer =====
+    %% ===== Sink Layer (subgraph 内部横排) =====
     subgraph Sink["📤 Sinks"]
         direction LR
         BQ[🏛️ BigQuery]:::sink
         BT[📊 Bigtable]:::sink
         GCS2[🗂️ GCS]:::sink
+        %% 隐形连线，强制同一行
+        BQ --- BT
+        BT --- GCS2
     end
 
-    %% ===== Flows =====
-    Source --> Pipeline --> Sink
+    %% ===== Flows between layers (竖向堆叠) =====
+    Source --> Pipeline
+    Pipeline --> Sink
+
+    %% 把上面的“隐形连线”真正隐藏（前6条是三组 subgraph 内的连线）
+    linkStyle 0 stroke-width:0px,opacity:0
+    linkStyle 1 stroke-width:0px,opacity:0
+    linkStyle 2 stroke-width:0px,opacity:0
+    linkStyle 3 stroke-width:0px,opacity:0
+    linkStyle 4 stroke-width:0px,opacity:0
+    linkStyle 5 stroke-width:0px,opacity:0
 ```
 
 ### Q20. Batch vs Streaming in Dataflow
