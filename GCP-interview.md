@@ -364,7 +364,7 @@ A **<mark>serverless</mark>** data processing service for **batch & streaming ET
 ### Q19. Dataflow Architecture
 
 ```mermaid
-flowchart LR
+flowchart TB
     %% ===== Styles =====
     classDef source fill:#eaf4ff,stroke:#1f618d,stroke-width:2px,color:#000,font-weight:bold
     classDef pipeline fill:#f0fff0,stroke:#27ae60,stroke-width:2px,color:#000,font-weight:bold
@@ -372,7 +372,7 @@ flowchart LR
 
     %% ===== Source Layer =====
     subgraph Source["📥 Sources"]
-        direction TB
+        direction LR
         Pub[📩 Pub/Sub]:::source
         GCS[🗂️ GCS]:::source
         DB[🗄️ Cloud SQL / Bigtable]:::source
@@ -380,7 +380,7 @@ flowchart LR
 
     %% ===== Pipeline Layer =====
     subgraph Pipeline["⚡ Apache Beam Pipeline"]
-        direction TB
+        direction LR
         PC[📦 PCollections]:::pipeline
         PT[🔧 PTransforms]:::pipeline
         WN[⏱️ Windowing & Triggers]:::pipeline
@@ -388,7 +388,7 @@ flowchart LR
 
     %% ===== Sink Layer =====
     subgraph Sink["📤 Sinks"]
-        direction TB
+        direction LR
         BQ[🏛️ BigQuery]:::sink
         BT[📊 Bigtable]:::sink
         GCS2[🗂️ GCS]:::sink
