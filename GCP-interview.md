@@ -52,6 +52,31 @@ For a **Data Engineer role focusing on GCP Data Warehouse & ETL**.
 
 ## 1. BigQuery (Core Data Warehouse)
 
+```mermaid
+flowchart TB
+    %% ===== Styles =====
+    classDef main fill:#ffe8cc,stroke:#d35400,stroke-width:2px,font-weight:bold,color:#000
+    classDef storage fill:#eaf4ff,stroke:#2980b9,stroke-width:1.5px
+    classDef compute fill:#f0fff0,stroke:#27ae60,stroke-width:1.5px
+    classDef schema fill:#fff0f6,stroke:#c2185b,stroke-width:1.5px
+    classDef cache fill:#fdf5e6,stroke:#8e44ad,stroke-width:1.5px
+
+    %% ===== Main Node =====
+    A[BigQuery]:::main
+
+    %% ===== Sub Nodes =====
+    B[Storage<br>Colossus + Capacitor]:::storage
+    C[Compute<br>Dremel + Slots]:::compute
+    D[Schema<br>Partition + Clustering]:::schema
+    E[Caching & Views<br>Materialized / Scheduled]:::cache
+
+    %% ===== Layout =====
+    A --> B
+    A --> C
+    A --> D
+    A --> E
+```
+
 ### Q1. What is BigQuery?
 
 - BigQuery is a **<mark>serverless</mark>**, **<mark>fully managed</mark>**, **<mark>cloud data warehouse</mark>** optimized for OLAP.  
