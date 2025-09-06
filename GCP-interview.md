@@ -54,7 +54,7 @@ For a **Data Engineer role focusing on GCP Data Warehouse & ETL**.
 
 ### Q1. What is BigQuery?
 BigQuery is a **<mark>serverless</mark>**, **<mark>fully managed</mark>**, **<mark>cloud data warehouse</mark>** optimized for OLAP.  
-It separates **storage (Colossus)** and **compute (slots)** using the **<mark>Dremel execution engine</mark>**.
+It separates **<mark>storage (Colossus</mark>, Google’s next-gen file system, similar to HDFS)** and **compute (slots)** using the **<mark>Dremel execution engine</mark>**.
 
 ---
 
