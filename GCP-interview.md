@@ -78,14 +78,14 @@ flowchart LR
 - [Q25. Monitoring & Debugging](#q25-monitoring--debugging)
 
 ## 5. Integration & Real-time
+
 - [Q26. Pub/Sub Basics](#q26-pubsub-basics)
 - [Q27. Pub/Sub → Dataflow → BigQuery Pipeline](#q27-pubsub--dataflow--bigquery-pipeline)
 - [Q28. Batch ETL Pipeline](#q28-batch-etl-pipeline)
 - [Q29. Migration from Hadoop](#q29-migration-from-hadoop)
 - [Q30. E-commerce Analytics Pipeline](#q30-e-commerce-analytics-pipeline)
 
-- [✅ Final Summary](#-final-summary)
-
+## [✅ Final Summary](#-final-summary)
 
 * BigQuery = **Data Warehouse Core**
 * Dataflow = **ETL Engine (Batch & Streaming)**
