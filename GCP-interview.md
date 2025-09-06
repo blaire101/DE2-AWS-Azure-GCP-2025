@@ -62,33 +62,6 @@ linkStyle 3 stroke-width:0px,fill:none
 linkStyle 4 stroke-width:0px,fill:none
 ```
 
-**Spark VS Dremel**
-
-```mermaid
-flowchart TD
-    %% ==== Style Definitions ====
-    classDef spark fill:#ffe6cc,stroke:#ff9933,stroke-width:2px,color:#000,font-weight:bold
-    classDef dremel fill:#e6f0ff,stroke:#3366cc,stroke-width:2px,color:#000,font-weight:bold
-    classDef title fill:#ffffff,stroke:none,color:#000,font-size:18px,font-weight:bold
-
-    %% ==== Spark Execution ====
-    subgraph Spark["🔥 Spark Execution (DAG)"]
-        direction TB
-        A[SQL / RDD Job]:::spark --> B[Stage 1: Map Tasks]:::spark
-        B --> C[Stage 2: Shuffle + Reduce]:::spark
-        C --> D[Stage 3: Output Result]:::spark
-    end
-
-    %% ==== Dremel Execution ====
-    subgraph Dremel["⚡ Dremel Execution Engine (BigQuery)"]
-        direction TB
-        Q[SQL Query]:::dremel --> T1[Fan-out Tree<br>Split tasks to many slots]:::dremel
-        T1 --> T2[Parallel Execution<br>on Slots]:::dremel
-        T2 --> T3[Fan-in Tree<br>Aggregate Results]:::dremel
-        T3 --> R[Final Result]:::dremel
-    end
-```
-
 ### Q3. Storage & Data Modeling
 
 * **Partitioning**: ingestion-time, date/datetime, int range
