@@ -116,7 +116,7 @@ linkStyle 4 stroke-width:0px,fill:none
 ### Q4. Query Execution & Slots
 
 ```mermaid
-flowchart TD
+flowchart LR
     A[SQL Query] --> B[Fan-out to Slots]
     B --> C[Parallel Execution on Slots]
     C --> D[Fan-in Aggregation]
@@ -140,8 +140,8 @@ Dremel tree → fan-out parallelism → fan-in aggregation.
 
 ### Q7. BigQuery Caching
 
-Query results cached 24 hours.
-No charge if exact query reruns on unchanged data.
+- Query results cached 24 hours.
+- No charge if exact query reruns on unchanged data.
 
 ### Q8. Materialized Views vs Scheduled Queries
 
