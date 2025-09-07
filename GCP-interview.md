@@ -22,8 +22,6 @@ flowchart LR
 
     subgraph ETL["⚙️ Processing"]
         DF[Dataflow Batch ETL]:::etl
-        CDF[Cloud Data Fusion<br>(Visual ETL)]:::etl
-        DP[Dataproc<br>(Spark/Hadoop)]:::etl
     end
 
     subgraph Warehouse["🏛️ BigQuery Data Warehouse"]
@@ -39,15 +37,13 @@ flowchart LR
     DB --> RAW
     CSV --> RAW
     RAW --> DF --> STG
-    RAW --> CDF --> STG
-    RAW --> DP --> STG
     STG --> FACT
     STG --> DIM
     FACT --> AGG
     FACT --> LS
     DIM --> LS
     AGG --> LS
-````
+```
 
 ## 🎯 Goal
 
