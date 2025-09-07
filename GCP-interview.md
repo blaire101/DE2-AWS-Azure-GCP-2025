@@ -63,22 +63,23 @@ For a **Data Engineer role focusing on GCP Data Warehouse & ETL**.
 
 ```mermaid
 flowchart TB
-    classDef main fill:#ffe8cc,stroke:#d35400,stroke-width:2px,font-weight:bold,color:#000
-    classDef storage fill:#eaf4ff,stroke:#2980b9,stroke-width:1.5px
-    classDef compute fill:#f0fff0,stroke:#27ae60,stroke-width:1.5px
-    classDef schema fill:#fff0f6,stroke:#c2185b,stroke-width:1.5px
-    classDef cache fill:#fdf5e6,stroke:#8e44ad,stroke-width:1.5px
+    classDef storage fill:#eaf4ff,stroke:#2980b9,stroke-width:1.5px,color:#000
+    classDef compute fill:#f0fff0,stroke:#27ae60,stroke-width:1.5px,color:#000
+    classDef schema  fill:#fff0f6,stroke:#c2185b,stroke-width:1.5px,color:#000
+    classDef cache   fill:#fdf5e6,stroke:#8e44ad,stroke-width:1.5px,color:#000
 
-    A[🏛️ BigQuery]:::main
-    B[💾 Storage<br>Colossus + Capacitor]:::storage
-    C[⚡ Compute<br>Dremel + Slots]:::compute
-    D[🗂️ Schema<br>Partition + Clustering]:::schema
-    E[📊 Caching & Views]:::cache
+    %% BigQuery as a container
+    subgraph BQ["🏛️ BigQuery"]
+      direction LR
+      B[💾 Storage<br/>Colossus + Capacitor]:::storage
+      C[⚡ Compute<br/>Dremel + Slots]:::compute
+      D[🗂️ Schema<br/>Partition + Clustering]:::schema
+      E[📊 Caching & Views]:::cache
+    end
 
-    A --> B
-    A --> C
-    A --> D
-    A --> E
+    %% (Optional external links)
+    %% Client --> BQ
+    %% BQ --> Downstream
 ```
 
 ### Q2. BigQuery Architecture
@@ -307,8 +308,6 @@ flowchart TB
 
 * Stackdriver Logging + Metrics.
 
----
-
 ## 5. Integration & Real-time
 
 ```mermaid
@@ -358,6 +357,18 @@ flowchart TB
 * Visualization (Looker).
 
 ---
+
+| **Dimension** | Cloud Data Fusion (CDF) | Dataflow (Apache Beam) | Dataproc (Spark/Hadoop) |
+|---|---|---|---|
+| **Development model** | <mark>Low-code</mark>, visual pipelines, drag-and-drop | <mark>Code-first</mark> (Java/Python/SQL via <mark>Beam</mark> SDKs) | <mark>Code-first</mark> (<mark>Spark</mark>/Scala/PySpark, Hive) |
+| **Primary paradigm** | <mark>Visual ETL/ELT</mark>, multi-source batch integration | <mark>Streaming</mark> + batch ETL with <mark>state</mark>, <mark>windows</mark>, <mark>triggers</mark> | <mark>Large-scale batch</mark>, existing <mark>Spark/Hadoop</mark> workloads |
+| **Runtime / engine** | Runs on <mark>Dataproc/Spark</mark> via Profiles | Managed <mark>Beam runner</mark> (Dataflow) | Managed <mark>Spark/Hadoop</mark> clusters or Serverless |
+| **Latency profile** | Minutes-level (cluster spin-up, scheduling) | <mark>Seconds / sub-seconds</mark> for streaming; efficient batch | Minutes to hours for batch; streaming via Spark Structured Streaming |
+| **Streaming strength** | Good for standardized batch; can read Pub/Sub | <mark>Strongest</mark>: exactly-once sinks, stateful processing | Possible, but more ops effort; better for batch |
+| **Connectors** | <mark>Rich catalog</mark>: JDBC, SaaS, GCS, <mark>BigQuery</mark>, Pub/Sub | Beam I/O connectors (broad, code-driven) | Spark ecosystem connectors; <mark>BigQuery connector</mark>, JDBC |
+| **Ops & cost levers** | Low build effort; runtime uses Dataproc. Use <mark>temporary clusters</mark> and right-sized <mark>profiles</mark> | Serverless <mark>autoscaling</mark>, batching, efficient windows/triggers | <mark>Ephemeral clusters</mark>, <mark>preemptible workers</mark>, autoscaling; tuning needed |
+| **Best fit** | <mark>Low-code teams</mark>, many sources, standardized batch, governance | <mark>Low-latency real-time</mark>, complex stateful ETL, portable logic | <mark>Existing Spark assets</mark>, custom libs, heavy offline batch |
+| **Typical example** | SaaS/JDBC + files → cleanse/joins → BigQuery | Pub/Sub → Dataflow (sessionization/state) → BigQuery | HDFS/Parquet → Spark jobs → BigQuery via connector |
 
 ## 6. Cloud Data Fusion (Visual ETL)
 
