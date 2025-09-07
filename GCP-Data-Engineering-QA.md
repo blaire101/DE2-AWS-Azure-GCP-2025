@@ -368,41 +368,40 @@ flowchart TB
 ```mermaid
 flowchart TB
     classDef main fill:#ffe8cc,stroke:#6c3483,stroke-width:2px,font-weight:bold,color:#000
-    classDef schema fill:#eaf4ff,stroke:#2874a6,stroke-width:1.5px
-    classDef scd fill:#f0fff0,stroke:#27ae60,stroke-width:1.5px
-    classDef cdc fill:#fff0f6,stroke:#c2185b,stroke-width:1.5px
-    classDef batch fill:#fdf5e6,stroke:#8e44ad,stroke-width:1.5px
+    classDef schema fill:#eaf4ff,stroke:#2874a6,stroke-width:2px,color:#000,font-weight:bold
+    classDef scd fill:#f0fff0,stroke:#27ae60,stroke-width:2px,color:#000,font-weight:bold
+    classDef cdc fill:#fff0f6,stroke:#c2185b,stroke-width:2px,color:#000,font-weight:bold
+    classDef batch fill:#fdf5e6,stroke:#8e44ad,stroke-width:2px,color:#000,font-weight:bold
 
     A[🧩 Data Modeling & ETL]:::main
-    B[📐 Schema Evolution]:::schema
-    C[🕰️ SCD Types]:::scd
-    D[🔄 CDC Pipelines]:::cdc
-    E[📥 Batch Load]:::batch
-    A --> B
-    A --> C
-    A --> D
-    A --> E
+
+    subgraph SE["Q14. Schema Evolution"]
+      B1[➕ Add column = Easy]:::schema
+      B2[❌ Drop or Change = New table + View]:::schema
+    end
+
+    subgraph SCD["Q15. Slowly Changing Dimensions"]
+      C1[Type1 = Overwrite]:::scd
+      C2[Type2 = New row<br/>valid_from and valid_to]:::scd
+      C3[Type3 = Add new column]:::scd
+    end
+
+    subgraph CDC["Q16. Change Data Capture"]
+      D1[🔄 Datastream]:::cdc
+      D2[⚡ Dataflow Apply Changes]:::cdc
+    end
+
+    subgraph BL["Q17. Batch Loading"]
+      E1[📂 From GCS CSV Parquet Avro]:::batch
+      E2[📥 bq load or Dataflow]:::batch
+      E3[✅ Parquet or Avro preferred]:::batch
+    end
+
+    A --> SE
+    A --> SCD
+    A --> CDC
+    A --> BL
 ```
-
-### Q14. Schema Evolution
-
-* Add = easy.
-* Drop/change = new table + view.
-
-### Q15. Slowly Changing Dimensions
-
-* Type1 = overwrite.
-* Type2 = new row with valid\_from/to.
-* Type3 = new column.
-
-### Q16. CDC
-
-* Use **Datastream/Dataflow** to apply DB changes into BQ.
-
-### Q17. Batch Loading
-
-* `bq load` or Dataflow.
-* From GCS (Parquet/Avro preferred).
 
 ## 4. Dataflow (ETL/Streaming Layer)
 
