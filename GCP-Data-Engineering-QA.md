@@ -438,29 +438,37 @@ flowchart TB
     A --> F
 ```
 
-### Q26. Pub/Sub Basics
+```mermaid
+flowchart TB
+    classDef pubsub fill:#eaf4ff,stroke:#1f618d,stroke-width:2px,color:#000,font-weight:bold
+    classDef etl fill:#f0fff0,stroke:#27ae60,stroke-width:2px,color:#000,font-weight:bold
+    classDef batch fill:#fff0f6,stroke:#c2185b,stroke-width:2px,color:#000,font-weight:bold
+    classDef migrate fill:#fdf5e6,stroke:#8e44ad,stroke-width:2px,color:#000,font-weight:bold
+    classDef bq fill:#fff3bf,stroke:#d48806,stroke-width:2px,color:#000,font-weight:bold
+    classDef viz fill:#d9f7be,stroke:#389e0d,stroke-width:2px,color:#000,font-weight:bold
 
-* GCP real-time messaging.
-* Producers → Topics → Subscribers → Dataflow → BQ.
+    %% Q26
+    P[📩 Pub/Sub<br/>Real-time messaging]:::pubsub
 
-### Q27. Pub/Sub → Dataflow → BQ
+    %% Q27
+    D[⚡ Dataflow Streaming ETL]:::etl
 
-* Streaming ETL.
+    %% Q28
+    B[📂 Batch ETL<br/>GCS → Dataflow or Dataproc]:::batch
 
-### Q28. Batch ETL Pipeline
+    %% Q29
+    M[🚚 Migration<br/>HDFS → GCS, Hive → Dataproc]:::migrate
 
-* GCS → Dataflow/Dataproc → BQ.
+    %% Q30
+    W[🏛️ BigQuery<br/>Star Schema]:::bq
+    V[📊 Looker<br/>Visualization]:::viz
 
-### Q29. Migration from Hadoop
-
-* HDFS → GCS, Hive → Dataproc.
-
-### Q30. E-commerce Analytics
-
-* Real-time orders (Pub/Sub).
-* Sessionization (Dataflow).
-* Star schema (BQ).
-* Visualization (Looker).
+    %% Flows
+    P --> D --> W
+    B --> W
+    M --> W
+    W --> V
+```
 
 | **Dimension** | Cloud Data Fusion (CDF) | Dataflow (Apache Beam) | Dataproc (Spark/Hadoop) |
 |---|---|---|---|
@@ -476,56 +484,80 @@ flowchart TB
 
 ## 6. Cloud Data Fusion (Visual ETL)
 
-### Q31. What is Cloud Data Fusion?
+```mermaid
+flowchart TB
+    classDef main fill:#ffe8cc,stroke:#154360,stroke-width:2px,font-weight:bold,color:#000
+    classDef feat fill:#eaf4ff,stroke:#1f618d,stroke-width:2px,color:#000,font-weight:bold
+    classDef use fill:#f0fff0,stroke:#27ae60,stroke-width:2px,color:#000,font-weight:bold
+    classDef arch fill:#fff0f6,stroke:#c2185b,stroke-width:2px,color:#000,font-weight:bold
 
-* Managed **visual data integration** service (built on CDAP).
-* Low-code ETL pipelines.
-* Runtime = Dataflow (streaming) or Dataproc (batch).
+    A[🧩 Cloud Data Fusion<br/>Visual ETL]:::main
 
-### Q32. Data Fusion Features
+    subgraph Arch["Q31. What is CDF"]
+      D1[🎨 Managed visual data integration<br/>Built on CDAP]:::arch
+      D2[🖱️ Low-code ETL pipelines]:::arch
+      D3[⚙️ Runtime = Dataflow streaming<br/>or Dataproc batch]:::arch
+    end
 
-* Wrangler for data prep.
-* Error handling: dead-letter, retry.
-* Schema drift alerts.
-* CI/CD export + deploy.
+    subgraph Feat["Q32. Features"]
+      F1[🧹 Wrangler for data prep]:::feat
+      F2[❌ Error handling<br/>dead-letter, retry]:::feat
+      F3[📐 Schema drift alerts]:::feat
+      F4[🚀 CI/CD export and deploy]:::feat
+    end
 
-### Q33. Use Cases
+    subgraph Use["Q33. Use Cases"]
+      U1[🗄️ DB → BQ batch ingestion]:::use
+      U2[📂 GCS CSV → Wrangler → BQ]:::use
+      U3[📩 Pub/Sub → BQ streaming]:::use
+    end
 
-* DB → BigQuery batch ingestion.
-* GCS CSV → Wrangler → BQ.
-* Pub/Sub → BQ streaming.
+    A --> Arch
+    A --> Feat
+    A --> Use
+```
 
 ## 7. Dataproc (Managed Spark/Hadoop)
 
-### Q34. What is Dataproc?
+```mermaid
+flowchart TB
+    classDef main fill:#ffe8cc,stroke:#d35400,stroke-width:2px,font-weight:bold,color:#000
+    classDef arch fill:#eaf4ff,stroke:#2980b9,stroke-width:2px,color:#000,font-weight:bold
+    classDef use fill:#f0fff0,stroke:#27ae60,stroke-width:2px,color:#000,font-weight:bold
+    classDef cost fill:#fff0f6,stroke:#c2185b,stroke-width:2px,color:#000,font-weight:bold
+    classDef pitfalls fill:#fdf5e6,stroke:#8e44ad,stroke-width:2px,color:#000,font-weight:bold
 
-* Managed Hadoop/Spark clusters.
-* Supports Spark, Hive, Pig, Presto.
-* Bridge for **legacy workloads**.
+    A[🏔️ Dataproc<br/>Managed Spark/Hadoop]:::main
 
-### Q35. Dataproc Architecture
+    subgraph Arch["Q35. Architecture"]
+      M[🖥️ Master/Worker VMs]:::arch
+      G[☁️ GCS as HDFS]:::arch
+      C[⏳ Ephemeral or Long-running Clusters]:::arch
+    end
 
-* Master/Worker VMs.
-* Uses **GCS as HDFS**.
-* Clusters = ephemeral or long-running.
+    subgraph Use["Q36. When to Use"]
+      U1[📦 Lift & Shift Hadoop/Spark]:::use
+      U2[⚙️ Complex Batch ETL]:::use
+      U3[🧪 PySpark ML/ETL Pipelines]:::use
+    end
 
-### Q36. When to Use
+    subgraph Cost["Q37. Cost & Optimization"]
+      P1[💵 Pay per VM-minute]:::cost
+      P2[⚡ Ephemeral clusters → savings]:::cost
+      P3[📂 Prefer GCS over HDFS]:::cost
+    end
 
-* Lift & shift Hadoop/Spark.
-* Complex batch ETL.
-* PySpark ML/ETL pipelines.
+    subgraph Pitfalls["Q38. Pitfalls"]
+      F1[⏸️ Leaving clusters idle]:::pitfalls
+      F2[📂 Using HDFS instead of GCS]:::pitfalls
+      F3[⚠️ Poor Spark tuning]:::pitfalls
+    end
 
-### Q37. Cost & Optimization
-
-* Pay per VM-minute.
-* Ephemeral clusters → cost savings.
-* Prefer GCS over HDFS.
-
-### Q38. Pitfalls
-
-* Leaving clusters idle.
-* Using HDFS instead of GCS.
-* Poor Spark tuning.
+    A --> Arch
+    A --> Use
+    A --> Cost
+    A --> Pitfalls
+```
 
 # ✅ Final Summary
 
