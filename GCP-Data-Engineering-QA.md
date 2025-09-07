@@ -247,38 +247,40 @@ flowchart TB
 
 ### Q8. Materialized Views vs Scheduled Queries
 
-* MV = precomputed, auto-refresh.
-* SQ = periodic query into table.
-
-Q1. What is the difference between a <mark>Materialized View</mark> and a <mark>Scheduled Query</mark> in BigQuery?
-
-- **<mark>Materialized View</mark>**: <mark>Precomputed</mark>, <mark>auto-refresh</mark>, <mark>incremental updates</mark>, best for <mark>frequently queried aggregations</mark>.  
-- **<mark>Scheduled Query</mark>**: <mark>Periodic execution</mark>, writes results to a <mark>table</mark>, best for <mark>daily/weekly reports</mark>.  
-
-Q2. In which scenarios would you choose a <mark>Materialized View</mark> over a <mark>Scheduled Query</mark> (and vice versa)?
-
-- **Use <mark>MV</mark>**: <mark>Dashboard</mark> needs <mark>real-time fast query</mark> of the same aggregation.  
-- **Use <mark>SQ</mark>**: Business requires <mark>daily snapshot reports</mark> (e.g., <mark>yesterday’s sales</mark>).  
-
 ```mermaid
 flowchart TB
     classDef mv fill:#eaf4ff,stroke:#2980b9,stroke-width:2px,color:#000,font-weight:bold
     classDef sq fill:#fff0f6,stroke:#c2185b,stroke-width:2px,color:#000,font-weight:bold
     classDef use fill:#fdf5e6,stroke:#8e44ad,stroke-width:1.5px,color:#000
+    classDef diff fill:#e6ffe6,stroke:#006600,stroke-width:2px,color:#000,font-weight:bold
 
-    C[🧑‍💻 Query Client/BI Tool]
+    C[🧑‍💻 Query Client or BI Tool]
 
     subgraph BQ["🏛️ BigQuery"]
       direction TB
-      MV[📊 Materialized View<br/>Auto-refresh, Incremental]:::mv
-      SQ[⏱️ Scheduled Query<br/>Runs on Schedule]:::sq
+      MV[📊 Materialized View<br/>Precomputed, Auto-refresh,<br/>Incremental updates]:::mv
+      SQ[⏱️ Scheduled Query<br/>Periodic execution,<br/>Writes results into Table]:::sq
     end
 
+    %% Differences
+    subgraph D["❓ Q1. Difference"]
+      DMV[✅ Best for<br/>Frequently queried aggregations]:::diff
+      DSQ[✅ Best for<br/>Daily or Weekly reports]:::diff
+    end
+
+    %% Use Cases
+    subgraph U["💡 Q2. Scenarios"]
+      U1[⚡ Use MV → Dashboards<br/>Real-time fast queries]:::use
+      U2[📅 Use SQ → Business snapshot<br/>Yesterday sales, reports]:::use
+    end
+
+    %% Connections
     C --> MV
     C --> SQ
-
-    MV --> U1[⚡ Fast repeated aggregations<br/>Dashboards, low latency]:::use
-    SQ --> U2[📅 Periodic snapshots<br/>Daily/weekly reports]:::use
+    MV --> DMV
+    SQ --> DSQ
+    MV --> U1
+    SQ --> U2
 ```
 
 ### Q9. Query Optimization Best Practices
