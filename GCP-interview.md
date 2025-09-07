@@ -1,5 +1,48 @@
 # 📚 GCP Data Engineering Q&A  
 
+```mermaid
+flowchart LR
+    classDef src fill:#d0f0fd,stroke:#007acc,stroke-width:2px,color:#000,font-weight:bold
+    classDef lake fill:#fde2d0,stroke:#cc5200,stroke-width:2px,color:#000,font-weight:bold
+    classDef etl fill:#e6d0fd,stroke:#7e3ff2,stroke-width:2px,color:#000,font-weight:bold
+    classDef wh fill:#fff3bf,stroke:#d48806,stroke-width:2px,color:#000,font-weight:bold
+    classDef srv fill:#d9f7be,stroke:#389e0d,stroke-width:2px,color:#000,font-weight:bold
+
+    subgraph Source["📥 Data Sources"]
+        DB[(MySQL Orders)]:::src
+        CSV[(GCS CSV Logs)]:::src
+    end
+
+    subgraph Lake["🪣 Data Lake (GCS)"]
+        RAW[Raw Zone]:::lake
+        STG[Staging Zone]:::lake
+    end
+
+    subgraph ETL["⚙️ Processing"]
+        DF[Dataflow Batch ETL]:::etl
+    end
+
+    subgraph Warehouse["🏛️ BigQuery Data Warehouse"]
+        FACT[Fact_Orders]:::wh
+        DIM[Dim_Customers]:::wh
+        AGG[Sales_Aggregates]:::wh
+    end
+
+    subgraph Serving["📊 Analytics"]
+        LS[Looker Studio]:::srv
+    end
+
+    DB --> RAW
+    CSV --> RAW
+    RAW --> DF --> STG
+    STG --> FACT
+    STG --> DIM
+    FACT --> AGG
+    FACT --> LS
+    DIM --> LS
+    AGG --> LS
+```
+
 - [1. BigQuery (Core Data Warehouse)](#1-bigquery-core-data-warehouse)
   - [Q1. What is BigQuery?](#q1-what-is-bigquery)
   - [Q2. BigQuery Architecture](#q2-bigquery-architecture)
@@ -55,49 +98,6 @@
 - [✅ Final Summary](#-final-summary)
 
 - [🎯 Goal](#-goal)
-
-```mermaid
-flowchart LR
-    classDef src fill:#d0f0fd,stroke:#007acc,stroke-width:2px,color:#000,font-weight:bold
-    classDef lake fill:#fde2d0,stroke:#cc5200,stroke-width:2px,color:#000,font-weight:bold
-    classDef etl fill:#e6d0fd,stroke:#7e3ff2,stroke-width:2px,color:#000,font-weight:bold
-    classDef wh fill:#fff3bf,stroke:#d48806,stroke-width:2px,color:#000,font-weight:bold
-    classDef srv fill:#d9f7be,stroke:#389e0d,stroke-width:2px,color:#000,font-weight:bold
-
-    subgraph Source["📥 Data Sources"]
-        DB[(MySQL Orders)]:::src
-        CSV[(GCS CSV Logs)]:::src
-    end
-
-    subgraph Lake["🪣 Data Lake (GCS)"]
-        RAW[Raw Zone]:::lake
-        STG[Staging Zone]:::lake
-    end
-
-    subgraph ETL["⚙️ Processing"]
-        DF[Dataflow Batch ETL]:::etl
-    end
-
-    subgraph Warehouse["🏛️ BigQuery Data Warehouse"]
-        FACT[Fact_Orders]:::wh
-        DIM[Dim_Customers]:::wh
-        AGG[Sales_Aggregates]:::wh
-    end
-
-    subgraph Serving["📊 Analytics"]
-        LS[Looker Studio]:::srv
-    end
-
-    DB --> RAW
-    CSV --> RAW
-    RAW --> DF --> STG
-    STG --> FACT
-    STG --> DIM
-    FACT --> AGG
-    FACT --> LS
-    DIM --> LS
-    AGG --> LS
-```
 
 ## 🎯 Goal
 
