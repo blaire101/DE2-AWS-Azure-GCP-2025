@@ -304,37 +304,39 @@ flowchart TB
 ```mermaid
 flowchart TB
     classDef main fill:#ffe8cc,stroke:#b03a2e,stroke-width:2px,font-weight:bold,color:#000
-    classDef pricing fill:#eaf4ff,stroke:#2874a6,stroke-width:1.5px
-    classDef saving fill:#f0fff0,stroke:#229954,stroke-width:1.5px
-    classDef security fill:#fff0f6,stroke:#8e44ad,stroke-width:1.5px
+    classDef pricing fill:#eaf4ff,stroke:#2874a6,stroke-width:2px,color:#000,font-weight:bold
+    classDef saving fill:#f0fff0,stroke:#229954,stroke-width:2px,color:#000,font-weight:bold
+    classDef security fill:#fff0f6,stroke:#8e44ad,stroke-width:2px,color:#000,font-weight:bold
 
     A[💰 Cost & 🔒 Security]:::main
-    B[💵 Pricing Models]:::pricing
-    C[📉 Cost-saving]:::saving
-    D[🛡️ Security]:::security
+
+    %% Q11 Pricing Models
+    subgraph B["Q11. Pricing Models"]
+      B1[⏳ On-demand<br/>$5 per TB scanned]:::pricing
+      B2[📊 Flat-rate<br/>Reserved slots]:::pricing
+      B3[💾 Storage<br/>Active vs Long-term]:::pricing
+    end
+
+    %% Q12 Cost-saving
+    subgraph C["Q12. Cost-saving Techniques"]
+      C1[🗂️ Partition tables]:::saving
+      C2[🗜️ Compressed formats<br/>(Parquet, ORC)]:::saving
+      C3[🚫 Avoid SELECT *]:::saving
+      C4[📈 Monitor queries<br/>INFORMATION_SCHEMA]:::saving
+    end
+
+    %% Q13 Security
+    subgraph D["Q13. Security in BigQuery"]
+      D1[🔑 IAM<br/>Project/Dataset/Table]:::security
+      D2[🧩 Row & Column-level policies]:::security
+      D3[🔐 CMEK<br/>Customer-managed keys]:::security
+      D4[🛡️ VPC-SC<br/>Perimeter security]:::security
+    end
+
     A --> B
     A --> C
     A --> D
 ```
-
-### Q11. Pricing Models
-
-* On-demand: \$5/TB scanned.
-* Flat-rate: reserved **slots**.
-* Storage: active vs long-term.
-
-### Q12. Cost-saving Techniques
-
-* Partition tables.
-* Compressed formats.
-* Avoid SELECT \*.
-* Monitor queries.
-
-### Q13. Security in BigQuery
-
-* IAM (project/dataset/table).
-* Row/Column-level policies.
-* CMEK, VPC-SC.
 
 ## 3. Data Modeling & ETL
 
