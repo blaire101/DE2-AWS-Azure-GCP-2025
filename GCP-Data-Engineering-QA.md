@@ -312,7 +312,7 @@ flowchart TB
 
     %% Q11 Pricing Models
     subgraph B["Q11. Pricing Models"]
-      B1[⏳ On-demand<br/>$5 per TB scanned]:::pricing
+      B1[⏳ On-demand<br/>5 USD per TB scanned]:::pricing
       B2[📊 Flat-rate<br/>Reserved slots]:::pricing
       B3[💾 Storage<br/>Active vs Long-term]:::pricing
     end
@@ -320,16 +320,16 @@ flowchart TB
     %% Q12 Cost-saving
     subgraph C["Q12. Cost-saving Techniques"]
       C1[🗂️ Partition tables]:::saving
-      C2[🗜️ Compressed formats<br/>(Parquet, ORC)]:::saving
+      C2[🗜️ Compressed formats<br/>Parquet ORC]:::saving
       C3[🚫 Avoid SELECT *]:::saving
       C4[📈 Monitor queries<br/>INFORMATION_SCHEMA]:::saving
     end
 
     %% Q13 Security
     subgraph D["Q13. Security in BigQuery"]
-      D1[🔑 IAM<br/>Project/Dataset/Table]:::security
-      D2[🧩 Row & Column-level policies]:::security
-      D3[🔐 CMEK<br/>Customer-managed keys]:::security
+      D1[🔑 IAM<br/>Project Dataset Table]:::security
+      D2[🧩 Row and Column-level policies]:::security
+      D3[🔐 CMEK<br/>Customer managed keys]:::security
       D4[🛡️ VPC-SC<br/>Perimeter security]:::security
     end
 
