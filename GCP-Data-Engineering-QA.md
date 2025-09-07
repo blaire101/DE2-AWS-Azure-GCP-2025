@@ -418,28 +418,6 @@ flowchart TB
 
 ```mermaid
 flowchart TB
-    classDef main fill:#ffe8cc,stroke:#154360,stroke-width:2px,font-weight:bold,color:#000
-    classDef pubsub fill:#eaf4ff,stroke:#1f618d,stroke-width:1.5px
-    classDef pipeline fill:#f0fff0,stroke:#27ae60,stroke-width:1.5px
-    classDef batch fill:#fff0f6,stroke:#c2185b,stroke-width:1.5px
-    classDef migrate fill:#fdf5e6,stroke:#8e44ad,stroke-width:1.5px
-    classDef usecase fill:#e8f8f5,stroke:#148f77,stroke-width:1.5px
-
-    A[🔗 Integration & Real-time]:::main
-    B[📩 Pub/Sub Basics]:::pubsub
-    C[⚡ Realtime Pipeline]:::pipeline
-    D[📂 Batch ETL]:::batch
-    E[🚚 Migration from Hadoop]:::migrate
-    F[🛒 E-commerce Analytics]:::usecase
-    A --> B
-    A --> C
-    A --> D
-    A --> E
-    A --> F
-```
-
-```mermaid
-flowchart TB
     classDef pubsub fill:#eaf4ff,stroke:#1f618d,stroke-width:2px,color:#000,font-weight:bold
     classDef etl fill:#f0fff0,stroke:#27ae60,stroke-width:2px,color:#000,font-weight:bold
     classDef batch fill:#fff0f6,stroke:#c2185b,stroke-width:2px,color:#000,font-weight:bold
