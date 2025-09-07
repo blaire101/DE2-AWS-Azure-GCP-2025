@@ -109,6 +109,10 @@ For a **Data Engineer role focusing on GCP Data Warehouse & ETL**.
 
 ## 1. BigQuery (Core Data Warehouse)
 
+<div align="center">
+  <img src="docs/GCP-BigQuery.png" alt="Diagram" width="500">
+</div>
+
 ### Q1. What is BigQuery?
 
 - BigQuery is a **<mark>serverless</mark>**, **<mark>fully managed</mark>**, **<mark>cloud data warehouse</mark>** optimized for OLAP.  
@@ -139,6 +143,15 @@ flowchart TB
     %% Client --> BQ
     %% BQ --> Downstream
 ```
+
+✅ BigQuery vs Hive vs SparkSQL
+
+| Feature | BigQuery | Hive | SparkSQL |
+|--------|----------|------|----------|
+| Type | Managed MPP Data Warehouse | Hadoop SQL Engine | In-memory distributed SQL |
+| Storage | Columnar + GCS | HDFS | HDFS/S3/GCS |
+| Latency | Fast | Slow | Fast |
+| Deployment | Fully managed | Self-hosted Hadoop | Self-hosted Spark |
 
 ### Q2. BigQuery Architecture
 
