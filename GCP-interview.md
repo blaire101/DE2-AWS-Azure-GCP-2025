@@ -183,6 +183,16 @@ flowchart TB
 * MV = precomputed, auto-refresh.
 * SQ = periodic query into table.
 
+Q1. What is the difference between a <mark>Materialized View</mark> and a <mark>Scheduled Query</mark> in BigQuery?
+
+- **<mark>Materialized View</mark>**: <mark>Precomputed</mark>, <mark>auto-refresh</mark>, <mark>incremental updates</mark>, best for <mark>frequently queried aggregations</mark>.  
+- **<mark>Scheduled Query</mark>**: <mark>Periodic execution</mark>, writes results to a <mark>table</mark>, best for <mark>daily/weekly reports</mark>.  
+
+Q2. In which scenarios would you choose a <mark>Materialized View</mark> over a <mark>Scheduled Query</mark> (and vice versa)?
+
+- **Use <mark>MV</mark>**: <mark>Dashboard</mark> needs <mark>real-time fast query</mark> of the same aggregation.  
+- **Use <mark>SQ</mark>**: Business requires <mark>daily snapshot reports</mark> (e.g., <mark>yesterday’s sales</mark>).  
+
 ```mermaid
 flowchart TB
     classDef mv fill:#eaf4ff,stroke:#2980b9,stroke-width:2px,color:#000,font-weight:bold
@@ -203,17 +213,6 @@ flowchart TB
     MV --> U1[⚡ Fast repeated aggregations<br/>Dashboards, low latency]:::use
     SQ --> U2[📅 Periodic snapshots<br/>Daily/weekly reports]:::use
 ```
-
-**Q1. What is the difference between a <mark>Materialized View</mark> and a <mark>Scheduled Query</mark> in BigQuery?**
-
-- **<mark>Materialized View</mark>**: <mark>Precomputed</mark>, <mark>auto-refresh</mark>, <mark>incremental updates</mark>, best for <mark>frequently queried aggregations</mark>.  
-- **<mark>Scheduled Query</mark>**: <mark>Periodic execution</mark>, writes results to a <mark>table</mark>, best for <mark>daily/weekly reports</mark>.  
-
-**Q2. In which scenarios would you choose a <mark>Materialized View</mark> over a <mark>Scheduled Query</mark> (and vice versa)?**
-
-- **Use <mark>MV</mark>**: <mark>Dashboard</mark> needs <mark>real-time fast query</mark> of the same aggregation.  
-- **Use <mark>SQ</mark>**: Business requires <mark>daily snapshot reports</mark> (e.g., <mark>yesterday’s sales</mark>).  
-
 
 ### Q9. Query Optimization Best Practices
 
@@ -420,8 +419,6 @@ flowchart TB
 * Sessionization (Dataflow).
 * Star schema (BQ).
 * Visualization (Looker).
-
----
 
 | **Dimension** | Cloud Data Fusion (CDF) | Dataflow (Apache Beam) | Dataproc (Spark/Hadoop) |
 |---|---|---|---|
