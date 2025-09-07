@@ -405,14 +405,14 @@ flowchart TB
 
 | Question | Key Points | Notes/Examples |
 |----------|------------|----------------|
-| **Q18. What is Dataflow?** | **Serverless ETL** for **batch & streaming**, built on **Apache Beam** | Unified model: one pipeline, multiple runners |
-| **Q19. Dataflow Architecture** | **Sources**: Pub/Sub, GCS, DB <br> **Pipeline**: PCollection → PTransform → Window <br> **Sinks**: BigQuery, Bigtable, GCS | Think: Input → Transform → Output |
-| **Q20. Batch vs Streaming** | **Batch**: daily/hourly jobs <br> **Streaming**: near real-time | Batch = GCS files, Streaming = Pub/Sub |
-| **Q21. Event-time vs Processing-time** | **Event-time** = when event actually happened <br> **Processing-time** = when system processes it | Important for **late data handling** |
-| **Q22. Windowing & Triggers** | **Windows**: Fixed, Sliding, Session <br> **Triggers**: control when partial results emitted | Example: 5-min sliding window with early trigger |
-| **Q23. Stateful Example** | Maintain per-key state, e.g., **count clicks per user in 5 min** | Requires **stateful DoFn** in Beam |
-| **Q24. Shuffle & Streaming Engine** | **Shuffle**: offloaded to backend <br> **Streaming Engine**: moves state/shuffle to service | Enables **autoscaling** & reduces worker load |
-| **Q25. Monitoring** | **Stackdriver Logging** + **Cloud Monitoring metrics** | Track latency, throughput, backlog |
+| **Q18. What is Dataflow?** | <mark>Serverless ETL</mark> for <mark>batch</mark> & <mark>streaming</mark>, built on <mark>Apache Beam</mark> | Unified model: one pipeline, multiple runners |
+| **Q19. Dataflow Architecture** | <mark>Sources</mark>: Pub/Sub, GCS, DB <br> <mark>Pipeline</mark>: PCollection → PTransform → Window <br> <mark>Sinks</mark>: BigQuery, Bigtable, GCS | Think: <mark>Input → Transform → Output</mark> |
+| **Q20. Batch vs Streaming** | <mark>Batch</mark>: daily/hourly jobs <br> <mark>Streaming</mark>: near real-time | Batch = <mark>GCS files</mark>, Streaming = <mark>Pub/Sub</mark> |
+| **Q21. Event-time vs Processing-time** | <mark>Event-time</mark> = when event happened <br> <mark>Processing-time</mark> = when processed | Important for <mark>late data handling</mark> |
+| **Q22. Windowing & Triggers** | <mark>Windows</mark>: Fixed, Sliding, Session <br> <mark>Triggers</mark>: control when partial results emitted | Example: <mark>5-min sliding window</mark> with early trigger |
+| **Q23. Stateful Example** | Maintain <mark>per-key state</mark>, e.g., count clicks per user in 5 min | Requires <mark>stateful DoFn</mark> in Beam |
+| **Q24. Shuffle & Streaming Engine** | <mark>Shuffle</mark>: offloaded to backend <br> <mark>Streaming Engine</mark>: moves state/shuffle to service | Enables <mark>autoscaling</mark> & reduces worker load |
+| **Q25. Monitoring** | <mark>Stackdriver Logging</mark> + <mark>Cloud Monitoring</mark> metrics | Track <mark>latency</mark>, <mark>throughput</mark>, <mark>backlog</mark> |
 
 ## 5. Integration & Real-time
 
