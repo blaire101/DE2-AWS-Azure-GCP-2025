@@ -1,5 +1,59 @@
 # 📚 GCP Data Engineering Q&A  
-📑 Table of Contents
+
+- [1. BigQuery (Core Data Warehouse)](#1-bigquery-core-data-warehouse)
+  - [Q1. What is BigQuery?](#q1-what-is-bigquery)
+  - [Q2. BigQuery Architecture](#q2-bigquery-architecture)
+  - [Q3. Storage & Data Modeling](#q3-storage--data-modeling)
+  - [Q4. Query Execution & Slots](#q4-query-execution--slots)
+  - [Q5. Partitioning vs Clustering](#q5-partitioning-vs-clustering)
+  - [Q6. External vs Native Tables](#q6-external-vs-native-tables)
+  - [Q7. BigQuery Caching](#q7-bigquery-caching)
+  - [Q8. Materialized Views vs Scheduled Queries](#q8-materialized-views-vs-scheduled-queries)
+  - [Q9. Query Optimization Best Practices](#q9-query-optimization-best-practices)
+  - [Q10. Common Pitfalls](#q10-common-pitfalls)
+
+- [2. Cost & Security](#2-cost--security)
+  - [Q11. Pricing Models](#q11-pricing-models)
+  - [Q12. Cost-saving Techniques](#q12-cost-saving-techniques)
+  - [Q13. Security in BigQuery](#q13-security-in-bigquery)
+
+- [3. Data Modeling & ETL](#3-data-modeling--etl)
+  - [Q14. Schema Evolution](#q14-schema-evolution)
+  - [Q15. Slowly Changing Dimensions](#q15-slowly-changing-dimensions)
+  - [Q16. CDC](#q16-cdc)
+  - [Q17. Batch Loading](#q17-batch-loading)
+
+- [4. Dataflow (ETL/Streaming Layer)](#4-dataflow-etlstreaming-layer)
+  - [Q18. What is Dataflow?](#q18-what-is-dataflow)
+  - [Q19. Dataflow Architecture](#q19-dataflow-architecture)
+  - [Q20. Batch vs Streaming](#q20-batch-vs-streaming)
+  - [Q21. Event-time vs Processing-time](#q21-event-time-vs-processing-time)
+  - [Q22. Windowing & Triggers](#q22-windowing--triggers)
+  - [Q23. Stateful Example](#q23-stateful-example)
+  - [Q24. Shuffle & Streaming Engine](#q24-shuffle--streaming-engine)
+  - [Q25. Monitoring](#q25-monitoring)
+
+- [5. Integration & Real-time](#5-integration--real-time)
+  - [Q26. Pub/Sub Basics](#q26-pubsub-basics)
+  - [Q27. Pub/Sub → Dataflow → BQ](#q27-pubsub--dataflow--bq)
+  - [Q28. Batch ETL Pipeline](#q28-batch-etl-pipeline)
+  - [Q29. Migration from Hadoop](#q29-migration-from-hadoop)
+  - [Q30. E-commerce Analytics](#q30-e-commerce-analytics)
+
+- [6. Cloud Data Fusion (Visual ETL)](#6-cloud-data-fusion-visual-etl)
+  - [Q31. What is Cloud Data Fusion?](#q31-what-is-cloud-data-fusion)
+  - [Q32. Data Fusion Features](#q32-data-fusion-features)
+  - [Q33. Use Cases](#q33-use-cases)
+
+- [7. Dataproc (Managed Spark/Hadoop)](#7-dataproc-managed-sparkhadoop)
+  - [Q34. What is Dataproc?](#q34-what-is-dataproc)
+  - [Q35. Dataproc Architecture](#q35-dataproc-architecture)
+  - [Q36. When to Use](#q36-when-to-use)
+  - [Q37. Cost & Optimization](#q37-cost--optimization)
+  - [Q38. Pitfalls](#q38-pitfalls)
+
+- [✅ Final Summary](#-final-summary)
+
 - [🎯 Goal](#-goal)
 
 ```mermaid
