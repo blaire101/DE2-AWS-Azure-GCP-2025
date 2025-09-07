@@ -67,7 +67,7 @@ flowchart LR
   - [Q17. Batch Loading](#q17-batch-loading)
 
 - [4. Dataflow (ETL/Streaming Layer)](#4-dataflow-etlstreaming-layer)
-  - [Q18. What is Dataflow?](#Dataflow-Q&A-(Q18–Q25))
+  - [Q18. What is Dataflow?](#dataflow-qa-q18q25)
   - [Q19. Dataflow Architecture](#q19-dataflow-architecture)
   - [Q20. Batch vs Streaming](#q20-batch-vs-streaming)
   - [Q21. Event-time vs Processing-time](#q21-event-time-vs-processing-time)
