@@ -67,7 +67,7 @@ flowchart LR
   - [Q17. Batch Loading](#q17-batch-loading)
 
 - [4. Dataflow (ETL/Streaming Layer)](#4-dataflow-etlstreaming-layer)
-  - [Q18. What is Dataflow?](#q18-what-is-dataflow)
+  - [Q18. What is Dataflow?](#Dataflow-Q&A-(Q18–Q25))
   - [Q19. Dataflow Architecture](#q19-dataflow-architecture)
   - [Q20. Batch vs Streaming](#q20-batch-vs-streaming)
   - [Q21. Event-time vs Processing-time](#q21-event-time-vs-processing-time)
@@ -401,43 +401,18 @@ flowchart TB
     A --> F
 ```
 
-### Q18. What is Dataflow?
+### Dataflow Q&A (Q18–Q25)
 
-* Serverless ETL for **batch & streaming**, built on **Apache Beam**.
-
-### Q19. Dataflow Architecture
-
-* Sources: Pub/Sub, GCS, DB.
-* Pipeline: PCollection → PTransform → Window.
-* Sinks: BQ, Bigtable, GCS.
-
-### Q20. Batch vs Streaming
-
-* Batch = daily/hourly.
-* Streaming = near real-time.
-
-### Q21. Event-time vs Processing-time
-
-* Event-time = when happened.
-* Processing-time = when processed.
-
-### Q22. Windowing & Triggers
-
-* Fixed, Sliding, Session windows.
-* Triggers control partial results.
-
-### Q23. Stateful Example
-
-* Count per user clicks in 5 min window.
-
-### Q24. Shuffle & Streaming Engine
-
-* Shuffle offloaded → backend.
-* Streaming engine stores state externally.
-
-### Q25. Monitoring
-
-* Stackdriver Logging + Metrics.
+| Question | Key Points | Notes/Examples |
+|----------|------------|----------------|
+| **Q18. What is Dataflow?** | **Serverless ETL** for **batch & streaming**, built on **Apache Beam** | Unified model: one pipeline, multiple runners |
+| **Q19. Dataflow Architecture** | **Sources**: Pub/Sub, GCS, DB <br> **Pipeline**: PCollection → PTransform → Window <br> **Sinks**: BigQuery, Bigtable, GCS | Think: Input → Transform → Output |
+| **Q20. Batch vs Streaming** | **Batch**: daily/hourly jobs <br> **Streaming**: near real-time | Batch = GCS files, Streaming = Pub/Sub |
+| **Q21. Event-time vs Processing-time** | **Event-time** = when event actually happened <br> **Processing-time** = when system processes it | Important for **late data handling** |
+| **Q22. Windowing & Triggers** | **Windows**: Fixed, Sliding, Session <br> **Triggers**: control when partial results emitted | Example: 5-min sliding window with early trigger |
+| **Q23. Stateful Example** | Maintain per-key state, e.g., **count clicks per user in 5 min** | Requires **stateful DoFn** in Beam |
+| **Q24. Shuffle & Streaming Engine** | **Shuffle**: offloaded to backend <br> **Streaming Engine**: moves state/shuffle to service | Enables **autoscaling** & reduces worker load |
+| **Q25. Monitoring** | **Stackdriver Logging** + **Cloud Monitoring metrics** | Track latency, throughput, backlog |
 
 ## 5. Integration & Real-time
 
