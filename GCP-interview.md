@@ -57,9 +57,8 @@ For a **Data Engineer role focusing on GCP Data Warehouse & ETL**.
 
 ### Q1. What is BigQuery?
 
-* Serverless, fully managed **cloud data warehouse** optimized for OLAP.
-* Separates **storage (Colossus)** and **compute (slots)**.
-* Execution via **Dremel engine**.
+- BigQuery is a **<mark>serverless</mark>**, **<mark>fully managed</mark>**, **<mark>cloud data warehouse</mark>** optimized for OLAP.  
+- It separates **<mark>storage (Colossus</mark>, Google’s next-gen file system, similar to HDFS)** and **<mark>Compute (slots)</mark>** using the **<mark>Dremel execution engine</mark>**.
 
 ```mermaid
 flowchart TB
@@ -145,9 +144,34 @@ flowchart LR
 
 ### Q6. External vs Native Tables
 
-* Native → stored in **Colossus**.
-* External → in **GCS, BigLake, Sheets**.
-* Tradeoff: flexibility vs performance.
+* **Native**: stored in BigQuery’s **Colossus**.
+* **External**: data in **GCS/BigLake/Sheets**. Query via federation.
+* Trade-off: flexibility vs performance.
+
+```mermaid
+flowchart TB
+    classDef client fill:#e6ffe6,stroke:#006600,stroke-width:2px,color:#000,font-weight:bold
+    classDef native fill:#eaf4ff,stroke:#2980b9,stroke-width:2px,color:#000,font-weight:bold
+    classDef external fill:#fff0f6,stroke:#c2185b,stroke-width:2px,color:#000,font-weight:bold
+    classDef trade fill:#fdf5e6,stroke:#8e44ad,stroke-width:1.5px,color:#000
+
+    %% Client in the center
+    C[🧑‍💻 Query<br/>Client/BI Tool]:::client
+
+    %% BigQuery container
+    subgraph BQ["🏛️ BigQuery"]
+      direction TB
+      N[💾 Native Table<br/>Colossus Storage]:::native
+      X[🌐 External Table<br/>GCS / BigLake / Sheets]:::external
+    end
+
+    %% Place Client in middle linking to both
+    C --> N
+    C --> X
+
+    N --> R1[⚡ Fast performance<br/>Optimized storage]:::trade
+    X --> R2[🔄 Flexible federation<br/>But slower]:::trade
+```
 
 ### Q7. BigQuery Caching
 
@@ -158,6 +182,38 @@ flowchart LR
 
 * MV = precomputed, auto-refresh.
 * SQ = periodic query into table.
+
+```mermaid
+flowchart TB
+    classDef mv fill:#eaf4ff,stroke:#2980b9,stroke-width:2px,color:#000,font-weight:bold
+    classDef sq fill:#fff0f6,stroke:#c2185b,stroke-width:2px,color:#000,font-weight:bold
+    classDef use fill:#fdf5e6,stroke:#8e44ad,stroke-width:1.5px,color:#000
+
+    C[🧑‍💻 Query Client/BI Tool]
+
+    subgraph BQ["🏛️ BigQuery"]
+      direction TB
+      MV[📊 Materialized View<br/>Auto-refresh, Incremental]:::mv
+      SQ[⏱️ Scheduled Query<br/>Runs on Schedule]:::sq
+    end
+
+    C --> MV
+    C --> SQ
+
+    MV --> U1[⚡ Fast repeated aggregations<br/>Dashboards, low latency]:::use
+    SQ --> U2[📅 Periodic snapshots<br/>Daily/weekly reports]:::use
+```
+
+**Q1. What is the difference between a <mark>Materialized View</mark> and a <mark>Scheduled Query</mark> in BigQuery?**
+
+- **<mark>Materialized View</mark>**: <mark>Precomputed</mark>, <mark>auto-refresh</mark>, <mark>incremental updates</mark>, best for <mark>frequently queried aggregations</mark>.  
+- **<mark>Scheduled Query</mark>**: <mark>Periodic execution</mark>, writes results to a <mark>table</mark>, best for <mark>daily/weekly reports</mark>.  
+
+**Q2. In which scenarios would you choose a <mark>Materialized View</mark> over a <mark>Scheduled Query</mark> (and vice versa)?**
+
+- **Use <mark>MV</mark>**: <mark>Dashboard</mark> needs <mark>real-time fast query</mark> of the same aggregation.  
+- **Use <mark>SQ</mark>**: Business requires <mark>daily snapshot reports</mark> (e.g., <mark>yesterday’s sales</mark>).  
+
 
 ### Q9. Query Optimization Best Practices
 
@@ -170,6 +226,12 @@ flowchart LR
 * Unpartitioned scans → \$\$\$.
 * Too many streaming inserts.
 * Misusing clustering.
+
+| Pitfall | Explanation | Cost/Performance Impact | Best Practice |
+|---------|-------------|--------------------------|---------------|
+| **Unpartitioned scans** | Query runs over the entire table without filtering by partition | 🚨 Very high cost (pay per TB scanned) + slow queries | Use **Partitioning** (e.g., by date) and always filter on partition column |
+| **Too many streaming inserts** | Writing rows in real-time with streaming API | 🚨 Expensive vs batch loads + quota limits | Prefer **Batch load from GCS**; if real-time needed, use **Pub/Sub + Dataflow** to micro-batch |
+| **Misusing clustering** | Choosing low-cardinality fields (e.g., boolean) for clustering | 🚨 No performance benefit, still pay for scan | Use **high-cardinality, frequently filtered fields** (e.g., `user_id`, `product_id`) for clustering |
 
 ## 2. Cost & Security
 
@@ -207,8 +269,6 @@ flowchart TB
 * IAM (project/dataset/table).
 * Row/Column-level policies.
 * CMEK, VPC-SC.
-
----
 
 ## 3. Data Modeling & ETL
 
