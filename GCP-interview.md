@@ -75,9 +75,14 @@ flowchart TB
       C[⚡ Compute<br/>Dremel + Slots]:::compute
       D[🗂️ Schema<br/>Partition + Clustering]:::schema
       E[📊 Caching & Views]:::cache
+
+      %% 隐形连线，确保它们在一行
+      B --- C
+      C --- D
+      D --- E
     end
 
-    %% (Optional external links)
+    %% 可选：外部链接
     %% Client --> BQ
     %% BQ --> Downstream
 ```
