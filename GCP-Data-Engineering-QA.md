@@ -207,7 +207,30 @@ flowchart LR
 
 * Partitioning = reduce scanned data.
 * Clustering = speed filtering/sorting.
-* Best = combine both.
+
+```mermaid
+flowchart TB
+    classDef part fill:#d0ebff,stroke:#1c7ed6,stroke-width:2px,color:#000,font-weight:bold
+    classDef cluster fill:#ffe8cc,stroke:#d17b00,stroke-width:2px,color:#000,font-weight:bold
+    classDef query fill:#d3f9d8,stroke:#2b8a3e,stroke-width:2px,color:#000,font-weight:bold
+
+    Q[🔍 Query<br/>order_date=2025-09-07<br/>user_id=123]:::query
+
+    subgraph P["📂 Partitioned by Date"]
+      P1[📅 2025-09-06 Partition]:::part
+      P2[📅 2025-09-07 Partition]:::part
+      P3[📅 2025-09-08 Partition]:::part
+    end
+
+    subgraph C["📑 Clustering inside 2025-09-07 Partition"]
+      C1[User_id 101 block]:::cluster
+      C2[⭐ User_id 123 block]:::query
+      C3[User_id 200 block]:::cluster
+    end
+
+    Q --> P2
+    P2 --> C2
+```
 
 ### Q6. External vs Native Tables
 
