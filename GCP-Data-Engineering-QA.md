@@ -405,7 +405,11 @@ flowchart TB
 
 ## 4. Dataflow (ETL/Streaming Layer)
 
-[![Pronunciation Training](https://img.youtube.com/vi/KalJ0VuEM7s/0.jpg)](https://www.youtube.com/watch?v=KalJ0VuEM7s)  
+[Google Cloud - Dataflow](https://www.youtube.com/watch?v=KalJ0VuEM7s)  
+
+<div align="center">
+  <img src="docs/GCP-Dataflow-1.png" alt="Diagram" width="700">
+</div>
 
 ```mermaid
 flowchart TB
