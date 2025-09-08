@@ -405,6 +405,11 @@ flowchart TB
 
 ## 4. Dataflow (ETL/Streaming Layer)
 
+[Data Pipeline](https://www.youtube.com/watch?v=yVUXvabnMRU)  
+
+<div align="center">
+  <img src="docs/GCP-ETL-data-pipeline.png" alt="Diagram" width="750">
+</div>
 
 ```mermaid
 flowchart TB
@@ -427,12 +432,6 @@ flowchart TB
     A --> E
     A --> F
 ```
-
-[Data Pipeline](https://www.youtube.com/watch?v=yVUXvabnMRU)  
-
-<div align="center">
-  <img src="docs/GCP-ETL-data-pipeline.png" alt="Diagram" width="800">
-</div>
 
 [Google Cloud - Dataflow](https://www.youtube.com/watch?v=KalJ0VuEM7s)  
 
