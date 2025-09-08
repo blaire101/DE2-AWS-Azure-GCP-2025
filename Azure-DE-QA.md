@@ -1,4 +1,361 @@
-# 📚 Azure Data Engineering Q&A (Synapse + ADLS + Data Factory)
+# 📚 Azure Data Engineering Q&A  Synapse + ADLS + Data Factory  Full Reference
+
+```mermaid
+flowchart LR
+    %% ===== Styles =====
+    classDef src fill:#d0f0fd,stroke:#007acc,stroke-width:2px,color:#000,font-weight:bold
+    classDef lake fill:#fde2d0,stroke:#cc5200,stroke-width:2px,color:#000,font-weight:bold
+    classDef etl fill:#e6d0fd,stroke:#7e3ff2,stroke-width:2px,color:#000,font-weight:bold
+    classDef wh fill:#fff3bf,stroke:#d48806,stroke-width:2px,color:#000,font-weight:bold
+    classDef srv fill:#d9f7be,stroke:#389e0d,stroke-width:2px,color:#000,font-weight:bold
+
+    %% ===== Layers =====
+    subgraph Source["📥 Data Sources"]
+        DB[SQL Server or MySQL]:::src
+        CSV[ADLS CSV or Parquet Files]:::src
+    end
+
+    subgraph Lake["🪣 Data Lake ADLS Gen2"]
+        RAW[Raw Zone]:::lake
+        STG[Staging Zone]:::lake
+        CUR[Curated Zone]:::lake
+    end
+
+    subgraph ETL["⚙️ Processing"]
+        ADF[Azure Data Factory and Synapse Pipelines]:::etl
+        DBX[Azure Databricks Batch Spark]:::etl
+        SVS[Synapse Serverless SQL on ADLS]:::etl
+    end
+
+    subgraph Warehouse["🏛️ Synapse Dedicated SQL Pool"]
+        FACT[Fact Orders]:::wh
+        DIMC[Dim Customers]:::wh
+        DIMP[Dim Products]:::wh
+        AGG[Sales Aggregates]:::wh
+    end
+
+    subgraph Serving["📊 Analytics"]
+        PBI[Power BI]:::srv
+    end
+
+    %% ===== Flows =====
+    DB --> RAW
+    CSV --> RAW
+    RAW --> ADF --> STG
+    STG --> DBX --> CUR
+    CUR --> SVS
+    CUR --> FACT
+    CUR --> DIMC
+    CUR --> DIMP
+    FACT --> AGG
+    FACT --> PBI
+    DIMC --> PBI
+    AGG --> PBI
+```
+
+* [1. Synapse Analytics  Core Data Warehouse ](#1-synapse-analytics--core-data-warehouse-)
+
+  * [Q1. What is Synapse](#q1-what-is-synapse)
+  * [Q2. Synapse Architecture](#q2-synapse-architecture)
+  * [Q3. Distribution and Partitioning](#q3-distribution-and-partitioning)
+  * [Q4. Compute and DWU Scaling](#q4-compute-and-dwu-scaling)
+  * [Q5. Serverless SQL vs Dedicated SQL](#q5-serverless-sql-vs-dedicated-sql)
+  * [Q6. External vs Native Tables](#q6-external-vs-native-tables)
+  * [Q7. Result Set Cache and Materialized Views](#q7-result-set-cache-and-materialized-views)
+  * [Q8. Query Optimization](#q8-query-optimization)
+  * [Q9. Common Pitfalls](#q9-common-pitfalls)
+  * [Q10. Synapse vs BigQuery one liners](#q10-synapse-vs-bigquery-one-liners)
+
+* [2. Cost and Security](#2-cost-and-security)
+
+  * [Q11. Pricing Models](#q11-pricing-models)
+  * [Q12. Cost Saving Patterns](#q12-cost-saving-patterns)
+  * [Q13. Security and Networking](#q13-security-and-networking)
+
+* [3. Data Modeling and ETL](#3-data-modeling-and-etl)
+
+  * [Q14. Star Schema and Naming](#q14-star-schema-and-naming)
+  * [Q15. Slowly Changing Dimensions](#q15-slowly-changing-dimensions)
+  * [Q16. Schema Evolution](#q16-schema-evolution)
+  * [Q17. Batch Loading Patterns](#q17-batch-loading-patterns)
+
+* [4. Data Factory and Databricks  ETL Layer ](#4-data-factory-and-databricks--etl-layer-)
+
+  * [Q18. What is Data Factory](#q18-what-is-data-factory)
+  * [Q19. ADF vs Databricks](#q19-adf-vs-databricks)
+  * [Q20. Mapping Data Flows](#q20-mapping-data-flows)
+  * [Q21. Orchestration and Monitoring](#q21-orchestration-and-monitoring)
+  * [Q22. Performance and Cost Tuning](#q22-performance-and-cost-tuning)
+  * [Q23. Pitfalls](#q23-pitfalls)
+
+* [5. Integration and Real time  brief ](#5-integration-and-real-time--brief-)
+
+  * [Q24. Event Hubs Basics](#q24-event-hubs-basics)
+  * [Q25. Event Hubs to Databricks to Synapse](#q25-event-hubs-to-databricks-to-synapse)
+  * [Q26. Batch ETL Blueprint ADLS to Synapse](#q26-batch-etl-blueprint-adls-to-synapse)
+  * [Q27. Migration from Hadoop](#q27-migration-from-hadoop)
+  * [Q28. E commerce Analytics reference](#q28-e-commerce-analytics-reference)
+
+* [6. Purview and Governance](#6-purview-and-governance)
+
+  * [Q29. What is Microsoft Purview](#q29-what-is-microsoft-purview)
+  * [Q30. Catalog Lineage Policies](#q30-catalog-lineage-policies)
+
+* [✅ Final Summary](#-final-summary)
+
+## 🎯 Goal
+
+For a **Data Engineer role focusing on Azure Data Warehouse and ETL**.
+
+* Deep focus on **<mark>Synapse Analytics</mark>** core warehouse
+* Solid understanding of **<mark>ADLS Gen2</mark>**, **<mark>Data Factory</mark>**, **<mark>Azure Databricks</mark>**
+* Cover **Batch ETL pipelines** and essential **real time ingestion** briefly
+
+## 1. Synapse Analytics  Core Data Warehouse
+
+### Q1. What is Synapse
+
+* **Azure Synapse Analytics** is a **<mark>cloud MPP data warehouse</mark>** that unifies **<mark>Dedicated SQL</mark>** compute, **<mark>Serverless SQL</mark>** on lake, and **<mark>Spark</mark>** with built in **<mark>orchestration</mark>** and **<mark>security</mark>**.
+
+```mermaid
+flowchart TB
+    classDef storage fill:#eaf4ff,stroke:#2980b9,stroke-width:1.8px,color:#000
+    classDef compute fill:#f0fff0,stroke:#27ae60,stroke-width:1.8px,color:#000
+    classDef dwu fill:#fff0f6,stroke:#c2185b,stroke-width:1.8px,color:#000
+    classDef cache fill:#fdf5e6,stroke:#8e44ad,stroke-width:1.8px,color:#000
+
+    subgraph SYN["🏛️ Synapse Analytics"]
+      S[ADLS Gen2  columnar]:::storage
+      C[MPP SQL  Spark]:::compute
+      D[DWU scale up  scale down]:::dwu
+      R[Result cache  Mat views]:::cache
+      S --- C
+      C --- D
+      D --- R
+    end
+```
+
+### Q2. Synapse Architecture
+
+* **Storage**: **<mark>ADLS Gen2</mark>** lake with **parquet orc delta**.
+* **Compute**: **<mark>Dedicated SQL pool</mark>** MPP for warehousing, **<mark>Serverless SQL</mark>** for on demand queries on lake, **<mark>Spark</mark>** for transforms.
+* **Integration**: **<mark>Synapse Pipelines</mark>** same engine as ADF, **<mark>Linked Services</mark>**.
+* **Serving**: **<mark>Power BI</mark>** tight integration.
+
+```mermaid
+flowchart TD
+    classDef lake fill:#fde2d0,stroke:#cc5200,stroke-width:2px,color:#000,font-weight:bold
+    classDef comp fill:#e6d0fd,stroke:#7e3ff2,stroke-width:2px,color:#000,font-weight:bold
+    classDef serve fill:#d9f7be,stroke:#389e0d,stroke-width:2px,color:#000,font-weight:bold
+
+    subgraph Lake["ADLS Gen2"]
+      L1[Parquet  ORC  Delta]:::lake
+      L2[Raw  Staging  Curated]:::lake
+    end
+
+    subgraph Compute["Synapse Compute"]
+      C1[Dedicated SQL pool]:::comp
+      C2[Serverless SQL]:::comp
+      C3[Spark]:::comp
+    end
+
+    subgraph Serving["Consumption"]
+      V1[Power BI]:::serve
+      V2[External apps via JDBC ODBC]:::serve
+    end
+
+    Lake --> Compute
+    Compute --> Serving
+```
+
+### Q3. Distribution and Partitioning
+
+* **Distribution** spreads rows across MPP nodes: **<mark>Hash</mark>**, **<mark>Round robin</mark>**, **<mark>Replicated</mark>**.
+* **Partitioning** splits a table by a logical column such as **<mark>date</mark>** or **<mark>int range</mark>**.
+
+```mermaid
+flowchart TB
+    classDef dist fill:#e6f2ff,stroke:#004080,stroke-width:2px,color:#000,font-weight:bold
+    classDef part fill:#ffe8cc,stroke:#d17b00,stroke-width:2px,color:#000,font-weight:bold
+    classDef note fill:#f6ffed,stroke:#389e0d,stroke-width:2px,color:#000,font-weight:bold
+
+    subgraph D["Table Distribution"]
+      D1[Hash by customer_id]:::dist
+      D2[Round robin large staging]:::dist
+      D3[Replicated small dimensions]:::dist
+    end
+
+    subgraph P["Table Partitioning"]
+      P1[Partition by order_date day]:::part
+      P2[Partition by month]:::part
+      P3[Int range partitions]:::part
+    end
+
+    N[Pick hash on join key for big fact  replicate small dims  filter partition column]:::note
+    D --> N
+    P --> N
+```
+
+### Q4. Compute and DWU Scaling
+
+* **<mark>DWU</mark>** controls dedicated pool compute. Scale **up** for heavy loads, **down** after. **Pause** to stop charges.
+
+### Q5. Serverless SQL vs Dedicated SQL
+
+* **Serverless SQL**: **<mark>pay per TB scanned</mark>** on ADLS data, great for ad hoc and ELT on lake.
+* **Dedicated SQL**: **<mark>provisioned MPP</mark>** best for steady workloads and BI serving.
+
+```mermaid
+flowchart LR
+    classDef srv fill:#e6f2ff,stroke:#004080,stroke-width:2px,color:#000,font-weight:bold
+    classDef ded fill:#ffe8cc,stroke:#d17b00,stroke-width:2px,color:#000,font-weight:bold
+
+    S[Serverless SQL  scan data in ADLS]:::srv
+    D[Dedicated SQL  provisioned DWU]:::ded
+
+    S -->|Ad hoc  exploration| D
+    D -->|Warm storage  BI serving| S
+```
+
+### Q6. External vs Native Tables
+
+* **External** on ADLS via serverless or dedicated with external objects. Flexible, cheaper scans, slower joins.
+* **Native** in dedicated pool columnstore. Fastest for star schema joins and aggregates.
+
+### Q7. Result Set Cache and Materialized Views
+
+* **Result cache** accelerates repeated queries until data changes.
+* **Materialized view** pre computes aggregations with automatic refresh.
+
+### Q8. Query Optimization
+
+* Choose **<mark>hash distribution</mark>** on join key for big facts.
+* **<mark>Replicate</mark>** small dimensions to avoid data movement.
+* Filter by **<mark>partition</mark>** column. Avoid `SELECT *`. Keep columns narrow.
+
+### Q9. Common Pitfalls
+
+* Round robin for large fact leads to **data movement**.
+* Skewed hash key leads to **long tails**.
+* No partition filter leads to **high cost** and slow scans.
+
+### Q10. Synapse vs BigQuery one liners
+
+* **Synapse** = **<mark>DWU based MPP</mark>** with **<mark>distribution choices</mark>** and tight **<mark>Power BI</mark>**.
+* **BigQuery** = **<mark>serverless</mark>** slots with **<mark>partition and clustering</mark>**.
+
+## 2. Cost and Security
+
+### Q11. Pricing Models
+
+* **Dedicated SQL**: **<mark>DWU hours</mark>**. Can **pause**.
+* **Serverless SQL**: **<mark>per TB scanned</mark>**.
+* **ADLS storage**: hot cool archive tiers.
+
+### Q12. Cost Saving Patterns
+
+* Pause dedicated pools when idle.
+* Store data in **<mark>parquet</mark>** and query via **<mark>serverless</mark>** for ad hoc.
+* Partition big tables. Avoid wide scans. Track with **<mark>Cost Management</mark>**.
+
+### Q13. Security and Networking
+
+* **<mark>Azure AD</mark>** auth, **<mark>RBAC</mark>**, **<mark>SQL permissions</mark>**.
+* **<mark>Private Endpoints</mark>**, **<mark>Managed VNET</mark>**, **<mark>Firewall rules</mark>**.
+* **<mark>TDE</mark>** at rest, **<mark>CMEK</mark>** with Key Vault, **<mark>Column level security</mark>**, **<mark>Row level security</mark>**.
+* **<mark>Purview</mark>** for catalog and lineage.
+
+## 3. Data Modeling and ETL
+
+### Q14. Star Schema and Naming
+
+* **Fact** tables hold events at lowest grain.
+* **Dimension** tables hold descriptive attributes.
+* Naming example: `dw.fact_orders`, `dw.dim_customers`, `dw.dim_products`.
+
+```mermaid
+flowchart TB
+    classDef fact fill:#fff3bf,stroke:#d48806,stroke-width:2px,color:#000,font-weight:bold
+    classDef dim fill:#e6f2ff,stroke:#004080,stroke-width:2px,color:#000,font-weight:bold
+
+    F[Fact Orders]:::fact
+    DC[Dim Customers]:::dim
+    DP[Dim Products]:::dim
+
+    F -- user_id --> DC
+    F -- product_id --> DP
+```
+
+### Q15. Slowly Changing Dimensions
+
+* **Type 1** overwrite columns.
+* **Type 2** add a new row with `valid_from  valid_to  is_current`.
+* **Type 3** add a new column to track previous value.
+
+### Q16. Schema Evolution
+
+* Prefer **<mark>parquet</mark>** in lake. Additive changes are easy. For breaking changes create new table plus view.
+
+### Q17. Batch Loading Patterns
+
+* **ADF Copy** from sources to ADLS.
+* Curate with **Databricks Spark** or **Serverless SQL**.
+* Load to **Dedicated SQL** with `COPY INTO` or PolyBase pattern.
+
+## 4. Data Factory and Databricks  ETL Layer
+
+### Q18. What is Data Factory
+
+* **ADF** is **<mark>managed orchestration</mark>** with **<mark>Copy Activity</mark>** and **<mark>Mapping Data Flows</mark>** on serverless Spark.
+
+### Q19. ADF vs Databricks
+
+* **ADF** low code for movement and simple transforms.
+* **Databricks** code first **<mark>Spark</mark>** for heavy ETL and Delta Lake medallion.
+
+```mermaid
+flowchart LR
+    classDef lc fill:#e6f2ff,stroke:#004080,stroke-width:2px,color:#000,font-weight:bold
+    classDef cf fill:#ffe8cc,stroke:#d17b00,stroke-width:2px,color:#000,font-weight:bold
+
+    A[ADF low code orchestration]:::lc
+    B[Databricks code first Spark]:::cf
+    A -->|ingest  schedule| B
+    B -->|heavy transform  delta| A
+```
+
+### Q20. Mapping Data Flows
+
+* Drag and drop joins, derive, aggregate. Runs on managed Spark behind the scenes.
+
+### Q21. Orchestration and Monitoring
+
+* Pipelines with triggers schedule and event.
+* Integration Runtimes for network and compute.
+* Monitor with ADF Monitor and Azure Monitor logs.
+
+### Q22. Performance and Cost Tuning
+
+* Partitioned reads and writes. Leverage parquet. Use staged copy and temp storage. Right size IR and cluster configs.
+
+### Q23. Pitfalls
+
+* Row by row transforms instead of set based.
+* No parallelism on large copy jobs.
+* Large upserts without partition pruning.
+
+## 5. Integration and Real time  brief
+
+### Q24. Event Hubs Basics
+
+* **Event Hubs** is **<mark>stream ingestion</mark>** similar to Kafka. Producers write to partitions. Consumers read with checkpoints.
+
+### Q25. Event Hubs to Databricks to Synapse
+
+* Real time path: **Event Hubs → Databricks Structured Streaming → Synapse** as micro batch.
+* Simpler path: **Event Hubs → Stream Analytics → ADLS or Synapse**.
+
+### Q26. Batch ETL Blueprint ADLS to Synapse
 
 ```mermaid
 flowchart LR
@@ -8,319 +365,59 @@ flowchart LR
     classDef wh fill:#fff3bf,stroke:#d48806,stroke-width:2px,color:#000,font-weight:bold
     classDef srv fill:#d9f7be,stroke:#389e0d,stroke-width:2px,color:#000,font-weight:bold
 
-    subgraph Source["📥 Data Sources"]
-        DB[SQL Server or MySQL]:::src
-        CSV[ADLS CSV Files]:::src
-    end
-
-    subgraph Lake["🪣 Data Lake ADLS Gen2"]
-        RAW[Raw Zone]:::lake
-        STG[Staging Zone]:::lake
-    end
-
-    subgraph ETL["⚙️ Processing"]
-        ADF[Azure Data Factory and Synapse Pipelines]:::etl
-        DBX[Azure Databricks Batch ETL]:::etl
-    end
-
-    subgraph Warehouse["🏛️ Synapse SQL Dedicated Pool"]
-        FACT[Fact_Orders]:::wh
-        DIM[Dim_Customers]:::wh
-        AGG[Sales_Aggregates]:::wh
-    end
-
-    subgraph Serving["📊 Analytics"]
-        PBI[Power BI]:::srv
-    end
-
-    DB --> RAW
-    CSV --> RAW
-    RAW --> ADF --> STG
-    STG --> DBX --> FACT
-    STG --> DBX --> DIM
-    FACT --> AGG
-    FACT --> PBI
-    DIM --> PBI
-    AGG --> PBI
+    SRC[Source systems]:::src --> RAW[ADLS raw]:::lake
+    RAW --> ADF[ADF copy and validate]:::etl --> STG[ADLS staging]:::lake
+    STG --> DBX[Databricks curate parquet]:::etl --> CUR[ADLS curated]:::lake
+    CUR --> SVS[Serverless SQL external tables]:::etl
+    CUR --> DW[Synapse dedicated star schema]:::wh
+    DW --> PBI[Power BI dashboards]:::srv
 ```
-
-* [1. Synapse Analytics (Core Data Warehouse)](#1-synapse-analytics-core-data-warehouse)
-
-  * [Q1. What is Synapse?](#q1-what-is-synapse)
-  * [Q2. Synapse Architecture](#q2-synapse-architecture)
-  * [Q3. Storage & Data Modeling](#q3-storage--data-modeling)
-  * [Q4. Compute & DWU](#q4-compute--dwu)
-  * [Q5. Distribution vs Partitioning](#q5-distribution-vs-partitioning)
-  * [Q6. Serverless vs Dedicated SQL](#q6-serverless-vs-dedicated-sql)
-  * [Q7. Caching & Result-set](#q7-caching--result-set)
-  * [Q8. Materialized Views vs CTAS](#q8-materialized-views-vs-ctas)
-  * [Q9. Query Optimization Tips](#q9-query-optimization-tips)
-  * [Q10. Common Pitfalls](#q10-common-pitfalls)
-
-* [2. Cost & Security](#2-cost--security)
-
-  * [Q11. Pricing Models](#q11-pricing-models)
-  * [Q12. Cost-saving Techniques](#q12-cost-saving-techniques)
-  * [Q13. Security & Governance](#q13-security--governance)
-
-* [3. Data Modeling & ETL](#3-data-modeling--etl)
-
-  * [Q14. Schema Evolution](#q14-schema-evolution)
-  * [Q15. Slowly Changing Dimensions](#q15-slowly-changing-dimensions)
-  * [Q16. CDC](#q16-cdc)
-  * [Q17. Batch Loading](#q17-batch-loading)
-
-* [4. Data Factory / Databricks (ETL Layer)](#4-data-factory--databricks-etl-layer)
-
-  * [Q18. What is Data Factory?](#q18-what-is-data-factory)
-  * [Q19. ADF vs Databricks](#q19-adf-vs-databricks)
-  * [Q20. Mapping Data Flows](#q20-mapping-data-flows)
-  * [Q21. Orchestration & Monitoring](#q21-orchestration--monitoring)
-  * [Q22. Performance & Cost](#q22-performance--cost)
-  * [Q23. Common Pitfalls](#q23-common-pitfalls)
-
-* [5. Integration & Real-time (Brief)](#5-integration--real-time-brief)
-
-  * [Q24. Event Hubs Basics](#q24-event-hubs-basics)
-  * [Q25. Event Hubs → ADF/Databricks → Synapse](#q25-event-hubs--adfdatabricks--synapse)
-  * [Q26. Batch ETL Pipeline (ADLS → Synapse)](#q26-batch-etl-pipeline-adls--synapse)
-  * [Q27. Migration from Hadoop](#q27-migration-from-hadoop)
-  * [Q28. E-commerce Analytics](#q28-e-commerce-analytics)
-
-* [6. Purview & Data Governance](#6-purview--data-governance)
-
-  * [Q29. What is Microsoft Purview?](#q29-what-is-microsoft-purview)
-  * [Q30. Catalog, Lineage, Policies](#q30-catalog-lineage-policies)
-
-* [✅ Final Summary](#-final-summary)
-
----
-
-## 🎯 Goal
-
-For a **Data Engineer role focusing on Azure Data Warehouse & ETL**.
-
-* Deep focus on **<mark>Synapse Analytics</mark>** (core warehouse)
-* Solid understanding of **<mark>ETL with Data Factory</mark>** and **<mark>Azure Databricks</mark>**
-* Cover **Batch ETL Pipelines & Integration Scenarios** with **<mark>ADLS</mark>** and **<mark>Power BI</mark>**
-
----
-
-## 1. Synapse Analytics (Core Data Warehouse)
-
-### Q1. What is Synapse?
-
-* **Azure Synapse Analytics** is Microsoft’s **<mark>cloud data warehouse</mark>** combining **<mark>SQL MPP</mark>**, **<mark>Spark</mark>**, and **<mark>Data Explorer</mark>** with integrated **<mark>orchestration</mark>** and **<mark>security</mark>**.
-
-```mermaid
-flowchart TB
-    classDef storage fill:#eaf4ff,stroke:#2980b9,stroke-width:1.5px,color:#000
-    classDef compute fill:#f0fff0,stroke:#27ae60,stroke-width:1.5px,color:#000
-    classDef dwu fill:#fff0f6,stroke:#c2185b,stroke-width:1.5px,color:#000
-    classDef cache fill:#fdf5e6,stroke:#8e44ad,stroke-width:1.5px,color:#000
-
-    subgraph SYN["🏛️ Synapse Analytics"]
-      S[💾 Storage<br/>ADLS Gen2 + Columnar]:::storage
-      C[⚡ Compute<br/>MPP SQL + Spark]:::compute
-      D[📐 DWU / cDWU<br/>Scale up/down]:::dwu
-      R[🧠 Caching & Result-set]:::cache
-      S --- C
-      C --- D
-      D --- R
-    end
-```
-
-✅ Synapse vs Hive vs SparkSQL
-
-| Feature    | Synapse (Dedicated SQL)           | Hive               | SparkSQL              |
-| ---------- | --------------------------------- | ------------------ | --------------------- |
-| Type       | Managed **<mark>MPP DW</mark>**   | Hadoop SQL Engine  | Distributed SQL       |
-| Storage    | Columnar on **<mark>ADLS</mark>** | HDFS               | HDFS/S3/ADLS          |
-| Latency    | Fast                              | Slow               | Fast                  |
-| Deployment | Fully managed                     | Self-hosted Hadoop | Self-hosted Spark/DBX |
-
-### Q2. Synapse Architecture
-
-* **Storage**: **<mark>ADLS Gen2</mark>** (lake) with parquet/orc.
-* **Compute**: **<mark>Dedicated SQL pool</mark>** (MPP), **<mark>Serverless SQL</mark>** (on-demand), **<mark>Spark</mark>**.
-* **Integration**: **<mark>Synapse Pipelines</mark>** (ADF engine), **<mark>Linked Services</mark>**.
-* **Serving**: **<mark>Power BI</mark>** integration.
-
-### Q3. Storage & Data Modeling
-
-* **Partitioning**: **<mark>partitioned parquet</mark>** in ADLS; table partitioning by **date/int** in Dedicated SQL.
-* **Distribution** (table-level): **<mark>Hash</mark>**, **<mark>Round-robin</mark>**, **<mark>Replicated</mark>**.
-* **Schema**: **<mark>Star schema</mark>** (fact + dimension) recommended.
-
-### Q4. Compute & DWU
-
-* **DWU (Data Warehouse Unit)** controls **<mark>compute</mark>**; scale **up/down** for performance/cost.
-* **Pause/Resume** Dedicated SQL pool to save cost.
-
-### Q5. Distribution vs Partitioning
-
-* **Distribution** = how rows are spread across MPP nodes (**<mark>Hash/Round-robin/Replicated</mark>**).
-* **Partitioning** = logical splits within a table (e.g., **<mark>date</mark>**).
-* Best practice: **hash-distribute** large fact by **join key**; **replicate** small dims.
-
-### Q6. Serverless vs Dedicated SQL
-
-* **Serverless SQL**: **<mark>pay-per-TB</mark>** scanned, queries external data on ADLS.
-* **Dedicated SQL**: **<mark>provisioned MPP</mark>** with DWUs; best for **consistent, heavy** workloads.
-
-### Q7. Caching & Result-set
-
-* **Result-set cache** & **materialized views** can speed up repeated queries.
-* **Result cache** is invalidated on data changes.
-
-### Q8. Materialized Views vs CTAS
-
-* **Materialized view**: precomputed, auto maintenance; great for **frequent aggregates**.
-* **CTAS** (`CREATE TABLE AS SELECT`): snapshot tables for **ELT** steps & performance isolation.
-
-### Q9. Query Optimization Tips
-
-* Choose correct **<mark>distribution</mark>**.
-* Use **<mark>partition elimination</mark>** by filtering on partition columns.
-* Avoid `SELECT *`; use **<mark>Columnstore</mark>**-friendly patterns.
-* Analyze plans; fix **data skew**.
-
-### Q10. Common Pitfalls
-
-* Using **round-robin** for large facts → **data movement** on joins.
-* Not filtering partitions → **high cost/slow**.
-* Skewed hash keys → **long tails**.
-
----
-
-## 2. Cost & Security
-
-### Q11. Pricing Models
-
-* **Dedicated SQL**: pay per **<mark>DWU-hours</mark>**; **pause** to stop charges.
-* **Serverless SQL**: pay per **<mark>TB scanned</mark>**.
-* **Storage**: ADLS **hot/cool/archive** tiers.
-
-### Q12. Cost-saving Techniques
-
-* **Pause** dedicated pools when idle.
-* Push **ELT** to serverless on ADLS for ad-hoc.
-* Use **partitioned parquet**; avoid wide scans.
-* Monitor with **<mark>Azure Monitor</mark>** / **<mark>Cost Management</mark>**.
-
-### Q13. Security & Governance
-
-* **<mark>Azure AD</mark>** auth, **<mark>RBAC</mark>** at resource level, **<mark>SQL permissions</mark>** inside Synapse.
-* **<mark>Managed VNET</mark>**, **<mark>Private Endpoints</mark>**.
-* **<mark>TDE</mark>** (Transparent Data Encryption), **<mark>CMEK</mark>** via Key Vault.
-* **<mark>Microsoft Purview</mark>** for catalog, classification, lineage.
-
----
-
-## 3. Data Modeling & ETL
-
-### Q14. Schema Evolution
-
-* Append-friendly formats (**parquet**).
-* Changes via **new tables + views** to preserve contracts.
-
-### Q15. Slowly Changing Dimensions
-
-* **Type 1** overwrite; **Type 2** add row with `valid_from/valid_to`; **Type 3** new column.
-* Implement via **Synapse SQL** or **Databricks**.
-
-### Q16. CDC
-
-* **Azure Data Factory** + **Change Tracking/Change Data Capture** from SQL/Oracle.
-* Write deltas to **ADLS parquet**; merge into **Synapse**.
-
-### Q17. Batch Loading
-
-* **Copy Activity** (ADF) → ADLS parquet → **PolyBase/Copy into** to Synapse.
-* Prefer **parquet** for compression & schema.
-
----
-
-## 4. Data Factory / Databricks (ETL Layer)
-
-### Q18. What is Data Factory?
-
-* **Azure Data Factory** = **<mark>managed orchestration</mark>** with **<mark>Copy Activity</mark>** and **<mark>Mapping Data Flows</mark>** (visual Spark).
-
-### Q19. ADF vs Databricks
-
-* **ADF**: low-code **<mark>orchestration + data movement</mark>**, simple transforms.
-* **Databricks**: code-first **<mark>Spark</mark>** for heavy transforms, Delta Lake, notebooks.
-
-### Q20. Mapping Data Flows
-
-* Serverless Spark under the hood; drag-and-drop joins, derive, aggregate.
-* Good for teams without deep Spark skills.
-
-### Q21. Orchestration & Monitoring
-
-* **Pipelines**, **Triggers** (schedule/event), **Integration Runtimes**.
-* Monitor with **<mark>ADF Monitor</mark>** and **<mark>Azure Monitor</mark>** logs.
-
-### Q22. Performance & Cost
-
-* Right-size **IR**; use **staged copy** to **<mark>blob staging</mark>**.
-* Partitioned reads/writes; batch in **parquet**.
-
-### Q23. Common Pitfalls
-
-* Overusing row-by-row transforms instead of **set-based**.
-* Not leveraging **parallelism**/partitions.
-* Large upserts without **partition pruning**.
-
----
-
-## 5. Integration & Real-time (Brief)
-
-### Q24. Event Hubs Basics
-
-* **Azure Event Hubs** = **<mark>stream ingestion</mark>** (Kafka-like).
-* Producers → **Partitions** → Consumers (Databricks/Stream Analytics).
-
-### Q25. Event Hubs → ADF/Databricks → Synapse
-
-* Real-time: **Event Hubs → Databricks Structured Streaming → Synapse** (micro-batch).
-* Or **Event Hubs → Stream Analytics → Synapse/ADLS** (simpler SQL).
-
-### Q26. Batch ETL Pipeline (ADLS → Synapse)
-
-* **Source**: ADLS **raw** CSV/parquet.
-* **Process**: ADF Copy / Data Flows / Databricks to **staging/curated**.
-* **Load**: `COPY INTO` / PolyBase to **Synapse** star schema → **Power BI**.
 
 ### Q27. Migration from Hadoop
 
-* **HDFS → ADLS**; **Hive/Spark → Databricks**; **Impala/Presto → Synapse/Serverless**; BI → **Power BI**.
+* HDFS to **ADLS**. Hive and Spark to **Databricks**. Impala and Presto workloads to **Synapse or Serverless**. Re point BI to **Power BI**.
 
-### Q28. E-commerce Analytics
+### Q28. E commerce Analytics reference
 
-* **Fact\_Orders** (hash by `customer_id`), **Dim\_Customers** (replicated), **Dim\_Products** (replicated).
-* **Aggregations** with **materialized views** or **CTAS**; **Power BI** direct query/import.
+* **Fact Orders** hash by `customer_id`. **Dim Customers** replicated. **Dim Products** replicated.
+* **Materialized views** or **CTAS** for sales aggregates. Power BI direct query or import.
 
----
+## 6. Purview and Governance
 
-## 6. Purview & Data Governance
+### Q29. What is Microsoft Purview
 
-### Q29. What is Microsoft Purview?
+* Unified **<mark>data catalog</mark>** with **<mark>classification</mark>**, **<mark>lineage</mark>**, and **<mark>access policy</mark>** across Azure and beyond.
 
-* Unified **<mark>data catalog</mark>**, **<mark>classification</mark>**, **<mark>lineage</mark>**, **<mark>policy</mark>** for Azure & beyond.
+### Q30. Catalog Lineage Policies
 
-### Q30. Catalog, Lineage, Policies
+* Scan Synapse and ADLS. Auto classify PII. Capture ADF and Databricks lineage. Enforce column level masking and RBAC policies.
 
-* **Scan** Synapse/ADLS/SQL; **classify PII**; **lineage** from ADF pipelines; enforce **access policies**.
+```mermaid
+flowchart LR
+    classDef gov fill:#f0f5ff,stroke:#2f54eb,stroke-width:2px,color:#000,font-weight:bold
+    classDef lake fill:#fde2d0,stroke:#cc5200,stroke-width:2px,color:#000,font-weight:bold
+    classDef wh fill:#fff3bf,stroke:#d48806,stroke-width:2px,color:#000,font-weight:bold
+    classDef etl fill:#e6d0fd,stroke:#7e3ff2,stroke-width:2px,color:#000,font-weight:bold
+    classDef srv fill:#d9f7be,stroke:#389e0d,stroke-width:2px,color:#000,font-weight:bold
 
----
+    PV[Microsoft Purview  catalog  lineage  policy]:::gov
+    ADLS[ADLS Gen2]:::lake
+    SYN[Synapse SQL]:::wh
+    ADF[ADF Pipelines]:::etl
+    DBX[Databricks]:::etl
+    PBI[Power BI]:::srv
+
+    PV -.-> ADLS
+    PV -.-> SYN
+    PV -.-> ADF
+    PV -.-> DBX
+    PV -.-> PBI
+```
 
 # ✅ Final Summary
 
-* **Synapse Analytics** → Azure **<mark>MPP data warehouse</mark>** (Dedicated/Serverless SQL) tightly integrated with **<mark>ADLS</mark>** and **<mark>Power BI</mark>**.
-* **Azure Data Factory** → **<mark>orchestration + data movement</mark>** (Copy, Mapping Data Flows).
-* **Azure Databricks** → **<mark>Spark</mark>**-based heavy transforms, Delta/medallion.
-* **Security & Governance** → **<mark>Azure AD</mark>**, **<mark>Key Vault (CMEK)</mark>**, **<mark>Private Endpoints</mark>**, **<mark>Purview</mark>**.
-* **Design** → ADLS **raw → staging → curated**; Synapse **star schema** (hash-distributed fact, replicated dims); **Power BI** serving.
-
+* **Synapse Analytics** delivers **<mark>MPP warehousing</mark>** with **<mark>Dedicated SQL</mark>** and **<mark>Serverless SQL</mark>**, integrated with **<mark>ADLS Gen2</mark>** and **<mark>Power BI</mark>**.
+* **Data Factory** handles **<mark>orchestration and copy</mark>**, **Mapping Data Flows** for visual Spark transforms.
+* **Azure Databricks** provides **<mark>Spark</mark>** heavy transforms and Delta Lake medallion layers.
+* **Best practice path**: ADLS **raw → staging → curated**  then Synapse **star schema** with **hash distributed fact** and **replicated dims**. Use **serverless** for ad hoc on lake, **dedicated** for BI.
+* **Security and governance** with **<mark>Azure AD</mark>**, **<mark>Private Endpoints</mark>**, **<mark>Key Vault CMEK</mark>**, and **<mark>Purview</mark>** for catalog and lineage.
