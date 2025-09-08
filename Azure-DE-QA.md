@@ -9,21 +9,21 @@ flowchart LR
     classDef srv fill:#d9f7be,stroke:#389e0d,stroke-width:2px,color:#000,font-weight:bold
 
     subgraph Source["📥 Data Sources"]
-        DB[(SQL Server / MySQL)]:::src
-        CSV[(ADLS CSV Files)]:::src
+        DB[SQL Server or MySQL]:::src
+        CSV[ADLS CSV Files]:::src
     end
 
-    subgraph Lake["🪣 Data Lake (ADLS Gen2)"]
+    subgraph Lake["🪣 Data Lake ADLS Gen2"]
         RAW[Raw Zone]:::lake
         STG[Staging Zone]:::lake
     end
 
     subgraph ETL["⚙️ Processing"]
-        ADF[Azure Data Factory / Synapse Pipelines]:::etl
-        DBX[Azure Databricks (Batch ETL)]:::etl
+        ADF[Azure Data Factory and Synapse Pipelines]:::etl
+        DBX[Azure Databricks Batch ETL]:::etl
     end
 
-    subgraph Warehouse["🏛️ Synapse SQL (Dedicated Pool)"]
+    subgraph Warehouse["🏛️ Synapse SQL Dedicated Pool"]
         FACT[Fact_Orders]:::wh
         DIM[Dim_Customers]:::wh
         AGG[Sales_Aggregates]:::wh
