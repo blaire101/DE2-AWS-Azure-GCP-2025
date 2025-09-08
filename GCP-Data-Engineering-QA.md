@@ -431,7 +431,7 @@ flowchart TB
 [Data Pipeline](https://www.youtube.com/watch?v=yVUXvabnMRU)  
 
 <div align="center">
-  <img src="docs/GCP-ETL-data-pipeline.png" alt="Diagram" width="700">
+  <img src="docs/GCP-ETL-data-pipeline.png" alt="Diagram" width="800">
 </div>
 
 [Google Cloud - Dataflow](https://www.youtube.com/watch?v=KalJ0VuEM7s)  
