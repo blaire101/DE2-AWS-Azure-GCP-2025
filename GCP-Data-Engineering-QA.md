@@ -411,6 +411,12 @@ flowchart TB
   <img src="docs/GCP-Dataflow-1.png" alt="Diagram" width="700">
 </div>
 
+
+<div align="center">
+  <img src="docs/GCP-ETL-data-pipeline.png" alt="Diagram" width="700">
+</div>
+
+
 ```mermaid
 flowchart TB
     classDef main fill:#ffe8cc,stroke:#196f3d,stroke-width:2px,font-weight:bold,color:#000
