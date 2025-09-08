@@ -405,6 +405,8 @@ flowchart TB
 
 ## 4. Dataflow (ETL/Streaming Layer)
 
+[![Pronunciation Training](https://img.youtube.com/vi/KalJ0VuEM7s/0.jpg)](https://www.youtube.com/watch?v=KalJ0VuEM7s)  
+
 ```mermaid
 flowchart TB
     classDef main fill:#ffe8cc,stroke:#196f3d,stroke-width:2px,font-weight:bold,color:#000
