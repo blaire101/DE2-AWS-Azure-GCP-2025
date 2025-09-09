@@ -421,3 +421,4 @@ You create an important report for your large team in Google Data Studio (Looker
 - Solution: turn off caching or lower the cache refresh interval in **report settings**.  
 - ⚠️ Trade-off: disabling cache may **increase BigQuery costs** and make dashboards slower.  
 
+  
