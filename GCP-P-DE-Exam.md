@@ -15,7 +15,15 @@
 
 ## 2. BigQuery Basics
 
+<div align="center">
+  <img src="docs/GCP-BigQuery-2.png" alt="Diagram" width="500">
+</div>
+
 ### A) Query Patterns & SQL Features
+
+<div align="center">
+  <img src="docs/GCP-BigQuery-Table-Types.png" alt="Diagram" width="700">
+</div>
 
 * [Q5: Partitioning vs Clustering](#q5-partitioning-vs-clustering)
 * [Q8: Deduplication with ROW\_NUMBER window function](#q8-deduplication-with-row_number-window-function)
