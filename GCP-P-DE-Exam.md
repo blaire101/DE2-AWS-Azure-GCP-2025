@@ -120,6 +120,21 @@ Your company built a TensorFlow neural-network model with a large number of neur
 
 ### 2. BigQuery Basics
 
+#### Q4: Disable caching in Data Studio report (data missing for <1h)
+
+Question:  
+You create an important report for your large team in Google Data Studio (Looker Studio). The report uses **BigQuery** as its data source. You notice that visualizations are not showing data that is **less than 1 hour old**. What should you do?
+
+- **Answer:**  
+  Disable caching by editing the **report settings** in Data Studio.  
+
+**Explanation (English):**  
+- Data Studio caches query results for up to **1 hour** by default.  
+- This cache helps reduce **query cost** and improve **dashboard performance**.  
+- But it also means **fresh data** (e.g., streaming inserts, recent loads) won’t appear until cache expires.  
+- Solution: turn off caching or lower the cache refresh interval in **report settings**.  
+- ⚠️ Trade-off: disabling cache may **increase BigQuery costs** and make dashboards slower.  
+
 #### Q5: Partitioning vs Clustering
 
 **Question:**  
