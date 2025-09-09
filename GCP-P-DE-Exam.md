@@ -194,3 +194,29 @@ You suspect query slowness in BigQuery is due to job queuing or slot contention.
 - Query INFORMATION\_SCHEMA.JOBS for metrics like total\_slot_ms, creation\_time, end\_time.
 - Check Admin Resource Charts in the BigQuery console for slot usage and queuing trends.
 
+#### Q248: Filtering rows with views / materialized views in BigQuery
+
+Question:
+You have an inventory of VM data stored in a BigQuery table. You want to prepare the data for regular reporting in the most cost-effective way. You need to exclude VM rows with fewer than 8 vCPU in your report.
+
+Answer:
+Use a <mark>**view**</mark> with a filter to drop rows with fewer than 8 vCPUs.
+
+* <mark>**View**</mark>: Good for lightweight, frequently changing queries. No storage cost, just logic.
+* <mark>**Materialized view**</mark>: Better for pre-aggregated, stable queries where performance matters. Has extra storage cost but gives faster query results.
+* In this case, <mark>**a simple view**</mark> is the most cost-effective solution.
+
+---
+
+#### Q252: Designing Customer–Product–Subscription Model in BigQuery
+
+Question:
+You are designing a data warehouse in BigQuery to analyze sales data for a telecommunication service provider. You need to create a data model for customers, products, and subscriptions. All customers, products, and subscriptions can be updated monthly, but you must maintain a historical record of all data. You plan to use the visualization layer for current and historical reporting. You need to ensure that the data model is simple, easy-to-use, and cost-effective.
+
+Answer:
+Use a <mark>**denormalized**</mark>, <mark>**append-only**</mark> model with <mark>**nested and repeated fields**</mark>, and include an <mark>**ingestion timestamp**</mark> to track historical data.
+
+1. <mark>**Denormalized**</mark>: Put customers, products, and subscriptions together in one table to reduce joins.
+2. <mark>**Append-only**</mark>: Insert new rows instead of overwriting old ones, to maintain history.
+3. <mark>**Nested/repeated fields**</mark>: Capture multiple subscriptions per customer efficiently.
+4. <mark>**Ingestion timestamp**</mark>: Track both current and historical states for reporting.
