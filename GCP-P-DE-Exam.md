@@ -147,6 +147,29 @@ Your team wants to optimize query performance and cost in BigQuery. What is the 
 
 ---
 
+#### Q8: Deduplication with ROW_NUMBER window function
+
+Question:  
+You are building a new real-time data warehouse using **BigQuery streaming inserts**. Since there’s no guarantee that data will only be sent once, but you do have a **unique ID** for each row and an **event timestamp**, you want to ensure that **duplicates are not included** when querying. Which query type should you use?
+
+- **Answer:**  
+  Use the **ROW_NUMBER** window function with `PARTITION BY unique_id` and filter on `row_number = 1`.
+
+**Explanation (English):**  
+- BigQuery streaming inserts may produce **duplicate rows**.  
+- To deduplicate, you partition by the **unique ID** and order by timestamp.  
+- Then select only the **first row** (`row_number = 1`).  
+- Example:  
+
+```sql
+  SELECT *
+  FROM (
+    SELECT *, ROW_NUMBER() OVER(PARTITION BY unique_id ORDER BY event_ts DESC) AS rn
+    FROM mytable
+  )
+  WHERE rn = 1;
+```
+
 #### Q9: Wildcard Tables in BigQuery
 
 **Question:**  
@@ -161,6 +184,26 @@ You need to query across multiple tables in BigQuery whose names share a prefix 
   FROM `bigquery-public-data.noaa_gsod.gsod*`
   WHERE _TABLE_SUFFIX BETWEEN '2010' AND '2012';
 ```
+
+#### Q10: Restrict access in BigQuery (IAM roles, dataset isolation)
+
+Question:  
+Your company is in a highly regulated industry. One requirement is to ensure individual users have access only to the minimum amount of information required to do their jobs. How should you enforce this requirement in BigQuery? (Choose three)
+
+* **Answer:**  
+  <mark>Restrict access by role (IAM)</mark>,  
+  <mark>Restrict dataset access to approved users</mark>,  
+  <mark>Segregate data across multiple datasets/tables</mark>.
+
+**Explanation (English):**
+
+* BigQuery uses <mark>IAM roles</mark> to control access.  
+* Best practice is the <mark>least privilege principle</mark>:  
+  * Grant only the roles needed (e.g., <mark>`roles/bigquery.dataViewer`</mark>).  
+  * Assign access at <mark>dataset or table level</mark>, not project-wide.  
+  * Separate <mark>sensitive data</mark> into different datasets/tables to limit visibility.  
+* Extra: <mark>Encryption</mark> and <mark>audit logs</mark> help compliance, but do not enforce row/column-level restrictions.
+
 
 #### Q15: Consistency in BigQuery Streaming Inserts
 
