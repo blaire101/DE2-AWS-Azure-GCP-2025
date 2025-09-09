@@ -111,3 +111,96 @@ Your company built a TensorFlow neural-network model with a large number of neur
   - **L1/L2 regularization** penalizes overly complex weights.  
   - **Early stopping** halts training once validation loss stops improving.  
 
+### 2. BigQuery Basics
+
+#### Q5: Partitioning vs Clustering
+
+**Question:**  
+Your team wants to optimize query performance and cost in BigQuery. What is the difference between partitioning and clustering, and how can they be combined?
+
+- **Answer:**  
+  - **Partitioning** reduces the amount of data scanned by filtering on partition keys (e.g., date).  
+  - **Clustering** organizes data inside partitions based on specified columns, improving filtering and sorting.  
+  - **Best Practice:** Combine both. Example: Partition by `order_date` and cluster by `user_id`. This minimizes scanned data and speeds up queries.
+
+---
+
+#### Q9: Wildcard Tables in BigQuery
+
+**Question:**  
+You need to query across multiple tables in BigQuery whose names share a prefix (e.g., `gsod*`). Which query syntax should you use?
+
+- **Answer:**  
+  Use **backticks with a wildcard** in the table name.  
+  Example:  
+  
+  ```sql
+  SELECT * 
+  FROM `bigquery-public-data.noaa_gsod.gsod*`
+  WHERE _TABLE_SUFFIX BETWEEN '2010' AND '2012';
+```
+
+This lets you query multiple tables with one statement.
+
+---
+
+#### Q15: Consistency in BigQuery Streaming Inserts
+
+**Question:**
+Your application streams data into BigQuery, and analysts complain that some records appear missing when querying right after insertion. How should you handle this?
+
+* **Answer:**
+  <mark>**Wait twice the average streaming latency before querying.**</mark>
+
+  * Streaming inserts are **eventually consistent**.
+  * Queries executed immediately after insertion may not see all rows.
+  * Waiting allows BigQuery to fully commit the records.
+
+---
+
+#### Q213: Dashboard Performance with Filters
+
+**Question:**
+Your company's `customer_order` table in BigQuery stores 10 PB of order history for 10 million customers. A dashboard allows support staff to filter by `country_name` and `username`. Queries are slow when applying filters. How should you redesign the table?
+
+* **Answer:**
+  <mark>**Cluster the table by `country_name` and `username`.**</mark>
+
+  * Clustering organizes rows by frequently filtered fields, reducing scanned data.
+  * Partitioning is not ideal here because `country_name` and `username` have high cardinality.
+  * Clustering improves query performance while keeping costs lower.
+
+---
+
+#### Q239: Concurrency Issues with BigQuery Slots
+
+
+**Question:**
+Your analyst team runs ad hoc queries and scheduled pipelines in BigQuery. With the recent addition of hundreds of non-time-sensitive SQL pipelines, users encounter frequent quota errors. About 1500 queries run concurrently during peak times. How should you resolve the concurrency issue?
+
+* **Answer:**
+  **Update SQL pipelines to run as <mark>batch queries</mark>, and run <mark>ad-hoc</mark> queries as <mark>interactive jobs</mark>.**
+
+  * Batch queries queue for execution and reduce contention.
+  * Interactive queries remain available for urgent user needs.
+  * This balances concurrency without increasing slot reservations.
+
+---
+
+#### Q233: Troubleshooting BigQuery Slot Contention
+
+**Question:**
+You suspect query slowness in BigQuery is due to job queuing or slot contention. How can you identify where the performance issue occurs?
+
+* **Answer:**
+  **Query the <mark>INFORMATION\_SCHEMA</mark> and use <mark>admin resource charts</mark>.**
+
+  * Run queries against `INFORMATION_SCHEMA.JOBS` to review job performance and slot usage.
+  * Combine with BigQuery admin charts to visualize slot allocation and job queuing.
+  * This helps diagnose contention and optimize workload management.
+
+**Knowledge :** When queries slow down, it may be due to slot contention. To diagnose:
+
+- Query INFORMATION\_SCHEMA.JOBS for metrics like total\_slot_ms, creation\_time, end\_time.
+- Check Admin Resource Charts in the BigQuery console for slot usage and queuing trends.
+
