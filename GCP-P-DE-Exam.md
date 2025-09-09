@@ -220,3 +220,71 @@ Use a <mark>**denormalized**</mark>, <mark>**append-only**</mark> model with <ma
 2. <mark>**Append-only**</mark>: Insert new rows instead of overwriting old ones, to maintain history.
 3. <mark>**Nested/repeated fields**</mark>: Capture multiple subscriptions per customer efficiently.
 4. <mark>**Ingestion timestamp**</mark>: Track both current and historical states for reporting.
+
+
+**Example Schema**
+
+```sql
+-- One denormalized table: customer_product_subscription
+CREATE OR REPLACE TABLE telco.sales_data AS
+SELECT
+  customer_id,
+  customer_name,
+  ARRAY<STRUCT<
+    product_id STRING,
+    product_name STRING,
+    subscriptions ARRAY<STRUCT<
+      subscription_id STRING,
+      start_date DATE,
+      end_date DATE,
+      status STRING
+    >>
+  >> AS products,
+  ingestion_ts TIMESTAMP
+FROM UNNEST([
+  STRUCT(
+    "C001" AS customer_id,
+    "Alice" AS customer_name,
+    [
+      STRUCT("P100", "Mobile Plan", [
+        STRUCT("S1001", DATE "2024-01-01", DATE "2024-12-31", "Active"),
+        STRUCT("S1002", DATE "2025-01-01", NULL, "Active")
+      ]),
+      STRUCT("P200", "Internet", [
+        STRUCT("S2001", DATE "2023-06-01", DATE "2024-05-31", "Expired")
+      ])
+    ] AS products,
+    CURRENT_TIMESTAMP() AS ingestion_ts
+  )
+]);
+```
+
+
+**Example Queries**
+
+**1. Count current active subscriptions**
+
+```sql
+SELECT
+  customer_id,
+  customer_name,
+  COUNTIF(sub.status = "Active") AS active_subscriptions
+FROM telco.sales_data, UNNEST(products) p, UNNEST(p.subscriptions) sub
+WHERE sub.end_date IS NULL OR sub.end_date > CURRENT_DATE()
+GROUP BY customer_id, customer_name;
+```
+
+**2. Retrieve historical records by ingestion timestamp**
+
+```sql
+SELECT
+  customer_id,
+  p.product_name,
+  sub.subscription_id,
+  sub.start_date,
+  sub.end_date,
+  ingestion_ts
+FROM telco.sales_data, UNNEST(products) p, UNNEST(p.subscriptions) sub
+WHERE customer_id = "C001"
+ORDER BY ingestion_ts DESC;
+```
