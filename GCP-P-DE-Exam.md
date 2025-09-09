@@ -144,20 +144,7 @@ Your company built a TensorFlow neural-network model with a large number of neur
 
 ## 2. BigQuery Basics
 
-#### Q4: Disable caching in Data Studio report (data missing for <1h)
-
-Question:  
-You create an important report for your large team in Google Data Studio (Looker Studio). The report uses **BigQuery** as its data source. You notice that visualizations are not showing data that is **less than 1 hour old**. What should you do?
-
-- **Answer:**  
-  Disable caching by editing the **report settings** in Data Studio.  
-
-**Explanation (English):**  
-- Data Studio caches query results for up to **1 hour** by default.  
-- This cache helps reduce **query cost** and improve **dashboard performance**.  
-- But it also means **fresh data** (e.g., streaming inserts, recent loads) won’t appear until cache expires.  
-- Solution: turn off caching or lower the cache refresh interval in **report settings**.  
-- ⚠️ Trade-off: disabling cache may **increase BigQuery costs** and make dashboards slower.  
+### A) Query Patterns & SQL Features
 
 #### Q5: Partitioning vs Clustering
 
@@ -208,6 +195,50 @@ You need to query across multiple tables in BigQuery whose names share a prefix 
   FROM `bigquery-public-data.noaa_gsod.gsod*`
   WHERE _TABLE_SUFFIX BETWEEN '2010' AND '2012';
 ```
+
+#### Q53: Slow GROUP BY due to data skew
+
+**Question:**  
+Your users report that a simple query with `GROUP BY country` in BigQuery is running very slowly. The table is large, and the query plan shows imbalance in stage execution. What is the most likely cause of the delay?
+
+- **Answer:**  
+  The slowdown is caused by **data skew** — most rows in the table have the **same value** in the `country` column, leading to uneven slot usage and slow aggregation.
+
+**Explanation (English):**  
+- In distributed systems like BigQuery, `GROUP BY` requires data to be **shuffled by key**.  
+- If one key (e.g., `"US"`) dominates, a **single reducer node** gets overloaded.  
+- **Best Practice:**  
+  - Pre-aggregate or bucket the data.  
+  - Use **approximate aggregate functions** (like `APPROX_TOP_COUNT`) when exact results are not critical.  
+  - Consider clustering/partitioning strategies to distribute load more evenly.  
+
+#### Q56: Legacy SQL over sharded tables — use `TABLE_DATE_RANGE`
+
+**Question:**  
+Your Firebase Analytics integration automatically creates daily tables in BigQuery (e.g., `app_events_20240815`, `app_events_20240816`). You need to query across the past 30 days using **Legacy SQL**. What function should you use?
+
+- **Answer:**  
+  Use the **`TABLE_DATE_RANGE`** function in Legacy SQL.  
+  Example:  
+
+```sql
+  SELECT event_name, COUNT(*)
+  FROM TABLE_DATE_RANGE([mydataset.app_events_],
+                        TIMESTAMP("2024-08-01"),
+                        TIMESTAMP("2024-08-30"))
+  GROUP BY event_name;
+````
+
+**Explanation (English):**
+
+* Legacy SQL requires `TABLE_DATE_RANGE` to scan **date-suffixed sharded tables**.
+* Modern **Standard SQL** supports wildcards with `_TABLE_SUFFIX`, which is recommended.
+* **Best Practice:**
+
+  * For new pipelines, avoid table sharding — use a **single partitioned table**.
+  * Partitioned tables are easier to query and scale better.
+
+
 
 #### Q10: Restrict access in BigQuery (IAM roles, dataset isolation)
 
@@ -375,3 +406,21 @@ FROM telco.sales_data, UNNEST(products) p, UNNEST(p.subscriptions) sub
 WHERE customer_id = "C001"
 ORDER BY ingestion_ts DESC;
 ```
+
+### F) Integration & BI (Looker Studio / Tools)
+
+#### Q4: Disable caching in Data Studio report (data missing for <1h)
+
+Question:  
+You create an important report for your large team in Google Data Studio (Looker Studio). The report uses **BigQuery** as its data source. You notice that visualizations are not showing data that is **less than 1 hour old**. What should you do?
+
+- **Answer:**  
+  Disable caching by editing the **report settings** in Data Studio.  
+
+**Explanation (English):**  
+- Data Studio caches query results for up to **1 hour** by default.  
+- This cache helps reduce **query cost** and improve **dashboard performance**.  
+- But it also means **fresh data** (e.g., streaming inserts, recent loads) won’t appear until cache expires.  
+- Solution: turn off caching or lower the cache refresh interval in **report settings**.  
+- ⚠️ Trade-off: disabling cache may **increase BigQuery costs** and make dashboards slower.  
+
