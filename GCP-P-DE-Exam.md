@@ -1,8 +1,6 @@
 # Google Cloud Professional Data Engineer — Q&A (Q1–Q319)
 
-## 📑 Table of Contents
-
-### 1. Machine Learning & TensorFlow
+## 1. Machine Learning & TensorFlow
 - [Q1: TensorFlow Overfitting Prevention](#q1-tensorflow-overfitting-prevention)
 - [Q2: Retraining Recommendation Model](#q2-retraining-recommendation-model)
 - [Q7: Predict Housing Prices](#q7-predict-housing-prices)
@@ -15,32 +13,53 @@
 
 ---
 
-### 2. BigQuery Basics
+## 2. BigQuery Basics
 
-- [Q4: Disable caching in Data Studio report (data missing for <1h)](#q4-disable-caching-in-data-studio-report-data-missing-for-1h)  
-- [Q5: Partitioning vs Clustering](#q5-partitioning-vs-clustering)  
-- [Q8: Deduplication with ROW_NUMBER window function](#q8-deduplication-with-row_number-window-function)  
-- [Q9: Wildcard Tables](#q9-wildcard-tables)  
-- [Q10: Restrict access in BigQuery (IAM roles, dataset isolation)](#q10-restrict-access-in-bigquery-iam-roles-dataset-isolation)  
-- [Q15: Streaming inserts are eventually consistent (wait before query)](#q15-streaming-inserts-are-eventually-consistent-wait-before-query)  
-- [Q24: Convert STRING to TIMESTAMP with new table](#q24-convert-string-to-timestamp-with-new-table)  
-- [Q25: Stackdriver Logging + advanced filter for BQ insert jobs](#q25-stackdriver-logging--advanced-filter-for-bq-insert-jobs)
+### A) Query Patterns & SQL Features
+
+* [Q5: Partitioning vs Clustering](#q5-partitioning-vs-clustering)
+* [Q8: Deduplication with ROW\_NUMBER window function](#q8-deduplication-with-row_number-window-function)
+* [Q9: Wildcard Tables](#q9-wildcard-tables)
+* [Q53: Slow GROUP BY due to data skew](#q53-slow-group-by-due-to-data-skew)
+* [Q56: Legacy SQL over sharded tables — use `TABLE_DATE_RANGE`](#q56-legacy-sql-over-sharded-tables--use-table_date_range)
+
+### B) Ingestion, Freshness & Consistency
+
+* [Q15: Streaming inserts are eventually consistent (wait before query)](#q15-streaming-inserts-are-eventually-consistent-wait-before-query)
+* [Q24: Convert STRING to TIMESTAMP with new table](#q24-convert-string-to-timestamp-with-new-table)
+* [Q48: CSV import mismatch — fix file encoding (BigQuery defaults to UTF-8)](#q48-csv-import-mismatch--fix-file-encoding-bigquery-defaults-to-utf-8)
+
+### C) Governance & Access Control
+
+* [Q10: Restrict access in BigQuery (IAM roles, dataset isolation)](#q10-restrict-access-in-bigquery-iam-roles-dataset-isolation)
+* [Q40: Enforce regional access — dataset-per-region + IAM on datasets](#q40-enforce-regional-access--dataset-per-region--iam-on-datasets)
+
+### D) Admin, Performance & Workload Mgmt
+
+* [Q233: Troubleshooting BigQuery slot contention](#q233-troubleshooting-bigquery-slot-contention)
+* [Q239: Concurrency issues with slots](#q239-concurrency-issues-with-slots)
+
+### E) Data Modeling & Table Design
+
+* [Q60: Replace sharded tables with one partitioned table](#q60-replace-sharded-tables-with-one-partitioned-table)
+* [Q252: Designing customer–product–subscription model](#q252-designing-customerproductsubscription-model)
+
+### F) Integration & BI (Looker Studio / Tools)
+
+* [Q4: Disable caching in Data Studio report (data missing for <1h)](#q4-disable-caching-in-data-studio-report-data-missing-for-1h)
+* [Q25: Stackdriver Logging + advanced filter for BQ insert jobs](#q25-stackdriver-logging--advanced-filter-for-bq-insert-jobs)
 * [Q36: Use a view to simplify columns for BI and cut query cost](#q36-use-a-view-to-simplify-columns-for-bi-and-cut-query-cost)
 * [Q39: Data Studio on BigQuery — build filtered, fast reports](#q39-data-studio-on-bigquery--build-filtered-fast-reports)
-* [Q40: Enforce regional access — dataset-per-region + IAM on datasets](#q40-enforce-regional-access--dataset-per-region--iam-on-datasets)
 * [Q43: Expose `FullName` via a BigQuery view (avoid reshaping data)](#q43-expose-fullname-via-a-bigquery-view-avoid-reshaping-data)
 * [Q46: Keep frequently updated reference data via BigQuery external table (GCS)](#q46-keep-frequently-updated-reference-data-via-bigquery-external-table-gcs)
-* [Q48: CSV import mismatch — fix file encoding (BigQuery defaults to UTF-8)](#q48-csv-import-mismatch--fix-file-encoding-bigquery-defaults-to-utf-8)
-* [Q53: Slow GROUP BY due to data skew](#q53-slow-group-by-due-to-data-skew)
 * [Q55: ODBC access — use Standard SQL view + service account](#q55-odbc-access--use-standard-sql-view--service-account)
-* [Q56: Legacy SQL over sharded tables — use `TABLE_DATE_RANGE`](#q56-legacy-sql-over-sharded-tables--use-table_date_range)
-* [Q60: Replace sharded tables with one partitioned table](#q60-replace-sharded-tables-with-one-partitioned-table)
-- [Q233: Troubleshooting BigQuery slot contention](#q233-troubleshooting-bigquery-slot-contention)  
-- [Q239: Concurrency issues with slots](#q239-concurrency-issues-with-slots)  
-- [Q248: Filtering rows with views vs materialized views](#q248-filtering-rows-with-views-vs-materialized-views)  
-- [Q252: Designing customer–product–subscription model](#q252-designing-customerproductsubscription-model)  
 
-### 3. Cost & Security
+### G) Views & Materialized Views
+
+* [Q248: Filtering rows with views vs materialized views](#q248-filtering-rows-with-views-vs-materialized-views)
+
+
+## 3. Cost & Security
 - [Q11: Pricing Models](#q11-pricing-models)
 - [Q12: Cost-Saving Techniques](#q12-cost-saving-techniques)
 - [Q13: Security in BigQuery](#q13-security-in-bigquery)
@@ -50,7 +69,7 @@
 
 ---
 
-### 4. Data Modeling & ETL
+## 4. Data Modeling & ETL
 - [Q14: SCD Types](#q14-scd-types)
 - [Q16: CDC Pipelines](#q16-cdc-pipelines)
 - [Q17: Batch Loading](#q17-batch-loading)
@@ -59,7 +78,7 @@
 
 ---
 
-### 5. Dataflow & Pipelines
+## 5. Dataflow & Pipelines
 - [Q5: Handling Corrupted CSV Data](#q5-handling-corrupted-csv-data)
 - [Q11: Basket Abandonment with Session Window](#q11-basket-abandonment-with-session-window)
 - [Q212: Dataflow Firewall Troubleshooting](#q212-dataflow-firewall-troubleshooting)
@@ -68,7 +87,7 @@
 
 ---
 
-### 6. Dataplex / Data Mesh / Governance
+## 6. Dataplex / Data Mesh / Governance
 - [Q210: Dataplex Design for Data Products](#q210-dataplex-design-for-data-products)
 - [Q217: Secure BigQuery Sharing with Policy Tags](#q217-secure-bigquery-sharing-with-policy-tags)
 - [Q240: Dataplex Permissions](#q240-dataplex-permissions)
@@ -77,14 +96,14 @@
 
 ---
 
-### 7. Pub/Sub & Messaging
+## 7. Pub/Sub & Messaging
 - [Q20: Duplicate Messages](#q20-duplicate-messages)
 - [Q224: Dataflow Lag in Pub/Sub](#q224-dataflow-lag-in-pubsub)
 - [Q228: Reprocessing Pub/Sub Messages](#q228-reprocessing-pubsub-messages)
 
 ---
 
-### 8. Cloud SQL / Spanner / Databases
+## 8. Cloud SQL / Spanner / Databases
 - [Q3: Scaling Patient Records](#q3-scaling-patient-records)
 - [Q197: ACID-Compliant Database](#q197-acid-compliant-database)
 - [Q218: Cloud SQL Disaster Recovery](#q218-cloud-sql-disaster-recovery)
@@ -92,7 +111,7 @@
 
 ---
 
-### 9. Cloud Storage & Data Lake
+## 9. Cloud Storage & Data Lake
 - [Q19: Storage Costs with Dataproc](#q19-storage-costs-with-dataproc)
 - [Q241: Cloud Storage RPO Design](#q241-cloud-storage-rpo-design)
 - [Q249: Cost Optimization for Raw Data](#q249-cost-optimization-for-raw-data)
@@ -101,20 +120,15 @@
 
 ---
 
-### 10. Governance & IAM
+## 10. Governance & IAM
 - [Q10: Restricting Access in BigQuery](#q10-restricting-access-in-bigquery)
 - [Q232: Resource Location Policy](#q232-resource-location-policy)
 - [Q226: Pub/Sub Isolation with VPC-SC](#q226-pubsub-isolation-with-vpc-sc)
 
 ---
 
-（👉 其余分类略，全部会覆盖到 Q1–Q319）
 
----
-
-## 📝 Detailed Questions & Answers
-
-### 1. Machine Learning & TensorFlow
+## 1. Machine Learning & TensorFlow
 
 #### Q1: TensorFlow Overfitting Prevention
 
@@ -128,7 +142,7 @@ Your company built a TensorFlow neural-network model with a large number of neur
   - **L1/L2 regularization** penalizes overly complex weights.  
   - **Early stopping** halts training once validation loss stops improving.  
 
-### 2. BigQuery Basics
+## 2. BigQuery Basics
 
 #### Q4: Disable caching in Data Studio report (data missing for <1h)
 
@@ -241,7 +255,6 @@ Your company's `customer_order` table in BigQuery stores 10 PB of order history 
 
 #### Q239: Concurrency Issues with BigQuery Slots
 
-
 **Question:**
 Your analyst team runs ad hoc queries and scheduled pipelines in BigQuery. With the recent addition of hundreds of non-time-sensitive SQL pipelines, users encounter frequent quota errors. About 1500 queries run concurrently during peak times. How should you resolve the concurrency issue?
 
@@ -295,7 +308,6 @@ Use a <mark>**denormalized**</mark>, <mark>**append-only**</mark> model with <ma
 2. <mark>**Append-only**</mark>: Insert new rows instead of overwriting old ones, to maintain history.
 3. <mark>**Nested/repeated fields**</mark>: Capture multiple subscriptions per customer efficiently.
 4. <mark>**Ingestion timestamp**</mark>: Track both current and historical states for reporting.
-
 
 **Example Schema**
 
