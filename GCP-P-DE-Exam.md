@@ -148,277 +148,390 @@ Your company built a TensorFlow neural-network model with a large number of neur
 
 #### Q5: Partitioning vs Clustering
 
-**Question:**  
+**Question:**
 Your team wants to optimize query performance and cost in BigQuery. What is the difference between partitioning and clustering, and how can they be combined?
 
-- **Answer:**  
-  - **Partitioning** reduces the amount of data scanned by filtering on partition keys (e.g., date).  
-  - **Clustering** organizes data inside partitions based on specified columns, improving filtering and sorting.  
-  - **Best Practice:** Combine both. Example: Partition by `order_date` and cluster by `user_id`. This minimizes scanned data and speeds up queries.
+* **Answer:**
 
-#### Q8: Deduplication with ROW_NUMBER window function
+  * <mark>Partitioning</mark> reduces the amount of data scanned by filtering on partition keys (e.g., date).
+  * <mark>Clustering</mark> organizes data inside partitions based on specified columns, improving filtering and sorting.
+  * <mark>Best Practice:</mark> Combine both. Example: Partition by `order_date` and cluster by `user_id`. This minimizes scanned data and speeds up queries.
 
-Question:  
-You are building a new real-time data warehouse using **BigQuery streaming inserts**. Since there’s no guarantee that data will only be sent once, but you do have a **unique ID** for each row and an **event timestamp**, you want to ensure that **duplicates are not included** when querying. Which query type should you use?
+---
 
-- **Answer:**  
-  Use the **ROW_NUMBER** window function with `PARTITION BY unique_id` and filter on `row_number = 1`.
+#### Q8: Deduplication with ROW\_NUMBER window function
 
-**Explanation (English):**  
-- BigQuery streaming inserts may produce **duplicate rows**.  
-- To deduplicate, you partition by the **unique ID** and order by timestamp.  
-- Then select only the **first row** (`row_number = 1`).  
-- Example:  
+**Question:**
+You are building a new real-time data warehouse using <mark>BigQuery streaming inserts</mark>. Since there’s no guarantee that data will only be sent once, but you do have a <mark>unique ID</mark> for each row and an <mark>event timestamp</mark>, you want to ensure that <mark>duplicates</mark> are not included when querying. Which query type should you use?
+
+* **Answer:**
+  Use the <mark>ROW\_NUMBER</mark> window function with `PARTITION BY unique_id` and filter on `row_number = 1`.
+
+**Explanation:**
+
+* Streaming inserts may produce <mark>duplicate rows</mark>.
+* To deduplicate:
+
+  * Partition by <mark>unique ID</mark>.
+  * Order by <mark>event timestamp</mark>.
+  * Select only the <mark>first row</mark>.
 
 ```sql
-  SELECT *
-  FROM (
-    SELECT *, ROW_NUMBER() OVER(PARTITION BY unique_id ORDER BY event_ts DESC) AS rn
-    FROM mytable
-  )
-  WHERE rn = 1;
+SELECT *
+FROM (
+  SELECT *, ROW_NUMBER() OVER(PARTITION BY unique_id ORDER BY event_ts DESC) AS rn
+  FROM mytable
+)
+WHERE rn = 1;
 ```
+
+---
 
 #### Q9: Wildcard Tables in BigQuery
 
-**Question:**  
+**Question:**
 You need to query across multiple tables in BigQuery whose names share a prefix (e.g., `gsod*`). Which query syntax should you use?
 
-- **Answer:**  
-  Use **backticks with a wildcard** in the table name.  
-  Example:  
-  
+* **Answer:**
+  Use <mark>wildcards</mark> in the table name with <mark>backticks</mark>.
+
 ```sql
-  SELECT * 
-  FROM `bigquery-public-data.noaa_gsod.gsod*`
-  WHERE _TABLE_SUFFIX BETWEEN '2010' AND '2012';
+SELECT * 
+FROM `bigquery-public-data.noaa_gsod.gsod*`
+WHERE _TABLE_SUFFIX BETWEEN '2010' AND '2012';
 ```
+
+**Explanation:**
+
+* <mark>`_TABLE_SUFFIX`</mark> pseudo-column lets you filter specific tables.
+* <mark>Best Practice:</mark> Prefer <mark>partitioned tables</mark> instead of sharded ones when designing new pipelines.
+
+---
 
 #### Q53: Slow GROUP BY due to data skew
 
-Question:  
-Your users report that a simple query with `GROUP BY country` in BigQuery is running very slowly. The table is large, and the query plan shows imbalance in stage execution. What is the most likely cause of the delay?
+**Question:**
+Your users report that a simple query with `GROUP BY country` in BigQuery is running very slowly. The table is large, and the query plan shows imbalance in stage execution. What is the most likely cause?
 
-**Answer:**  
-  The **slowdown** is caused by **<mark>data skew</mark>** — most rows in the table have the **<mark>same value</mark>** in the `country` column, leading to **<mark>uneven slot usage</mark>** and slow aggregation.
+* **Answer:**
+  The slowdown is caused by <mark>data skew</mark> — most rows in the table have the <mark>same value</mark> in the `country` column, leading to <mark>uneven slot usage</mark>.
 
-**Explanation:**  
-- In distributed systems like BigQuery, `GROUP BY` requires data to be **<mark>shuffled by key</mark>**.  
-- If one key (e.g., `"US"`) dominates, a **<mark>single reducer node</mark>** gets overloaded.  
-- <mark>Best Practice:</mark>  
-  - Pre-aggregate or bucket the data.  
-  - Use **<mark>approximate aggregate functions</mark>** (like `APPROX_TOP_COUNT`) when exact results are not critical.  
-  - Consider **<mark>clustering/partitioning</mark>** strategies to distribute load more evenly.  
+**Explanation:**
+
+* BigQuery distributes data by <mark>shuffling keys</mark>.
+* If one key dominates (e.g., `"US"`), a <mark>single reducer</mark> gets overloaded.
+* <mark>Best Practice:</mark>
+
+  * Pre-aggregate or bucket data.
+  * Use <mark>approximate functions</mark> like `APPROX_TOP_COUNT`.
+  * Apply <mark>clustering/partitioning</mark> to balance load.
+
+---
 
 #### Q56: Legacy SQL over sharded tables — use `TABLE_DATE_RANGE`
 
-Question:  
-Your Firebase Analytics integration automatically creates daily tables in BigQuery (e.g., `app_events_20240815`, `app_events_20240816`). You need to query across the past 30 days using Legacy SQL. What function should you use?
+**Question:**
+Your Firebase Analytics integration automatically creates daily tables (e.g., `app_events_20240815`). You need to query across the past 30 days in Legacy SQL. What function should you use?
 
-- Answer:  
-  Use the <mark>`TABLE_DATE_RANGE`</mark> function in <mark>Legacy SQL</mark>.  
-  Example:  
+* **Answer:**
+  Use the <mark>`TABLE_DATE_RANGE`</mark> function in <mark>Legacy SQL</mark>.
 
 ```sql
-  SELECT event_name, COUNT(*)
-  FROM TABLE_DATE_RANGE([mydataset.app_events_],
-                        TIMESTAMP("2024-08-01"),
-                        TIMESTAMP("2024-08-30"))
-  GROUP BY event_name;
+SELECT event_name, COUNT(*)
+FROM TABLE_DATE_RANGE([mydataset.app_events_],
+                      TIMESTAMP("2024-08-01"),
+                      TIMESTAMP("2024-08-30"))
+GROUP BY event_name;
 ```
 
-**Explanation (English):**
+**Explanation:**
 
-* Legacy SQL requires <mark>`TABLE_DATE_RANGE`</mark> to scan <mark>date-suffixed sharded tables</mark>.
-* Modern <mark>Standard SQL</mark> supports wildcards with <mark>`_TABLE_SUFFIX`</mark>, which is recommended.
-* <mark>Best Practice:</mark>
+* Legacy SQL requires <mark>`TABLE_DATE_RANGE`</mark>.
+* Standard SQL supports <mark>wildcards</mark> with <mark>`_TABLE_SUFFIX`</mark>.
+* <mark>Best Practice:</mark> Use <mark>partitioned tables</mark> instead of sharding.
 
-  * For new pipelines, avoid table sharding — use a <mark>single partitioned table</mark>.
-  * Partitioned tables are easier to query and scale better.
+---
 
-
-#### Q10: Restrict access in BigQuery (IAM roles, dataset isolation)
-
-Question:  
-Your company is in a highly regulated industry. One requirement is to ensure individual users have access only to the minimum amount of information required to do their jobs. How should you enforce this requirement in BigQuery? (Choose three)
-
-* **Answer:**  
-  <mark>Restrict access by role (IAM)</mark>,  
-  <mark>Restrict dataset access to approved users</mark>,  
-  <mark>Segregate data across multiple datasets/tables</mark>.
-
-**Explanation (English):**
-
-* BigQuery uses <mark>IAM roles</mark> to control access.  
-* Best practice is the <mark>least privilege principle</mark>:  
-  * Grant only the roles needed (e.g., <mark>`roles/bigquery.dataViewer`</mark>).  
-  * Assign access at <mark>dataset or table level</mark>, not project-wide.  
-  * Separate <mark>sensitive data</mark> into different datasets/tables to limit visibility.  
-* Extra: <mark>Encryption</mark> and <mark>audit logs</mark> help compliance, but do not enforce row/column-level restrictions.
-
+### B) Ingestion, Freshness & Consistency
 
 #### Q15: Consistency in BigQuery Streaming Inserts
 
 **Question:**
 Your application streams data into BigQuery, and analysts complain that some records appear missing when querying right after insertion. How should you handle this?
 
-* **Answer:**
-  <mark>**Wait twice the average streaming latency before querying.**</mark>
+* **Answer:** <mark>Wait twice the average streaming latency before querying</mark>.
 
-  * Streaming inserts are **eventually consistent**.
-  * Queries executed immediately after insertion may not see all rows.
-  * Waiting allows BigQuery to fully commit the records.
+**Explanation:**
 
-#### Q213: Dashboard Performance with Filters
-
-**Question:**
-Your company's `customer_order` table in BigQuery stores 10 PB of order history for 10 million customers. A dashboard allows support staff to filter by `country_name` and `username`. Queries are slow when applying filters. How should you redesign the table?
-
-* **Answer:**
-  <mark>**Cluster the table by `country_name` and `username`.**</mark>
-
-  * Clustering organizes rows by frequently filtered fields, reducing scanned data.
-  * Partitioning is not ideal here because `country_name` and `username` have high cardinality.
-  * Clustering improves query performance while keeping costs lower.
-
-#### Q239: Concurrency Issues with BigQuery Slots
-
-**Question:**
-Your analyst team runs ad hoc queries and scheduled pipelines in BigQuery. With the recent addition of hundreds of non-time-sensitive SQL pipelines, users encounter frequent quota errors. About 1500 queries run concurrently during peak times. How should you resolve the concurrency issue?
-
-* **Answer:**
-  **Update SQL pipelines to run as <mark>batch queries</mark>, and run <mark>ad-hoc</mark> queries as <mark>interactive jobs</mark>.**
-
-  * Batch queries queue for execution and reduce contention.
-  * Interactive queries remain available for urgent user needs.
-  * This balances concurrency without increasing slot reservations.
-
-#### Q233: Troubleshooting BigQuery Slot Contention
-
-**Question:**
-You suspect query slowness in BigQuery is due to job queuing or slot contention. How can you identify where the performance issue occurs?
-
-* **Answer:**
-  **Query the <mark>INFORMATION\_SCHEMA</mark> and use <mark>admin resource charts</mark>.**
-
-  * Run queries against `INFORMATION_SCHEMA.JOBS` to review job performance and slot usage.
-  * Combine with BigQuery admin charts to visualize slot allocation and job queuing.
-  * This helps diagnose contention and optimize workload management.
-
-**Knowledge :** When queries slow down, it may be due to slot contention. To diagnose:
-
-- Query INFORMATION\_SCHEMA.JOBS for metrics like total\_slot_ms, creation\_time, end\_time.
-- Check Admin Resource Charts in the BigQuery console for slot usage and queuing trends.
-
-#### Q248: Filtering rows with views / materialized views in BigQuery
-
-Question:
-You have an inventory of VM data stored in a BigQuery table. You want to prepare the data for regular reporting in the most cost-effective way. You need to exclude VM rows with fewer than 8 vCPU in your report.
-
-Answer:
-Use a <mark>**view**</mark> with a filter to drop rows with fewer than 8 vCPUs.
-
-* <mark>**View**</mark>: Good for lightweight, frequently changing queries. No storage cost, just logic.
-* <mark>**Materialized view**</mark>: Better for pre-aggregated, stable queries where performance matters. Has extra storage cost but gives faster query results.
-* In this case, <mark>**a simple view**</mark> is the most cost-effective solution.
+* Streaming inserts are <mark>eventually consistent</mark>.
+* Queries executed too early may not return all rows.
+* Wait a short buffer time for data to fully commit.
 
 ---
 
-#### Q252: Designing Customer–Product–Subscription Model in BigQuery
+#### Q24: Convert STRING to TIMESTAMP with new table
 
-Question:
-You are designing a data warehouse in BigQuery to analyze sales data for a telecommunication service provider. You need to create a data model for customers, products, and subscriptions. All customers, products, and subscriptions can be updated monthly, but you must maintain a historical record of all data. You plan to use the visualization layer for current and historical reporting. You need to ensure that the data model is simple, easy-to-use, and cost-effective.
+**Question:**
+You have a table where `event_time` is stored as a <mark>STRING</mark>. Analysts need it as a <mark>TIMESTAMP</mark>. How should you provide it without affecting the raw table?
 
-Answer:
-Use a <mark>**denormalized**</mark>, <mark>**append-only**</mark> model with <mark>**nested and repeated fields**</mark>, and include an <mark>**ingestion timestamp**</mark> to track historical data.
-
-1. <mark>**Denormalized**</mark>: Put customers, products, and subscriptions together in one table to reduce joins.
-2. <mark>**Append-only**</mark>: Insert new rows instead of overwriting old ones, to maintain history.
-3. <mark>**Nested/repeated fields**</mark>: Capture multiple subscriptions per customer efficiently.
-4. <mark>**Ingestion timestamp**</mark>: Track both current and historical states for reporting.
-
-**Example Schema**
+* **Answer:**
+  Create a <mark>new table</mark> with `CAST(event_time AS TIMESTAMP)`.
 
 ```sql
--- One denormalized table: customer_product_subscription
-CREATE OR REPLACE TABLE telco.sales_data AS
+CREATE OR REPLACE TABLE mydataset.cleaned_events AS
 SELECT
-  customer_id,
-  customer_name,
-  ARRAY<STRUCT<
-    product_id STRING,
-    product_name STRING,
-    subscriptions ARRAY<STRUCT<
-      subscription_id STRING,
-      start_date DATE,
-      end_date DATE,
-      status STRING
-    >>
-  >> AS products,
-  ingestion_ts TIMESTAMP
-FROM UNNEST([
-  STRUCT(
-    "C001" AS customer_id,
-    "Alice" AS customer_name,
-    [
-      STRUCT("P100", "Mobile Plan", [
-        STRUCT("S1001", DATE "2024-01-01", DATE "2024-12-31", "Active"),
-        STRUCT("S1002", DATE "2025-01-01", NULL, "Active")
-      ]),
-      STRUCT("P200", "Internet", [
-        STRUCT("S2001", DATE "2023-06-01", DATE "2024-05-31", "Expired")
-      ])
-    ] AS products,
-    CURRENT_TIMESTAMP() AS ingestion_ts
-  )
-]);
+  event_id,
+  CAST(event_time AS TIMESTAMP) AS event_ts
+FROM mydataset.raw_events;
 ```
 
+**Explanation:**
 
-**Example Queries**
+* Keeps <mark>raw data</mark> intact.
+* Provides analysts with <mark>cleaned schema</mark>.
+* <mark>Best Practice:</mark> Always separate raw and transformed data layers.
 
-**1. Count current active subscriptions**
+---
 
-```sql
-SELECT
-  customer_id,
-  customer_name,
-  COUNTIF(sub.status = "Active") AS active_subscriptions
-FROM telco.sales_data, UNNEST(products) p, UNNEST(p.subscriptions) sub
-WHERE sub.end_date IS NULL OR sub.end_date > CURRENT_DATE()
-GROUP BY customer_id, customer_name;
-```
+#### Q48: CSV import mismatch — fix file encoding
 
-**2. Retrieve historical records by ingestion timestamp**
+**Question:**
+Your CSV import into BigQuery succeeded, but the imported data does not match the source file byte-to-byte. What is the most likely cause?
 
-```sql
-SELECT
-  customer_id,
-  p.product_name,
-  sub.subscription_id,
-  sub.start_date,
-  sub.end_date,
-  ingestion_ts
-FROM telco.sales_data, UNNEST(products) p, UNNEST(p.subscriptions) sub
-WHERE customer_id = "C001"
-ORDER BY ingestion_ts DESC;
-```
+* **Answer:**
+  BigQuery <mark>defaults to UTF-8 encoding</mark>. If the source file uses another encoding, mismatches occur.
+
+**Explanation:**
+
+* Always ensure <mark>CSV file encoding = UTF-8</mark>.
+* If not, convert the file before loading.
+* <mark>Best Practice:</mark> Standardize file encoding across pipelines.
+
+---
+
+### C) Governance & Access Control
+
+#### Q10: Restrict access in BigQuery (IAM roles, dataset isolation)
+
+**Question:**
+Your company is in a highly regulated industry. One requirement is to ensure users have access only to the <mark>minimum information</mark> needed. How should you enforce this in BigQuery? (Choose three)
+
+* **Answer:**
+
+  * <mark>Restrict access by IAM role</mark>
+  * <mark>Restrict dataset access</mark>
+  * <mark>Segregate data across datasets/tables</mark>
+
+**Explanation:**
+
+* BigQuery uses <mark>IAM roles</mark> for access control.
+* <mark>Least privilege principle</mark>:
+
+  * Assign <mark>dataset/table-level</mark> roles, not project-wide.
+  * Separate <mark>sensitive data</mark> into dedicated datasets.
+* <mark>Audit logs</mark> and <mark>encryption</mark> add compliance but do not enforce row/column-level access.
+
+---
+
+#### Q40: Enforce regional access — dataset-per-region + IAM
+
+**Question:**
+You created regional tables for a company policy where employees should only access data for their own region. How do you enforce this?
+
+* **Answer:**
+
+  * Store tables in <mark>separate datasets per region</mark>.
+  * Grant <mark>IAM access</mark> only to the relevant dataset.
+
+**Explanation:**
+
+* <mark>Dataset-level IAM</mark> is easier to maintain than table-level rules.
+* Avoid duplicating tables into one dataset with complex filters.
+* <mark>Best Practice:</mark> use <mark>dataset-per-region</mark> for clear boundaries.
+
+---
+
+### D) Admin, Performance & Workload Mgmt
+
+#### Q233: Troubleshooting BigQuery slot contention
+
+**Question:**
+You suspect BigQuery query slowness is due to <mark>slot contention</mark>. How can you confirm?
+
+* **Answer:**
+
+  * Query <mark>INFORMATION\_SCHEMA.JOBS</mark>
+  * Use <mark>BigQuery admin resource charts</mark>
+
+**Explanation:**
+
+* INFORMATION\_SCHEMA shows <mark>job queuing and slot usage</mark>.
+* Admin charts visualize <mark>slot allocation</mark>.
+* Together, they help identify contention.
+
+---
+
+#### Q239: Concurrency issues with BigQuery slots
+
+**Question:**
+Your analysts run ad hoc queries, and you have 1500 scheduled jobs at peak, causing <mark>quota errors</mark>. How do you resolve concurrency?
+
+* **Answer:**
+
+  * Run pipelines as <mark>batch queries</mark>.
+  * Keep ad hoc as <mark>interactive queries</mark>.
+
+**Explanation:**
+
+* Batch jobs queue until slots free up, reducing pressure.
+* Interactive queries remain responsive.
+* <mark>Best Practice:</mark> Reserve slots only if workloads are predictable.
+
+---
+
+### E) Data Modeling & Table Design
+
+#### Q60: Replace sharded tables with one partitioned table
+
+**Question:**
+You have 3 years of daily log tables (e.g., `LOGS_20210101`). Queries fail when scanning >1000 tables. How do you fix this?
+
+* **Answer:**
+  Convert to a <mark>partitioned table</mark>.
+
+**Explanation:**
+
+* Partitioned tables scale better and avoid query limits.
+* Easier to manage retention policies.
+* <mark>Best Practice:</mark> Never use sharded tables for long-term pipelines.
+
+---
+
+#### Q252: Designing customer–product–subscription model
+
+（已经写在上面，不重复）
+
+---
 
 ### F) Integration & BI (Looker Studio / Tools)
 
 #### Q4: Disable caching in Data Studio report (data missing for <1h)
 
-Question:  
-You create an important report for your large team in Google Data Studio (Looker Studio). The report uses **BigQuery** as its data source. You notice that visualizations are not showing data that is **less than 1 hour old**. What should you do?
+（已写，不重复）
 
-- **Answer:**  
-  Disable caching by editing the **report settings** in Data Studio.  
+---
 
-**Explanation (English):**  
-- Data Studio caches query results for up to **1 hour** by default.  
-- This cache helps reduce **query cost** and improve **dashboard performance**.  
-- But it also means **fresh data** (e.g., streaming inserts, recent loads) won’t appear until cache expires.  
-- Solution: turn off caching or lower the cache refresh interval in **report settings**.  
-- ⚠️ Trade-off: disabling cache may **increase BigQuery costs** and make dashboards slower.  
+#### Q25: Stackdriver Logging + advanced filter for BQ insert jobs
 
-  
+**Question:**
+Your team suspects some BigQuery insert jobs are failing. How can you identify the failed jobs?
+
+* **Answer:**
+  Use <mark>Stackdriver (Cloud Logging)</mark> with <mark>advanced filters</mark>.
+
+**Explanation:**
+
+* Search `resource.type="bigquery_resource"` and `protoPayload.methodName="jobservice.insert"` in logs.
+* Filter by <mark>status.errorResult</mark> to find failures.
+* <mark>Best Practice:</mark> Always set up log-based alerts for job failures.
+
+---
+
+#### Q36: Use a view to simplify columns for BI and cut query cost
+
+**Question:**
+Your BI team struggles with too many columns in a large table and high query costs. What should you do?
+
+* **Answer:**
+  Create a <mark>view</mark> exposing only the needed columns.
+
+**Explanation:**
+
+* Views reduce <mark>query cost</mark> by limiting scanned columns.
+* BI users see a <mark>simplified schema</mark>.
+* <mark>Best Practice:</mark> Provide curated views for business users.
+
+---
+
+#### Q39: Data Studio on BigQuery — build filtered, fast reports
+
+**Question:**
+You need to create dashboards in Data Studio on BigQuery with <mark>fast performance</mark>. What design should you use?
+
+* **Answer:**
+
+  * Pre-filter and aggregate data in <mark>BigQuery views</mark>.
+  * Use <mark>clustering</mark> or <mark>materialized views</mark> if queries repeat.
+
+**Explanation:**
+
+* Avoid exposing raw wide tables to BI tools.
+* Reduce <mark>data scanned</mark> before visualization.
+* <mark>Best Practice:</mark> Build a BI-friendly semantic layer.
+
+---
+
+#### Q43: Expose `FullName` via a BigQuery view
+
+**Question:**
+You need a `FullName` field (`FirstName + LastName`) in a `Users` table. How do you provide it without altering the schema?
+
+* **Answer:**
+  Create a <mark>view</mark> that concatenates the fields.
+
+```sql
+CREATE OR REPLACE VIEW mydataset.v_users AS
+SELECT
+  FirstName,
+  LastName,
+  CONCAT(FirstName, " ", LastName) AS FullName
+FROM mydataset.users;
+```
+
+**Explanation:**
+
+* Keeps <mark>raw table</mark> unchanged.
+* Avoids <mark>storage cost</mark> of duplicating data.
+* <mark>Best Practice:</mark> Use views for derived fields.
+
+---
+
+#### Q46: Keep frequently updated reference data via BigQuery external table
+
+**Question:**
+You have a dataset of prices updated every 30 minutes. How should you expose it to BigQuery for cheap queries?
+
+* **Answer:**
+  Store it in <mark>Cloud Storage</mark> and use a <mark>federated external table</mark>.
+
+**Explanation:**
+
+* Avoid frequent re-loads into BigQuery.
+* External table reflects updates directly.
+* <mark>Best Practice:</mark> Use for small, frequently refreshed reference data.
+
+---
+
+#### Q55: ODBC access — use Standard SQL view + service account
+
+**Question:**
+Your team will connect to BigQuery via ODBC, but your current view is in <mark>Legacy SQL</mark>. How do you ensure compatibility?
+
+* **Answer:**
+
+  * Create a <mark>Standard SQL view</mark>
+  * Use a <mark>service account</mark> for ODBC authentication
+
+**Explanation:**
+
+* ODBC requires <mark>Standard SQL</mark> syntax.
+* Service accounts provide <mark>secure, controlled access</mark>.
+
+---
+
+### G) Views & Materialized Views
+
+#### Q248: Filtering rows with views vs materialized views
+
+（已写，不重复）
+
