@@ -156,8 +156,6 @@ Your team wants to optimize query performance and cost in BigQuery. What is the 
   - **Clustering** organizes data inside partitions based on specified columns, improving filtering and sorting.  
   - **Best Practice:** Combine both. Example: Partition by `order_date` and cluster by `user_id`. This minimizes scanned data and speeds up queries.
 
----
-
 #### Q8: Deduplication with ROW_NUMBER window function
 
 Question:  
@@ -198,27 +196,27 @@ You need to query across multiple tables in BigQuery whose names share a prefix 
 
 #### Q53: Slow GROUP BY due to data skew
 
-**Question:**  
+Question:  
 Your users report that a simple query with `GROUP BY country` in BigQuery is running very slowly. The table is large, and the query plan shows imbalance in stage execution. What is the most likely cause of the delay?
 
-- **Answer:**  
-  The slowdown is caused by **data skew** — most rows in the table have the **same value** in the `country` column, leading to uneven slot usage and slow aggregation.
+**Answer:**  
+  The **slowdown** is caused by **<mark>data skew</mark>** — most rows in the table have the **<mark>same value</mark>** in the `country` column, leading to **<mark>uneven slot usage</mark>** and slow aggregation.
 
-**Explanation (English):**  
-- In distributed systems like BigQuery, `GROUP BY` requires data to be **shuffled by key**.  
-- If one key (e.g., `"US"`) dominates, a **single reducer node** gets overloaded.  
-- **Best Practice:**  
+**Explanation:**  
+- In distributed systems like BigQuery, `GROUP BY` requires data to be **<mark>shuffled by key</mark>**.  
+- If one key (e.g., `"US"`) dominates, a **<mark>single reducer node</mark>** gets overloaded.  
+- <mark>Best Practice:</mark>  
   - Pre-aggregate or bucket the data.  
-  - Use **approximate aggregate functions** (like `APPROX_TOP_COUNT`) when exact results are not critical.  
-  - Consider clustering/partitioning strategies to distribute load more evenly.  
+  - Use **<mark>approximate aggregate functions</mark>** (like `APPROX_TOP_COUNT`) when exact results are not critical.  
+  - Consider **<mark>clustering/partitioning</mark>** strategies to distribute load more evenly.  
 
 #### Q56: Legacy SQL over sharded tables — use `TABLE_DATE_RANGE`
 
-**Question:**  
-Your Firebase Analytics integration automatically creates daily tables in BigQuery (e.g., `app_events_20240815`, `app_events_20240816`). You need to query across the past 30 days using **Legacy SQL**. What function should you use?
+Question:  
+Your Firebase Analytics integration automatically creates daily tables in BigQuery (e.g., `app_events_20240815`, `app_events_20240816`). You need to query across the past 30 days using Legacy SQL. What function should you use?
 
-- **Answer:**  
-  Use the **`TABLE_DATE_RANGE`** function in Legacy SQL.  
+- Answer:  
+  Use the <mark>`TABLE_DATE_RANGE`</mark> function in <mark>Legacy SQL</mark>.  
   Example:  
 
 ```sql
@@ -227,17 +225,16 @@ Your Firebase Analytics integration automatically creates daily tables in BigQue
                         TIMESTAMP("2024-08-01"),
                         TIMESTAMP("2024-08-30"))
   GROUP BY event_name;
-````
+```
 
 **Explanation (English):**
 
-* Legacy SQL requires `TABLE_DATE_RANGE` to scan **date-suffixed sharded tables**.
-* Modern **Standard SQL** supports wildcards with `_TABLE_SUFFIX`, which is recommended.
-* **Best Practice:**
+* Legacy SQL requires <mark>`TABLE_DATE_RANGE`</mark> to scan <mark>date-suffixed sharded tables</mark>.
+* Modern <mark>Standard SQL</mark> supports wildcards with <mark>`_TABLE_SUFFIX`</mark>, which is recommended.
+* <mark>Best Practice:</mark>
 
-  * For new pipelines, avoid table sharding — use a **single partitioned table**.
+  * For new pipelines, avoid table sharding — use a <mark>single partitioned table</mark>.
   * Partitioned tables are easier to query and scale better.
-
 
 
 #### Q10: Restrict access in BigQuery (IAM roles, dataset isolation)
