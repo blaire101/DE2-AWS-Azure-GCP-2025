@@ -16,7 +16,7 @@
 ## 2. BigQuery Basics
 
 <div align="center">
-  <img src="docs/GCP-BigQuery-2.png" alt="Diagram" width="800">
+  <img src="docs/GCP-BigQuery-2.png" alt="Diagram" width="900">
 </div>
 
 **BigQuery Table Types**
