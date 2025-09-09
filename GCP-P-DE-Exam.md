@@ -16,13 +16,13 @@
 ## 2. BigQuery Basics
 
 <div align="center">
-  <img src="docs/GCP-BigQuery-2.png" alt="Diagram" width="500">
+  <img src="docs/GCP-BigQuery-2.png" alt="Diagram" width="800">
 </div>
 
 ### A) Query Patterns & SQL Features
 
 <div align="center">
-  <img src="docs/GCP-BigQuery-Table-Types.png" alt="Diagram" width="700">
+  <img src="docs/GCP-BigQuery-Table-Types.png" alt="Diagram" width="800">
 </div>
 
 * [Q5: Partitioning vs Clustering](#q5-partitioning-vs-clustering)
