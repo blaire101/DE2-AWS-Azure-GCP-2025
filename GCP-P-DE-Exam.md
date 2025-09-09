@@ -134,15 +134,11 @@ You need to query across multiple tables in BigQuery whose names share a prefix 
   Use **backticks with a wildcard** in the table name.  
   Example:  
   
-  ```sql
+```sql
   SELECT * 
   FROM `bigquery-public-data.noaa_gsod.gsod*`
   WHERE _TABLE_SUFFIX BETWEEN '2010' AND '2012';
 ```
-
-This lets you query multiple tables with one statement.
-
----
 
 #### Q15: Consistency in BigQuery Streaming Inserts
 
@@ -156,8 +152,6 @@ Your application streams data into BigQuery, and analysts complain that some rec
   * Queries executed immediately after insertion may not see all rows.
   * Waiting allows BigQuery to fully commit the records.
 
----
-
 #### Q213: Dashboard Performance with Filters
 
 **Question:**
@@ -169,8 +163,6 @@ Your company's `customer_order` table in BigQuery stores 10 PB of order history 
   * Clustering organizes rows by frequently filtered fields, reducing scanned data.
   * Partitioning is not ideal here because `country_name` and `username` have high cardinality.
   * Clustering improves query performance while keeping costs lower.
-
----
 
 #### Q239: Concurrency Issues with BigQuery Slots
 
@@ -184,8 +176,6 @@ Your analyst team runs ad hoc queries and scheduled pipelines in BigQuery. With 
   * Batch queries queue for execution and reduce contention.
   * Interactive queries remain available for urgent user needs.
   * This balances concurrency without increasing slot reservations.
-
----
 
 #### Q233: Troubleshooting BigQuery Slot Contention
 
