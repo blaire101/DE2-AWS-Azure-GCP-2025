@@ -16,12 +16,19 @@
 ---
 
 ### 2. BigQuery Basics
-- [Q5: Partitioning vs Clustering](#q5-partitioning-vs-clustering)
-- [Q9: Wildcard Tables](#q9-wildcard-tables)
-- [Q15: Streaming Inserts Consistency](#q15-streaming-inserts-consistency)
-- [Q213: Dashboard Performance with Filters](#q213-dashboard-performance-with-filters)
 
----
+- [Q4: Disable caching in Data Studio report (data missing for <1h)](#q4-disable-caching-in-data-studio-report-data-missing-for-1h)  
+- [Q5: Partitioning vs Clustering](#q5-partitioning-vs-clustering)  
+- [Q8: Deduplication with ROW_NUMBER window function](#q8-deduplication-with-row_number-window-function)  
+- [Q9: Wildcard Tables](#q9-wildcard-tables)  
+- [Q10: Restrict access in BigQuery (IAM roles, dataset isolation)](#q10-restrict-access-in-bigquery-iam-roles-dataset-isolation)  
+- [Q15: Streaming inserts are eventually consistent (wait before query)](#q15-streaming-inserts-are-eventually-consistent-wait-before-query)  
+- [Q24: Convert STRING to TIMESTAMP with new table](#q24-convert-string-to-timestamp-with-new-table)  
+- [Q25: Stackdriver Logging + advanced filter for BQ insert jobs](#q25-stackdriver-logging--advanced-filter-for-bq-insert-jobs)  
+- [Q233: Troubleshooting BigQuery slot contention](#q233-troubleshooting-bigquery-slot-contention)  
+- [Q239: Concurrency issues with slots](#q239-concurrency-issues-with-slots)  
+- [Q248: Filtering rows with views vs materialized views](#q248-filtering-rows-with-views-vs-materialized-views)  
+- [Q252: Designing customer–product–subscription model](#q252-designing-customerproductsubscription-model)  
 
 ### 3. Cost & Security
 - [Q11: Pricing Models](#q11-pricing-models)
