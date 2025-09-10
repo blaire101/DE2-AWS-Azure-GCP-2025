@@ -154,14 +154,20 @@ flowchart TD
 - **Filestore (NFS)**  
 - **Backup & DR**  
 
----
 
 ## 9. Firestore / Bigtable / Cloud SQL
 
 - Firestore = NoSQL document DB  
 - Bigtable = Wide-column DB (low latency, high throughput)  
-- Cloud SQL = Managed MySQL/Postgres/SQL Server  
+- <mark>Cloud SQL</mark> = Managed MySQL/Postgres/SQL Server
 - AlloyDB = Advanced PostgreSQL-compatible  
+
+| Option | Description | Supported Engines / Use Cases |
+|--------|-------------|--------------------------------|
+| **Cloud SQL** | <mark>Managed relational database service</mark>, equivalent to AWS RDS. Provides automated backups, patching, high availability, and scaling. | <mark>MySQL</mark>, PostgreSQL, SQL Server |
+| **Cloud Spanner** | <mark>Globally distributed relational database</mark>. Combines traditional SQL features with horizontal scalability of NoSQL. Strong consistency and high availability across regions. | Large-scale applications, mission-critical systems, cross-region transactions |
+| **Self-managed DB on Compute Engine (with Persistent Disk)** | Deploy and manage your own database on GCE VMs, similar to running Oracle on AWS EC2. Provides full control over configuration and tuning. | Oracle, other custom RDBMS, niche engines not covered by Cloud SQL/Spanner |
+
 
 ```mermaid
 flowchart TB
