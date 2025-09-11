@@ -144,14 +144,18 @@ flowchart TB
     %% BQ --> Downstream
 ```
 
-✅ BigQuery vs Hive vs SparkSQL
+✅ BigQuery vs SparkSQL
 
-| Feature | BigQuery | Hive | SparkSQL |
-|--------|----------|------|----------|
-| Type | Managed MPP Data Warehouse | Hadoop SQL Engine | In-memory distributed SQL |
-| Storage | Columnar + GCS | HDFS | HDFS/S3/GCS |
+| Component/Feature   | **BigQuery**     | **SparkSQL**     |
+| ---------------- | -------------- | ---------------- |
+| Type | Managed MPP Data Warehouse  | In-memory distributed SQL |
+| Storage | Columnar + GCS| HDFS/S3/GCS |
 | Latency | Fast | Slow | Fast |
-| Deployment | Fully managed | Self-hosted Hadoop | Self-hosted Spark |
+| **Storage Layer**       | <mark>Colossus</mark> (Google’s distributed FS, built into GCS). <mark>Columnar Capacitor</mark> format. **No ops overhead**.                              | <mark>HDFS</mark>, S3, or GCS with Parquet/ORC. **Requires cluster/storage ops**.                                          |
+| **Execution Engine**    | <mark>Dremel</mark> (tree-based <mark>MPP</mark>). Queries run as **parallel trees**; <mark>aggregation bubbles up</mark>. <mark>Minimizes shuffle</mark>. | <mark>Catalyst Optimizer</mark> + Tungsten Engine. <mark>DAG-based</mark> execution with **heavy shuffle** between stages. |
+| **Compute Units**       | <mark>Slots</mark> = abstract execution units (1 CPU + memory). **Fully managed**, <mark>auto-scaled</mark>.                                               | <mark>Executors</mark> = JVM processes you must size/tune (cores, memory). <mark>Manual cluster mgmt</mark>.               |
+| **Query Aggregation**   | <mark>Tree aggregation</mark>: local partials merged up the tree. **Avoids single reducer bottleneck**.                                                    | <mark>Shuffle aggregation</mark>: data reshuffled across executors. <mark>Skew</mark> can slow jobs.                       |
+
 
 **BigQuery vs Hive — Table Naming & Querying**
 
