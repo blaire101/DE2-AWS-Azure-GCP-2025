@@ -66,13 +66,13 @@
 
 ### G) Views & Materialized Views
 
-* [Q248: Filtering rows with views vs materialized views](#q248-filtering-rows-with-views-vs-materialized-views)
+* [Q248: Filtering rows with views vs materialized views ✅](#q248-filtering-rows-with-views-vs-materialized-views)
 
 
 ## 3. Cost & Security
-- [Q11: Pricing Models](#q11-pricing-models)
-- [Q12: Cost-Saving Techniques](#q12-cost-saving-techniques)
-- [Q13: Security in BigQuery](#q13-security-in-bigquery)
+- [Q11: Pricing Models ✅](#q11-pricing-models)
+- [Q12: Cost-Saving Techniques ✅](#q12-cost-saving-techniques)
+- [Q13: Security in BigQuery ✅](#q13-security-in-bigquery)
 - [Q200: PII Protection](#q200-pii-protection)
 - [Q215: CMEK Sharing](#q215-cmek-sharing)
 - [Q238: Per-User Crypto-Deletion](#q238-per-user-crypto-deletion)
@@ -95,16 +95,14 @@
 - [Q253: Dataflow Internal IP Only](#q253-dataflow-internal-ip-only)
 - [Q254: Dataflow Performance Optimization](#q254-dataflow-performance-optimization)
 
----
 
 ## 6. Dataplex / Data Mesh / Governance
+- [Q16: Securing BigQuery with Audit Logs](#q16-securing-bigquery-with-audit-logs)
 - [Q210: Dataplex Design for Data Products](#q210-dataplex-design-for-data-products)
 - [Q217: Secure BigQuery Sharing with Policy Tags](#q217-secure-bigquery-sharing-with-policy-tags)
 - [Q240: Dataplex Permissions](#q240-dataplex-permissions)
 - [Q244: Analytics Hub Sharing](#q244-analytics-hub-sharing)
 - [Q247: Data Mesh with Dataplex](#q247-data-mesh-with-dataplex)
-
----
 
 ## 7. Pub/Sub & Messaging
 - [Q20: Duplicate Messages](#q20-duplicate-messages)
@@ -115,20 +113,19 @@
 
 ## 8. Cloud SQL / Spanner / Databases
 - [Q3: Scaling Patient Records](#q3-scaling-patient-records)
+- [Q6: Weather App DB Failure Handling](#q6-weather-app-db-failure-handling)
 - [Q197: ACID-Compliant Database](#q197-acid-compliant-database)
 - [Q218: Cloud SQL Disaster Recovery](#q218-cloud-sql-disaster-recovery)
 - [Q236: HA Cloud SQL Multi-Region](#q236-ha-cloud-sql-multi-region)
 
----
 
 ## 9. Cloud Storage & Data Lake
+- [Q17: Migrating Hadoop Jobs to Cloud Dataproc with GCS Connector](#q17-migrating-hadoop-jobs-to-cloud-dataproc-with-gcs-connector)
 - [Q19: Storage Costs with Dataproc](#q19-storage-costs-with-dataproc)
 - [Q241: Cloud Storage RPO Design](#q241-cloud-storage-rpo-design)
 - [Q249: Cost Optimization for Raw Data](#q249-cost-optimization-for-raw-data)
 - [Q251: Retention Policy Lock](#q251-retention-policy-lock)
 - [Q257: Autoclass for Data Lake](#q257-autoclass-for-data-lake)
-
----
 
 ## 10. Governance & IAM
 - [Q10: Restricting Access in BigQuery](#q10-restricting-access-in-bigquery)
@@ -605,5 +602,241 @@ Your team will connect to BigQuery via ODBC, but your current view is in <mark>L
 
 #### Q248: Filtering rows with views vs materialized views
 
+**Question:**  
+You have an inventory of VM data stored in the BigQuery table `dataset.inventory_vm`.  
+You need to prepare the data for **regular reporting** in the most **cost-effective** way.  
+You want to **exclude VM rows with fewer than 8 vCPU** in your report. What should you do?
+
+Options:  
+<mark>A. Create a **view** with a filter to drop rows with fewer than 8 vCPU, and use the **UNNEST** operator.</mark>  
+B. Create a **materialized view** with a filter to drop rows with fewer than 8 vCPU, and use a WITH CTE.  
+C. Create a **view** with a filter to drop rows with fewer than 8 vCPU, and use a WITH CTE.  
+D. Use **Dataflow** to batch process and write the result to another BigQuery table.  
+
+**Correct Answer:**  
+A. Create a <mark>view</mark> with a filter to drop rows with fewer than 8 vCPU, and use the <mark>UNNEST</mark> operator.  
+
+
+**Explanation:**
+
+* The `vcpu` information is stored in a **nested field** (inside `components` column).  
+* You must use <mark>`UNNEST`</mark> to flatten the array before filtering.  
+* <mark>View</mark>:
+  * Zero storage cost.  
+  * Always up-to-date with the base table.  
+  * Perfect for reporting filters.  
+
+* <mark>Materialized View</mark>:  
+  * Adds storage cost.  
+  * Useful for **pre-aggregations**, not simple filters.  
+
+* <mark>Dataflow</mark>:  
+  * Too complex and expensive for this use case.  
+
+**View Definition:**
+
+```sql
+CREATE OR REPLACE VIEW dataset.v_inventory_vm AS
+SELECT vm_id, c.vcpu
+FROM dataset.inventory_vm,
+     UNNEST(components) AS c
+WHERE c.component = "cpu"
+  AND c.vcpu >= 8;
+```
+
+## 3. Cost & Security
+
+- [Q11: Pricing Models](#q11-pricing-models)
+- [Q12: Cost-Saving Techniques](#q12-cost-saving-techniques)
+- [Q13: Security in BigQuery](#q13-security-in-bigquery)
+- [Q200: PII Protection](#q200-pii-protection)
+- [Q215: CMEK Sharing](#q215-cmek-sharing)
+- [Q238: Per-User Crypto-Deletion](#q238-per-user-crypto-deletion)
+
+#### Q11: Basket Abandonment System with Dataflow
+
+**Question:**  
+You are designing a basket abandonment system for an e-commerce company. The rules are:  
+* No interaction by the user for **1 hour**  
+* Basket value > **$30**  
+* No completed transaction  
+
+You use **Google Cloud Dataflow** to process the data and decide if a message should be sent. How should you design the pipeline?
+
+Options:  
+A. Use a fixed-time window with a duration of 60 minutes.  
+B. Use a sliding time window with a duration of 60 minutes.  
+<mark>C. Use a session window with a gap time duration of 60 minutes.</mark>  
+D. Use a global window with a time-based trigger with a delay of 60 minutes.  
+
+**Correct Answer:**  
+C. Use a <mark>session window</mark> with a gap time duration of 60 minutes.  
+
+**Explanation:**  
+
+* <mark>Session windows</mark> group events into sessions separated by inactivity gaps.  
+* A **gap of 60 minutes** means if the user does nothing for 1 hour, the session closes.  
+* Perfect fit for **user inactivity detection** like cart abandonment.  
+* Fixed or sliding windows (A/B) cannot capture per-user inactivity properly.  
+* Global window with custom triggers (D) is too complex.  
+
+---
+
+#### Q12: Secure Multi-Client BigQuery Access
+
+**Question:**  
+Your company handles data for multiple clients. Each client wants to use their own tools, with some accessing directly via **BigQuery**.  
+You must ensure **clients cannot see each other’s data** and only have **appropriate access**. What should you do? (Choose three)
+
+Options:  
+A. Load data into different partitions.  
+<mark>B. Load data into a different dataset for each client.</mark>  
+C. Put each client’s data in a different table within the same dataset.  
+<mark>D. Restrict a client’s dataset to approved users.</mark>  
+E. Only allow a service account to access the datasets.  
+<mark>F. Use IAM roles for each client’s users.</mark>  
+
+**Correct Answer:**  
+B, D, F  
+
+**Explanation:**  
+
+* <mark>Separate datasets per client</mark> = clean boundary.  
+* <mark>Restrict dataset access</mark> = dataset-level IAM for approved users only.  
+* <mark>IAM roles</mark> = enforce least privilege per client.  
+* A is wrong: Partitions don’t isolate access.  
+* C is wrong: Tables inside the same dataset share the same IAM policy.  
+* E is wrong: Service accounts are for backend automation, not client-facing access.  
+
+---
+
+#### Q13: Scalable Database for POS Transactions
+
+**Question:**  
+You want to process **payment transactions** in a **point-of-sale (POS) app** running on Google Cloud.  
+The user base may grow **exponentially**, and you do not want to manage infrastructure scaling. Which database should you use?
+
+Options:  
+A. Cloud SQL  
+B. BigQuery  
+C. Cloud Bigtable  
+<mark>D. Cloud Datastore (Firestore in Datastore mode)</mark>  
+
+**Correct Answer:**  
+D. Cloud Datastore  
+
+**Explanation:**  
+
+* <mark>Cloud Datastore</mark> (now Firestore in Datastore mode) is **serverless**.  
+  * Auto-scales storage & compute.  
+  * Provides **ACID transactions** (within entity groups).  
+  * No infra management needed.  
+* Cloud SQL: Limited auto-scaling (storage only, not CPU/memory).  
+* BigQuery: OLAP, not OLTP (not suitable for transactions).  
+* Bigtable: Scales for throughput, but manual node management required.  
+
+| Dimension   | **Cloud Datastore / Firestore (Datastore mode)** | **Cloud SQL**                        |
+| ----------- | ----------------------------------------------- | ------------------------------------ |
+| Operations  | <mark>**Serverless / Auto-scaling**</mark>       | **Manual** tuning of CPU/memory; storage auto-extends |
+| Workload    | **OLTP**, low-latency read/write                | **OLTP**, relational model           |
+| Transactions (ACID) | Yes (**small-scope transactions**, good for orders/inventory) | Full SQL transactions, strong relational integrity |
+| Data Model  | Document / Entity (non-relational)              | Relational tables, schema, foreign keys |
+| Scalability | <mark>**No ops required**</mark>                | Manual scaling windows needed         |
+| POS Fit     | <mark>**✓ Best fit**</mark>                     | Possible (but need scaling/ops work) |
+
+--- 未分类 -- 分类参考最上面 --
+
+#### Q6: Weather app handling DB failure
+
+**Question:**  
+Your weather app queries a database every 15 minutes to get the current temperature. The frontend is powered by Google App Engine and serves millions of users. How should you design the frontend to respond to a database failure?
+
+Options:  
+A. Issue a command to restart the database servers.  
+<mark>B. Retry the query with exponential backoff, up to a cap of 15 minutes.</mark>  
+C. Retry the query every second until it comes back online to minimize staleness of data.  
+D. Reduce the query frequency to once every hour until the database comes back online.  
+
+**Correct Answer:**  
+B. Retry the query with <mark>exponential backoff</mark>, up to a cap of 15 minutes.  
+
+**Explanation:**  
+- Exponential backoff prevents overwhelming the DB with retries.  
+- Starts with short delays (1s, 2s, 4s …) and increases gradually.  
+- A cap (15m) avoids infinite retry storms.  
+- Restarting DB (A) is infra task, not frontend.  
+- Retrying every second (C) overloads server.  
+- Reducing to 1h (D) makes data too stale.  
+
+---
+
+#### Q16: First step to secure BigQuery warehouse
+
+**Question:**  
+Your startup has no formal security policy. Everyone in the company has access to BigQuery datasets. You’ve been asked to secure the data warehouse and need to first discover what everyone is doing. What should you do?
+
+Options:  
+<mark>A. Use Google Stackdriver (Cloud) Audit Logs to review data access.</mark>  
+B. Get the IAM policy of each table.  
+C. Use Stackdriver Monitoring to see BigQuery slot usage.  
+D. Use the Google Cloud Billing API to check billing.  
+
+**Correct Answer:**  
+A. Use <mark>Cloud Audit Logs</mark> to review data access.  
+
+**Explanation:**  
+- Audit Logs = best way to discover *who accessed what and when*.  
+- IAM policy only shows *permissions*, not actual usage.  
+- Monitoring slots shows performance, not security.  
+- Billing API only shows costs, not access.  
+
+---
+
+#### Q17: Migrating Hadoop cluster to cloud
+
+**Question:**  
+Your company is migrating their 30-node Apache Hadoop cluster to the cloud. They want to re-use Hadoop jobs, minimize cluster management, and persist data beyond cluster life. What should you do?
+
+Options:  
+A. Create a Google Cloud Dataflow job.  
+B. Create a Dataproc cluster with persistent disks for HDFS.  
+C. Create a Hadoop cluster on Compute Engine with persistent disks.  
+<mark>D. Create a Cloud Dataproc cluster that uses the Google Cloud Storage connector.</mark>  
+E. Create a Hadoop cluster on Compute Engine with Local SSDs.  
+
+**Correct Answer:**  
+D. Cloud Dataproc with <mark>GCS connector</mark>.  
+
+**Explanation:**  
+- **Dataproc** = managed Hadoop, minimal ops.  
+- **GCS connector** = data persists even after cluster shutdown.  
+- Persistent HDFS disks (B) still tied to cluster lifecycle.  
+- Raw Compute Engine clusters (C, E) require manual ops.  
+- Dataflow (A) can’t directly re-use existing Hadoop jobs.  
+
+---
+
+#### Q18: ML applications on bank transactions
+
+**Question:**  
+You are given a dataset of bank transactions (user ID, type, location, amount). Business asks what ML can be applied. Which three?  
+
+Options:  
+A. Supervised learning to determine which transactions are most likely fraudulent.  
+<mark>B. Unsupervised learning to determine which transactions are most likely fraudulent.</mark>  
+<mark>C. Clustering to divide transactions into N categories.</mark>  
+<mark>D. Supervised learning to predict the location of a transaction.</mark>  
+E. Reinforcement learning to predict the location.  
+F. Unsupervised learning to predict the location.  
+
+**Correct Answer:**  
+B, C, D  
+
+**Explanation:**  
+- **Fraud detection** often starts as **unsupervised anomaly detection** (B).  
+- **Clustering (C)** groups transactions by similarity (e.g., type, amount, location).  
+- **Supervised classification (D)** works if location is the target label.  
+- A requires labeled fraud data (not given).  
+- E/F are not suitable for this dataset.  
 
 
