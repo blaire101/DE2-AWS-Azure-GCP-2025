@@ -320,7 +320,7 @@ Your CSV import into BigQuery succeeded, but the imported data does not match th
 
 ### C) Governance & Access Control
 
-#### Q10: Restrict access in BigQuery (IAM roles, dataset isolation)
+#### Q10: Restrict access in BigQuery (IAM roles, dataset isolation) ✅
 
 **Question:**
 Your company is in a highly regulated industry. One requirement is to ensure users have access only to the <mark>minimum information</mark> needed. How should you enforce this in BigQuery? (Choose three)
@@ -335,14 +335,12 @@ Your company is in a highly regulated industry. One requirement is to ensure use
 
 * BigQuery uses <mark>IAM roles</mark> for access control.
 * <mark>Least privilege principle</mark>:
-
   * Assign <mark>dataset/table-level</mark> roles, not project-wide.
   * Separate <mark>sensitive data</mark> into dedicated datasets.
 * <mark>Audit logs</mark> and <mark>encryption</mark> add compliance but do not enforce row/column-level access.
 
----
 
-#### Q40: Enforce regional access — dataset-per-region + IAM
+#### Q40: Enforce regional access — dataset-per-region + IAM ✅
 
 **Question:**
 You created regional tables for a company policy where employees should only access data for their own region. How do you enforce this?
@@ -358,7 +356,6 @@ You created regional tables for a company policy where employees should only acc
 * Avoid duplicating tables into one dataset with complex filters.
 * <mark>Best Practice:</mark> use <mark>dataset-per-region</mark> for clear boundaries.
 
----
 
 ### D) Admin, Performance & Workload Mgmt
 
@@ -378,7 +375,6 @@ You suspect BigQuery query slowness is due to <mark>slot contention</mark>. How 
 * Admin charts visualize <mark>slot allocation</mark>.
 * Together, they help identify contention.
 
----
 
 #### Q239: Concurrency issues with BigQuery slots ✅
 
@@ -396,7 +392,6 @@ Your analysts run ad hoc queries, and you have 1500 scheduled jobs at peak, caus
 * Interactive queries remain responsive.
 * <mark>Best Practice:</mark> Reserve slots only if workloads are predictable.
 
----
 
 ### E) Data Modeling & Table Design
 
