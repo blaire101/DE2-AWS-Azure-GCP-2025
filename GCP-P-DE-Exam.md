@@ -833,7 +833,7 @@ F. Unsupervised learning to predict the location.
 B, C, D  
 
 **Explanation:**  
-- **Fraud detection** often starts as **unsupervised anomaly detection** (B).  
+- **Fraud detection** often starts as **unsupervised anomaly detection** (B).  <mark>Unsupervised learning does not give a definitive conclusion like “this is fraud”; instead, it outputs an anomaly score.</mark>
 - **Clustering (C)** groups transactions by similarity (e.g., type, amount, location).  
 - **Supervised classification (D)** works if location is the target label.  
 - A requires labeled fraud data (not given).  
