@@ -25,7 +25,7 @@
   <img src="docs/GCP-BigQuery-Table-Types.png" alt="Diagram" width="800">
 </div>
 
-### A) Query Patterns & SQL Features
+### A) Query Patterns & SQL Features 
 
 * [Q5: Partitioning vs Clustering](#q5-partitioning-vs-clustering)
 * [Q8: Deduplication with ROW\_NUMBER window function](#q8-deduplication-with-row_number-window-function)
@@ -156,12 +156,12 @@ Your company built a TensorFlow neural-network model with a large number of neur
 
 ### A) Query Patterns & SQL Features
 
-#### Q5: Partitioning vs Clustering
+#### Q5: Partitioning vs Clustering ✅
 
 **Question:**
 Your team wants to optimize query performance and cost in BigQuery. What is the difference between partitioning and clustering, and how can they be combined?
 
-* **Answer:**
+**Answer:**
 
   * <mark>Partitioning</mark> reduces the amount of data scanned by filtering on partition keys (e.g., date).
   * <mark>Clustering</mark> organizes data inside partitions based on specified columns, improving filtering and sorting.
@@ -169,12 +169,12 @@ Your team wants to optimize query performance and cost in BigQuery. What is the 
 
 ---
 
-#### Q8: Deduplication with ROW\_NUMBER window function
+#### Q8: Deduplication with ROW\_NUMBER window function ✅
 
 **Question:**
 You are building a new real-time data warehouse using <mark>BigQuery streaming inserts</mark>. Since there’s no guarantee that data will only be sent once, but you do have a <mark>unique ID</mark> for each row and an <mark>event timestamp</mark>, you want to ensure that <mark>duplicates</mark> are not included when querying. Which query type should you use?
 
-* **Answer:**
+**Answer:**
   Use the <mark>ROW\_NUMBER</mark> window function with `PARTITION BY unique_id` and filter on `row_number = 1`.
 
 **Explanation:**
@@ -197,12 +197,12 @@ WHERE rn = 1;
 
 ---
 
-#### Q9: Wildcard Tables in BigQuery
+#### Q9: Wildcard Tables in BigQuery ✅
 
 **Question:**
 You need to query across multiple tables in BigQuery whose names share a prefix (e.g., `gsod*`). Which query syntax should you use?
 
-* **Answer:**
+**Answer:**
   Use <mark>wildcards</mark> in the table name with <mark>backticks</mark>.
 
 ```sql
@@ -218,12 +218,12 @@ WHERE _TABLE_SUFFIX BETWEEN '2010' AND '2012';
 
 ---
 
-#### Q53: Slow GROUP BY due to data skew
+#### Q53: Slow GROUP BY due to data skew ✅
 
 **Question:**
 Your users report that a simple query with `GROUP BY country` in BigQuery is running very slowly. The table is large, and the query plan shows imbalance in stage execution. What is the most likely cause?
 
-* **Answer:**
+**Answer:**
   The slowdown is caused by <mark>data skew</mark> — most rows in the table have the <mark>same value</mark> in the `country` column, leading to <mark>uneven slot usage</mark>.
 
 **Explanation:**
@@ -238,12 +238,12 @@ Your users report that a simple query with `GROUP BY country` in BigQuery is run
 
 ---
 
-#### Q56: Legacy SQL over sharded tables — use `TABLE_DATE_RANGE`
+#### Q56: Legacy SQL over sharded tables — use `TABLE_DATE_RANGE` ✅
 
 **Question:**
 Your Firebase Analytics integration automatically creates daily tables (e.g., `app_events_20240815`). You need to query across the past 30 days in Legacy SQL. What function should you use?
 
-* **Answer:**
+**Answer:**
   Use the <mark>`TABLE_DATE_RANGE`</mark> function in <mark>Legacy SQL</mark>.
 
 ```sql
@@ -264,12 +264,12 @@ GROUP BY event_name;
 
 ### B) Ingestion, Freshness & Consistency
 
-#### Q15: Consistency in BigQuery Streaming Inserts
+#### Q15: Consistency in BigQuery Streaming Inserts ✅
 
 **Question:**
 Your application streams data into BigQuery, and analysts complain that some records appear missing when querying right after insertion. How should you handle this?
 
-* **Answer:** <mark>Wait twice the average streaming latency before querying</mark>.
+**Answer:** <mark>Wait twice the average streaming latency before querying</mark>.
 
 **Explanation:**
 
@@ -277,14 +277,13 @@ Your application streams data into BigQuery, and analysts complain that some rec
 * Queries executed too early may not return all rows.
 * Wait a short buffer time for data to fully commit.
 
----
 
-#### Q24: Convert STRING to TIMESTAMP with new table
+#### Q24: Convert STRING to TIMESTAMP with new table ✅
 
 **Question:**
 You have a table where `event_time` is stored as a <mark>STRING</mark>. Analysts need it as a <mark>TIMESTAMP</mark>. How should you provide it without affecting the raw table?
 
-* **Answer:**
+**Answer:**
   Create a <mark>new table</mark> with `CAST(event_time AS TIMESTAMP)`.
 
 ```sql
@@ -303,12 +302,12 @@ FROM mydataset.raw_events;
 
 ---
 
-#### Q48: CSV import mismatch — fix file encoding
+#### Q48: CSV import mismatch — fix file encoding ✅
 
 **Question:**
 Your CSV import into BigQuery succeeded, but the imported data does not match the source file byte-to-byte. What is the most likely cause?
 
-* **Answer:**
+**Answer:**
   BigQuery <mark>defaults to UTF-8 encoding</mark>. If the source file uses another encoding, mismatches occur.
 
 **Explanation:**
@@ -326,7 +325,7 @@ Your CSV import into BigQuery succeeded, but the imported data does not match th
 **Question:**
 Your company is in a highly regulated industry. One requirement is to ensure users have access only to the <mark>minimum information</mark> needed. How should you enforce this in BigQuery? (Choose three)
 
-* **Answer:**
+**Answer:**
 
   * <mark>Restrict access by IAM role</mark>
   * <mark>Restrict dataset access</mark>
@@ -348,7 +347,7 @@ Your company is in a highly regulated industry. One requirement is to ensure use
 **Question:**
 You created regional tables for a company policy where employees should only access data for their own region. How do you enforce this?
 
-* **Answer:**
+**Answer:**
 
   * Store tables in <mark>separate datasets per region</mark>.
   * Grant <mark>IAM access</mark> only to the relevant dataset.
@@ -368,7 +367,7 @@ You created regional tables for a company policy where employees should only acc
 **Question:**
 You suspect BigQuery query slowness is due to <mark>slot contention</mark>. How can you confirm?
 
-* **Answer:**
+**Answer:**
 
   * Query <mark>INFORMATION\_SCHEMA.JOBS</mark>
   * Use <mark>BigQuery admin resource charts</mark>
@@ -406,7 +405,7 @@ Your analysts run ad hoc queries, and you have 1500 scheduled jobs at peak, caus
 **Question:**
 You have 3 years of daily log tables (e.g., `LOGS_20210101`). Queries fail when scanning >1000 tables. How do you fix this?
 
-* **Answer:**
+**Answer:**
   Convert to a <mark>partitioned table</mark>.
 
 **Explanation:**
@@ -425,7 +424,7 @@ You need to create a model for **customers, products, and subscriptions**.
 All entities can be **updated monthly**, but you must **maintain historical records**.  
 The visualization layer must support **current and historical reporting**, and the model should be **simple, easy-to-use, and cost-effective**.  
 
-* **Answer:**  
+**Answer:**  
   Use a <mark>denormalized</mark>, <mark>append-only</mark> model with <mark>nested and repeated fields</mark>, and include an <mark>ingestion timestamp</mark> to track historical data.  
 
 **Explanation:**  
@@ -476,7 +475,7 @@ What should you do?
 **Question:**
 Your team suspects some BigQuery insert jobs are failing. How can you identify the failed jobs?
 
-* **Answer:**
+**Answer:**
   Use <mark>Stackdriver (Cloud Logging)</mark> with <mark>advanced filters</mark>.
 
 <div align="center">
@@ -496,7 +495,7 @@ Your team suspects some BigQuery insert jobs are failing. How can you identify t
 **Question:**
 Your BI team struggles with too many columns in a large table and high query costs. What should you do?
 
-* **Answer:**
+**Answer:**
   Create a <mark>view</mark> exposing only the needed columns.
 
 <div align="center">
@@ -527,7 +526,7 @@ FROM raw_sales_table;
 **Question:**
 You need to create dashboards in Data Studio on BigQuery with <mark>fast performance</mark>. What design should you use?
 
-* **Answer:**
+**Answer:**
 
   * Pre-filter and aggregate data in <mark>BigQuery views</mark>.
   * Use <mark>clustering</mark> or <mark>materialized views</mark> if queries repeat.
@@ -578,7 +577,7 @@ You have a dataset of prices updated every 30 minutes. How should you expose it 
   <img src="docs/GCP-external-table.png" alt="Diagram" width="700">
 </div>
 
-* **Answer:**
+**Answer:**
   Store it in <mark>Cloud Storage</mark> and use a <mark>federated external table</mark>.
 
 **Explanation:**
