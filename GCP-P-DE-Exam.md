@@ -363,7 +363,7 @@ You created regional tables for a company policy where employees should only acc
 
 ### D) Admin, Performance & Workload Mgmt
 
-#### Q233: Troubleshooting BigQuery slot contention
+#### Q233: Troubleshooting BigQuery slot contention ✅
 
 **Question:**
 You suspect BigQuery query slowness is due to <mark>slot contention</mark>. How can you confirm?
@@ -381,12 +381,12 @@ You suspect BigQuery query slowness is due to <mark>slot contention</mark>. How 
 
 ---
 
-#### Q239: Concurrency issues with BigQuery slots
+#### Q239: Concurrency issues with BigQuery slots ✅
 
 **Question:**
 Your analysts run ad hoc queries, and you have 1500 scheduled jobs at peak, causing <mark>quota errors</mark>. How do you resolve concurrency?
 
-* **Answer:**
+**Answer:**
 
   * Run pipelines as <mark>batch queries</mark>.
   * Keep ad hoc as <mark>interactive queries</mark>.
@@ -401,7 +401,7 @@ Your analysts run ad hoc queries, and you have 1500 scheduled jobs at peak, caus
 
 ### E) Data Modeling & Table Design
 
-#### Q60: Replace sharded tables with one partitioned table
+#### Q60: Replace sharded tables with one partitioned table ✅
 
 **Question:**
 You have 3 years of daily log tables (e.g., `LOGS_20210101`). Queries fail when scanning >1000 tables. How do you fix this?
@@ -417,27 +417,71 @@ You have 3 years of daily log tables (e.g., `LOGS_20210101`). Queries fail when 
 
 ---
 
-#### Q252: Designing customer–product–subscription model
+#### Q252: Designing customer–product–subscription model ✅
 
-（已经写在上面，不重复）
+**Question:**  
+You are designing a data warehouse in BigQuery to analyze sales data for a **telecommunication service provider**.  
+You need to create a model for **customers, products, and subscriptions**.  
+All entities can be **updated monthly**, but you must **maintain historical records**.  
+The visualization layer must support **current and historical reporting**, and the model should be **simple, easy-to-use, and cost-effective**.  
 
----
+* **Answer:**  
+  Use a <mark>denormalized</mark>, <mark>append-only</mark> model with <mark>nested and repeated fields</mark>, and include an <mark>ingestion timestamp</mark> to track historical data.  
+
+**Explanation:**  
+
+* **Denormalized**: Put customers, products, and subscriptions together in one table to reduce joins.  
+* **Append-only**: Insert new rows instead of overwriting old ones, to preserve history.  
+* **Nested/repeated fields**: Capture multiple subscriptions per customer efficiently.  
+* **Ingestion timestamp**: Enables both point-in-time and current-state reporting.  
+
+<mark>Best Practice:</mark> In BigQuery, prefer **wide denormalized tables** with nested fields for performance and cost efficiency, instead of complex star schemas.  
+
+**Example Query — Count Active Subscriptions**
+
+```sql
+SELECT
+  customer_id,
+  customer_name,
+  COUNTIF(sub.status = "Active") AS active_subscriptions
+FROM telco.sales_data,
+     UNNEST(products) AS p,
+     UNNEST(p.subscriptions) AS sub
+WHERE sub.end_date IS NULL OR sub.end_date > CURRENT_DATE()
+GROUP BY customer_id, customer_name;
+```
+
+👉 This query uses **`UNNEST`** to flatten nested arrays (`products` and `subscriptions`),
+then filters by `status = "Active"` and `end_date` to count current active subscriptions per customer.
+
+
 
 ### F) Integration & BI (Looker Studio / Tools)
 
-#### Q4: Disable caching in Data Studio report (data missing for <1h)
+#### Q4: Disable caching in Data Studio report (data missing for <1h) ✅
 
-（已写，不重复）
+**Question:**  
+You create an important report for your large team in **Google Data Studio (Looker Studio)**.  
+The report uses **BigQuery** as its data source.  
 
----
+You notice that visualizations are not showing data that is **less than 1 hour old**.  
+What should you do?
 
-#### Q25: Stackdriver Logging + advanced filter for BQ insert jobs
+**Answer:**  
+  <mark>Disable caching</mark> by editing the **report settings** in Data Studio.
+
+
+#### Q25: Stackdriver Logging + advanced filter for BQ insert jobs ✅
 
 **Question:**
 Your team suspects some BigQuery insert jobs are failing. How can you identify the failed jobs?
 
 * **Answer:**
   Use <mark>Stackdriver (Cloud Logging)</mark> with <mark>advanced filters</mark>.
+
+<div align="center">
+  <img src="docs/GCP-Stackdriver.webp" alt="Diagram" width="600">
+</div>
 
 **Explanation:**
 
@@ -447,7 +491,7 @@ Your team suspects some BigQuery insert jobs are failing. How can you identify t
 
 ---
 
-#### Q36: Use a view to simplify columns for BI and cut query cost
+#### Q36: Use a view to simplify columns for BI and cut query cost ✅
 
 **Question:**
 Your BI team struggles with too many columns in a large table and high query costs. What should you do?
@@ -455,15 +499,30 @@ Your BI team struggles with too many columns in a large table and high query cos
 * **Answer:**
   Create a <mark>view</mark> exposing only the needed columns.
 
+<div align="center">
+  <img src="docs/GCP-View-BI-Tool.png" alt="Diagram" width="400">
+</div>
+
 **Explanation:**
 
 * Views reduce <mark>query cost</mark> by limiting scanned columns.
 * BI users see a <mark>simplified schema</mark>.
 * <mark>Best Practice:</mark> Provide curated views for business users.
 
+
+```sql
+CREATE VIEW sales_summary AS
+SELECT
+  order_id,
+  customer_id,
+  total_amount,
+  order_date
+FROM raw_sales_table;
+```
+
 ---
 
-#### Q39: Data Studio on BigQuery — build filtered, fast reports
+#### Q39: Data Studio on BigQuery — build filtered, fast reports ✅
 
 **Question:**
 You need to create dashboards in Data Studio on BigQuery with <mark>fast performance</mark>. What design should you use?
@@ -481,21 +540,26 @@ You need to create dashboards in Data Studio on BigQuery with <mark>fast perform
 
 ---
 
-#### Q43: Expose `FullName` via a BigQuery view
+#### Q43: Expose `FullName` via a BigQuery view ✅
 
 **Question:**
 You need a `FullName` field (`FirstName + LastName`) in a `Users` table. How do you provide it without altering the schema?
 
-* **Answer:**
+**Answer:**
   Create a <mark>view</mark> that concatenates the fields.
 
+<div align="center">
+  <img src="docs/GCP-materialized_views.jpg" alt="Diagram" width="800">
+</div>
+
 ```sql
-CREATE OR REPLACE VIEW mydataset.v_users AS
+CREATE MATERIALIZED VIEW mydataset.v_users AS
 SELECT
   FirstName,
   LastName,
   CONCAT(FirstName, " ", LastName) AS FullName
-FROM mydataset.users;
+FROM mydataset.users
+WHERE status = 'ACTIVE';
 ```
 
 **Explanation:**
@@ -504,12 +568,15 @@ FROM mydataset.users;
 * Avoids <mark>storage cost</mark> of duplicating data.
 * <mark>Best Practice:</mark> Use views for derived fields.
 
----
 
-#### Q46: Keep frequently updated reference data via BigQuery external table
+#### Q46: Keep frequently updated reference data via BigQuery external table ✅
 
 **Question:**
 You have a dataset of prices updated every 30 minutes. How should you expose it to BigQuery for cheap queries?
+
+<div align="center">
+  <img src="docs/GCP-external-table.png" alt="Diagram" width="700">
+</div>
 
 * **Answer:**
   Store it in <mark>Cloud Storage</mark> and use a <mark>federated external table</mark>.
@@ -522,12 +589,12 @@ You have a dataset of prices updated every 30 minutes. How should you expose it 
 
 ---
 
-#### Q55: ODBC access — use Standard SQL view + service account
+#### Q55: ODBC access — use Standard SQL view + service account ✅
 
 **Question:**
 Your team will connect to BigQuery via ODBC, but your current view is in <mark>Legacy SQL</mark>. How do you ensure compatibility?
 
-* **Answer:**
+**Answer:**
 
   * Create a <mark>Standard SQL view</mark>
   * Use a <mark>service account</mark> for ODBC authentication
@@ -535,6 +602,7 @@ Your team will connect to BigQuery via ODBC, but your current view is in <mark>L
 **Explanation:**
 
 * ODBC requires <mark>Standard SQL</mark> syntax.
+* Legacy SQL → Standard SQL: Resolves compatibility issues.
 * Service accounts provide <mark>secure, controlled access</mark>.
 
 ---
@@ -543,5 +611,5 @@ Your team will connect to BigQuery via ODBC, but your current view is in <mark>L
 
 #### Q248: Filtering rows with views vs materialized views
 
-（已写，不重复）
+
 
