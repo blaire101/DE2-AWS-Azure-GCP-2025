@@ -27,42 +27,42 @@
 
 ### A) Query Patterns & SQL Features 
 
-* [Q5: Partitioning vs Clustering](#q5-partitioning-vs-clustering)
-* [Q8: Deduplication with ROW\_NUMBER window function](#q8-deduplication-with-row_number-window-function)
-* [Q9: Wildcard Tables](#q9-wildcard-tables)
-* [Q53: Slow GROUP BY due to data skew](#q53-slow-group-by-due-to-data-skew)
-* [Q56: Legacy SQL over sharded tables — use `TABLE_DATE_RANGE`](#q56-legacy-sql-over-sharded-tables--use-table_date_range)
+* [Q5: Partitioning vs Clustering ✅](#q5-partitioning-vs-clustering)
+* [Q8: Deduplication with ROW\_NUMBER window function ✅](#q8-deduplication-with-row_number-window-function)
+* [Q9: Wildcard Tables ✅](#q9-wildcard-tables)
+* [Q53: Slow GROUP BY due to data skew ✅](#q53-slow-group-by-due-to-data-skew)
+* [Q56: Legacy SQL over sharded tables — use `TABLE_DATE_RANGE` ✅](#q56-legacy-sql-over-sharded-tables--use-table_date_range)
 
 ### B) Ingestion, Freshness & Consistency
 
-* [Q15: Streaming inserts are eventually consistent (wait before query)](#q15-streaming-inserts-are-eventually-consistent-wait-before-query)
-* [Q24: Convert STRING to TIMESTAMP with new table](#q24-convert-string-to-timestamp-with-new-table)
-* [Q48: CSV import mismatch — fix file encoding (BigQuery defaults to UTF-8)](#q48-csv-import-mismatch--fix-file-encoding-bigquery-defaults-to-utf-8)
+* [Q15: Streaming inserts are eventually consistent (wait before query) ✅](#q15-streaming-inserts-are-eventually-consistent-wait-before-query)
+* [Q24: Convert STRING to TIMESTAMP with new table ✅](#q24-convert-string-to-timestamp-with-new-table)
+* [Q48: CSV import mismatch — fix file encoding (BigQuery defaults to UTF-8) ✅](#q48-csv-import-mismatch--fix-file-encoding-bigquery-defaults-to-utf-8)
 
 ### C) Governance & Access Control
 
-* [Q10: Restrict access in BigQuery (IAM roles, dataset isolation)](#q10-restrict-access-in-bigquery-iam-roles-dataset-isolation)
-* [Q40: Enforce regional access — dataset-per-region + IAM on datasets](#q40-enforce-regional-access--dataset-per-region--iam-on-datasets)
+* [Q10: Restrict access in BigQuery (IAM roles, dataset isolation) ✅](#q10-restrict-access-in-bigquery-iam-roles-dataset-isolation)
+* [Q40: Enforce regional access — dataset-per-region + IAM on datasets ✅](#q40-enforce-regional-access--dataset-per-region--iam-on-datasets)
 
 ### D) Admin, Performance & Workload Mgmt
 
-* [Q233: Troubleshooting BigQuery slot contention](#q233-troubleshooting-bigquery-slot-contention)
-* [Q239: Concurrency issues with slots](#q239-concurrency-issues-with-slots)
+* [Q233: Troubleshooting BigQuery slot contention ✅](#q233-troubleshooting-bigquery-slot-contention)
+* [Q239: Concurrency issues with slots ✅](#q239-concurrency-issues-with-slots)
 
 ### E) Data Modeling & Table Design
 
-* [Q60: Replace sharded tables with one partitioned table](#q60-replace-sharded-tables-with-one-partitioned-table)
-* [Q252: Designing customer–product–subscription model](#q252-designing-customerproductsubscription-model)
+* [Q60: Replace sharded tables with one partitioned table ✅](#q60-replace-sharded-tables-with-one-partitioned-table)
+* [Q252: Designing customer–product–subscription model ✅](#q252-designing-customerproductsubscription-model)
 
 ### F) Integration & BI (Looker Studio / Tools)
 
-* [Q4: Disable caching in Data Studio report (data missing for <1h)](#q4-disable-caching-in-data-studio-report-data-missing-for-1h)
-* [Q25: Stackdriver Logging + advanced filter for BQ insert jobs](#q25-stackdriver-logging--advanced-filter-for-bq-insert-jobs)
-* [Q36: Use a view to simplify columns for BI and cut query cost](#q36-use-a-view-to-simplify-columns-for-bi-and-cut-query-cost)
-* [Q39: Data Studio on BigQuery — build filtered, fast reports](#q39-data-studio-on-bigquery--build-filtered-fast-reports)
-* [Q43: Expose `FullName` via a BigQuery view (avoid reshaping data)](#q43-expose-fullname-via-a-bigquery-view-avoid-reshaping-data)
-* [Q46: Keep frequently updated reference data via BigQuery external table (GCS)](#q46-keep-frequently-updated-reference-data-via-bigquery-external-table-gcs)
-* [Q55: ODBC access — use Standard SQL view + service account](#q55-odbc-access--use-standard-sql-view--service-account)
+* [Q4: Disable caching in Data Studio report (data missing for <1h) ✅](#q4-disable-caching-in-data-studio-report-data-missing-for-1h)
+* [Q25: Stackdriver Logging + advanced filter for BQ insert jobs ✅](#q25-stackdriver-logging--advanced-filter-for-bq-insert-jobs)
+* [Q36: Use a view to simplify columns for BI and cut query cost ✅](#q36-use-a-view-to-simplify-columns-for-bi-and-cut-query-cost)
+* [Q39: Data Studio on BigQuery — build filtered, fast reports ✅](#q39-data-studio-on-bigquery--build-filtered-fast-reports)
+* [Q43: Expose `FullName` via a BigQuery view (avoid reshaping data) ✅](#q43-expose-fullname-via-a-bigquery-view-avoid-reshaping-data)
+* [Q46: Keep frequently updated reference data via BigQuery external table (GCS) ✅](#q46-keep-frequently-updated-reference-data-via-bigquery-external-table-gcs)
+* [Q55: ODBC access — use Standard SQL view + service account ✅](#q55-odbc-access--use-standard-sql-view--service-account)
 
 ### G) Views & Materialized Views
 
@@ -156,7 +156,7 @@ Your company built a TensorFlow neural-network model with a large number of neur
 
 ### A) Query Patterns & SQL Features
 
-#### Q5: Partitioning vs Clustering ✅
+#### Q5: Partitioning vs Clustering
 
 **Question:**
 Your team wants to optimize query performance and cost in BigQuery. What is the difference between partitioning and clustering, and how can they be combined?
@@ -169,7 +169,7 @@ Your team wants to optimize query performance and cost in BigQuery. What is the 
 
 ---
 
-#### Q8: Deduplication with ROW\_NUMBER window function ✅
+#### Q8: Deduplication with ROW\_NUMBER window function
 
 **Question:**
 You are building a new real-time data warehouse using <mark>BigQuery streaming inserts</mark>. Since there’s no guarantee that data will only be sent once, but you do have a <mark>unique ID</mark> for each row and an <mark>event timestamp</mark>, you want to ensure that <mark>duplicates</mark> are not included when querying. Which query type should you use?
@@ -197,7 +197,7 @@ WHERE rn = 1;
 
 ---
 
-#### Q9: Wildcard Tables in BigQuery ✅
+#### Q9: Wildcard Tables in BigQuery
 
 **Question:**
 You need to query across multiple tables in BigQuery whose names share a prefix (e.g., `gsod*`). Which query syntax should you use?
@@ -218,7 +218,7 @@ WHERE _TABLE_SUFFIX BETWEEN '2010' AND '2012';
 
 ---
 
-#### Q53: Slow GROUP BY due to data skew ✅
+#### Q53: Slow GROUP BY due to data skew
 
 **Question:**
 Your users report that a simple query with `GROUP BY country` in BigQuery is running very slowly. The table is large, and the query plan shows imbalance in stage execution. What is the most likely cause?
@@ -238,7 +238,7 @@ Your users report that a simple query with `GROUP BY country` in BigQuery is run
 
 ---
 
-#### Q56: Legacy SQL over sharded tables — use `TABLE_DATE_RANGE` ✅
+#### Q56: Legacy SQL over sharded tables — use `TABLE_DATE_RANGE`
 
 **Question:**
 Your Firebase Analytics integration automatically creates daily tables (e.g., `app_events_20240815`). You need to query across the past 30 days in Legacy SQL. What function should you use?
@@ -264,7 +264,7 @@ GROUP BY event_name;
 
 ### B) Ingestion, Freshness & Consistency
 
-#### Q15: Consistency in BigQuery Streaming Inserts ✅
+#### Q15: Consistency in BigQuery Streaming Inserts
 
 **Question:**
 Your application streams data into BigQuery, and analysts complain that some records appear missing when querying right after insertion. How should you handle this?
@@ -278,7 +278,7 @@ Your application streams data into BigQuery, and analysts complain that some rec
 * Wait a short buffer time for data to fully commit.
 
 
-#### Q24: Convert STRING to TIMESTAMP with new table ✅
+#### Q24: Convert STRING to TIMESTAMP with new table
 
 **Question:**
 You have a table where `event_time` is stored as a <mark>STRING</mark>. Analysts need it as a <mark>TIMESTAMP</mark>. How should you provide it without affecting the raw table?
@@ -302,7 +302,7 @@ FROM mydataset.raw_events;
 
 ---
 
-#### Q48: CSV import mismatch — fix file encoding ✅
+#### Q48: CSV import mismatch — fix file encoding
 
 **Question:**
 Your CSV import into BigQuery succeeded, but the imported data does not match the source file byte-to-byte. What is the most likely cause?
@@ -320,7 +320,7 @@ Your CSV import into BigQuery succeeded, but the imported data does not match th
 
 ### C) Governance & Access Control
 
-#### Q10: Restrict access in BigQuery (IAM roles, dataset isolation) ✅
+#### Q10: Restrict access in BigQuery (IAM roles, dataset isolation)
 
 **Question:**
 Your company is in a highly regulated industry. One requirement is to ensure users have access only to the <mark>minimum information</mark> needed. How should you enforce this in BigQuery? (Choose three)
@@ -340,7 +340,7 @@ Your company is in a highly regulated industry. One requirement is to ensure use
 * <mark>Audit logs</mark> and <mark>encryption</mark> add compliance but do not enforce row/column-level access.
 
 
-#### Q40: Enforce regional access — dataset-per-region + IAM ✅
+#### Q40: Enforce regional access — dataset-per-region + IAM
 
 **Question:**
 You created regional tables for a company policy where employees should only access data for their own region. How do you enforce this?
@@ -359,7 +359,7 @@ You created regional tables for a company policy where employees should only acc
 
 ### D) Admin, Performance & Workload Mgmt
 
-#### Q233: Troubleshooting BigQuery slot contention ✅
+#### Q233: Troubleshooting BigQuery slot contention
 
 **Question:**
 You suspect BigQuery query slowness is due to <mark>slot contention</mark>. How can you confirm?
@@ -376,7 +376,7 @@ You suspect BigQuery query slowness is due to <mark>slot contention</mark>. How 
 * Together, they help identify contention.
 
 
-#### Q239: Concurrency issues with BigQuery slots ✅
+#### Q239: Concurrency issues with BigQuery slots
 
 **Question:**
 Your analysts run ad hoc queries, and you have 1500 scheduled jobs at peak, causing <mark>quota errors</mark>. How do you resolve concurrency?
@@ -395,7 +395,7 @@ Your analysts run ad hoc queries, and you have 1500 scheduled jobs at peak, caus
 
 ### E) Data Modeling & Table Design
 
-#### Q60: Replace sharded tables with one partitioned table ✅
+#### Q60: Replace sharded tables with one partitioned table
 
 **Question:**
 You have 3 years of daily log tables (e.g., `LOGS_20210101`). Queries fail when scanning >1000 tables. How do you fix this?
@@ -411,7 +411,7 @@ You have 3 years of daily log tables (e.g., `LOGS_20210101`). Queries fail when 
 
 ---
 
-#### Q252: Designing customer–product–subscription model ✅
+#### Q252: Designing customer–product–subscription model
 
 **Question:**  
 You are designing a data warehouse in BigQuery to analyze sales data for a **telecommunication service provider**.  
@@ -452,7 +452,7 @@ then filters by `status = "Active"` and `end_date` to count current active subsc
 
 ### F) Integration & BI (Looker Studio / Tools)
 
-#### Q4: Disable caching in Data Studio report (data missing for <1h) ✅
+#### Q4: Disable caching in Data Studio report (data missing for <1h)
 
 **Question:**  
 You create an important report for your large team in **Google Data Studio (Looker Studio)**.  
@@ -465,7 +465,7 @@ What should you do?
   <mark>Disable caching</mark> by editing the **report settings** in Data Studio.
 
 
-#### Q25: Stackdriver Logging + advanced filter for BQ insert jobs ✅
+#### Q25: Stackdriver Logging + advanced filter for BQ insert jobs
 
 **Question:**
 Your team suspects some BigQuery insert jobs are failing. How can you identify the failed jobs?
@@ -485,7 +485,7 @@ Your team suspects some BigQuery insert jobs are failing. How can you identify t
 
 ---
 
-#### Q36: Use a view to simplify columns for BI and cut query cost ✅
+#### Q36: Use a view to simplify columns for BI and cut query cost
 
 **Question:**
 Your BI team struggles with too many columns in a large table and high query costs. What should you do?
@@ -516,7 +516,7 @@ FROM raw_sales_table;
 
 ---
 
-#### Q39: Data Studio on BigQuery — build filtered, fast reports ✅
+#### Q39: Data Studio on BigQuery — build filtered, fast reports
 
 **Question:**
 You need to create dashboards in Data Studio on BigQuery with <mark>fast performance</mark>. What design should you use?
@@ -534,7 +534,7 @@ You need to create dashboards in Data Studio on BigQuery with <mark>fast perform
 
 ---
 
-#### Q43: Expose `FullName` via a BigQuery view ✅
+#### Q43: Expose `FullName` via a BigQuery view
 
 **Question:**
 You need a `FullName` field (`FirstName + LastName`) in a `Users` table. How do you provide it without altering the schema?
@@ -563,7 +563,7 @@ WHERE status = 'ACTIVE';
 * <mark>Best Practice:</mark> Use views for derived fields.
 
 
-#### Q46: Keep frequently updated reference data via BigQuery external table ✅
+#### Q46: Keep frequently updated reference data via BigQuery external table
 
 **Question:**
 You have a dataset of prices updated every 30 minutes. How should you expose it to BigQuery for cheap queries?
@@ -583,7 +583,7 @@ You have a dataset of prices updated every 30 minutes. How should you expose it 
 
 ---
 
-#### Q55: ODBC access — use Standard SQL view + service account ✅
+#### Q55: ODBC access — use Standard SQL view + service account
 
 **Question:**
 Your team will connect to BigQuery via ODBC, but your current view is in <mark>Legacy SQL</mark>. How do you ensure compatibility?
