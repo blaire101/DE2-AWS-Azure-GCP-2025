@@ -1980,8 +1980,7 @@ Options:
 - C. Compress text files to gzip using Grid Computing Tools. Use BigQuery for storage and query.  
 - D. Compress text files to gzip using Grid Computing Tools. Use Cloud Storage, then import into Cloud Bigtable for query.  
 
-**Correct Answer:**  
-B  
+**Correct Answer:**  B  
 
 **Explanation:**  
 - **Avro** is Google’s recommended format for BigQuery: supports schema, compression, and parallel load.  
