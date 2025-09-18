@@ -1104,7 +1104,7 @@ D. Create a new pipeline with a new Pub/Sub subscription and cancel the old one.
 A  
 
 **Explanation:**  
-- **Drain** allows current pipeline to **finish processing in-flight data** before shutdown → no loss.  
+- <mark>**Drain** allows current pipeline to **finish processing in-flight data** before shutdown → no loss.</mark>    
 - **B** only works for compatible transform changes (rename/mapping), not for incompatible jobs.  
 - **C/D** risk losing unacked or duplicate messages when switching subscriptions.  
 - Safe approach: **drain old pipeline → deploy new one**.  
