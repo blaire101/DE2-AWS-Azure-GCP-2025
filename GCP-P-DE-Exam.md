@@ -1767,3 +1767,225 @@ B
 - A still leaves many tables.  
 - C only caches results (24h), doesn’t reduce tables.  
 - D = workarounds with views, still metadata overhead.  
+
+
+#### Q61: Optimize Dataproc cluster cost for weekly Spark job
+
+**Question:**  
+Analytics team runs a Spark job (30 min runtime on 15 nodes) weekly. Data in GCS, output to BigQuery. How to optimize cluster cost?
+
+Options:  
+A. Migrate to Cloud Dataflow  
+<mark>B. Use pre-emptible VMs for the cluster</mark>  
+C. Use higher-memory nodes so job runs faster  
+D. Use SSDs on worker nodes so job runs faster  
+
+**Correct Answer:**  
+B
+
+**Explanation:**  
+- **Preemptible VMs (B)** cut compute cost by up to 80%. Perfect for **batch jobs** (short, restartable, non-critical).  
+- **A** adds migration effort; question focuses on **cost optimization within Dataproc**.  
+- **C** increases cost; speed isn’t the problem (job already fits in 30 min).  
+- **D** SSDs increase I/O cost; Spark jobs reading from GCS don’t need large local PD.  
+
+---
+
+#### Q62: Handle late or out-of-order events in Dataflow
+
+**Question:**  
+Company receives batch + stream event data. Sometimes late or out-of-order. How should Dataflow pipeline handle this?
+
+Options:  
+A. Single global window  
+B. Sliding windows  
+<mark>C. Use watermarks and timestamps</mark>  
+D. Require all data sources to include timestamps  
+
+**Correct Answer:**  
+C
+
+**Explanation:**  
+- **Watermarks** track event-time progress and allow Dataflow to wait for stragglers.  
+- **Timestamps** order events correctly, even if out-of-order.  
+- A/B don’t solve late arrivals properly.  
+- D is good practice but incomplete—still need **watermarks** to know how late is acceptable.
+
+---
+
+#### Q63: Add synthetic feature for linear separation
+
+**Question:**  
+Dataset has circular separation by class (X,Y). Need to classify with linear algorithm by adding a synthetic feature. Which?  
+
+Options:  
+<mark>A. X² + Y²</mark>  
+B. X²  
+C. Y²  
+D. cos(X)  
+
+**Correct Answer:**  
+A
+
+**Explanation:**  
+- Circle equation: **X² + Y² = r²**. Adding this feature makes data linearly separable in higher dimension.  
+- B and C lose joint relationship (need both X and Y).  
+- D ignores Y, doesn’t match circular boundary.
+
+---
+
+#### Q64: Secure app → BigQuery access without per-user auth
+
+**Question:**  
+IT app integrates with BigQuery. Users should not authenticate individually, nor get dataset access. How to access securely?  
+
+Options:  
+A. Grant group dataset access  
+B. Use SSO + pass user creds  
+<mark>C. Use service account, grant dataset access, use its key</mark>  
+D. Dummy user + stored password  
+
+**Correct Answer:**  
+C
+
+**Explanation:**  
+- **Service accounts** are for apps, not humans. Grant dataset access to SA → app authenticates securely.  
+- A/B/D require per-user or insecure key/password sharing.  
+- **C is Google-recommended best practice** for app-to-BigQuery integration.
+
+#### Q65: Casual prep for ML with nulls in logistic regression
+
+**Question:**  
+Build a data pipeline for logistic regression. Need a casual way to prep data, monitor/adjust **null values**, keep them **real-valued** (not removed).  
+
+Options:  
+A. Dataprep → find nulls → Dataproc job: convert to 'none'  
+<mark>B. Dataprep → find nulls → Dataprep job: convert to 0</mark>  
+C. Dataflow → find nulls → Dataprep job: convert to 'none'  
+D. Dataflow → find nulls → custom script: convert to 0  
+
+**Correct Answer:**  
+B  
+
+**Explanation:**  
+- Logistic regression requires **numeric (real-valued)** inputs.  
+- **Dataprep** is the “casual” tool (UI-based wrangling).  
+- Converting nulls to **0** keeps them real-valued.  
+- 'none' is a string, not numeric.  
+- Dataflow/custom scripts are heavier ops than required.
+
+---
+
+#### Q66: Encrypt at rest for Redis/Kafka on GCE with key rotation
+
+**Question:**  
+Redis via Kafka on GCE. Must encrypt data at rest with keys you can **create, rotate, and destroy**.  
+
+Options:  
+A. SA + API call “encryption at rest”  
+<mark>B. Create keys in Cloud KMS; use them for GCE data encryption</mark>  
+C. Create keys locally, upload to KMS, use for GCE  
+D. Create keys in KMS; reference in API calls at runtime  
+
+**Correct Answer:**  
+B  
+
+**Explanation:**  
+- **Cloud KMS** supports customer-managed keys (CMEK): creation, rotation, destruction.  
+- Integrated directly with GCE disk encryption.  
+- **C** (CSEK) = external keys, but rotation harder.  
+- **D** = API call use, not true disk encryption at rest.  
+- Best practice: use CMEK with KMS (option B).
+
+---
+
+#### Q67: Recommend videos (fast filtering, TB-scale)
+
+**Question:**  
+App recommends new videos by past views. Must generate **labels** for video entities, and provide **fast filtering** across several TB of data.  
+
+Options:  
+A. Build classifier (MLlib) → Dataproc  
+B. Build 2 classifiers (MLlib) → Dataproc  
+<mark>C. Use Video Intelligence API for labels; store in Bigtable; filter</mark>  
+D. Use Video Intelligence API; store in Cloud SQL; join/filter  
+
+**Correct Answer:**  
+C  
+
+**Explanation:**  
+- Use **Video Intelligence API** for managed labeling (avoid custom ML).  
+- **Bigtable** → low-latency, scalable TB+ data store with key-based filtering.  
+- **Cloud SQL** → limited storage (~64TB), slower joins.  
+- Spark MLlib (A/B) → heavy/overkill; not needed.
+
+---
+
+#### Q68: Cheapest scalable JSON → BigQuery pipeline
+
+**Question:**  
+Write/transform JSON from Pub/Sub to BigQuery. Must minimize **service costs**, handle variable input sizes, with minimal manual ops.  
+
+Options:  
+A. Dataproc + monitor CPU + resize workers  
+B. Dataproc + diagnose bottleneck + manual tuning  
+<mark>C. Dataflow + monitor lag (Stackdriver) + default autoscaling</mark>  
+D. Dataflow + monitor runtimes + custom machine types  
+
+**Correct Answer:**  
+C  
+
+**Explanation:**  
+- **Dataflow** = serverless, auto-scaling, ideal for spiky workloads.  
+- **Autoscaling** lowers costs and removes manual intervention.  
+- **Dataproc** (A/B) = cluster ops overhead.  
+- **D** customizing machine types = more manual ops.
+
+---
+
+#### Q69: Transfer YouTube channel backup logs for ANSI SQL analysis
+
+**Question:**  
+Your infrastructure includes a set of YouTube channels. You need to create a process to send YouTube channel data to Google Cloud so global marketing teams can perform **ANSI SQL analysis** on up-to-date log data. How should you transfer the logs?  
+
+Options:  
+<mark>A. Use Storage Transfer Service to transfer the offsite backup files to a Cloud Storage Multi-Regional storage bucket as a final destination.</mark>  
+B. Use Storage Transfer Service to transfer the offsite backup files to a Cloud Storage Regional bucket as a final destination.  
+C. Use BigQuery Data Transfer Service to transfer the offsite backup files to a Cloud Storage Multi-Regional storage bucket as a final destination.  
+D. Use BigQuery Data Transfer Service to transfer the offsite backup files to a Cloud Storage Regional bucket as a final destination.  
+
+**Correct Answer:**  
+A  
+
+**Explanation:**  
+- **Storage Transfer Service** is the correct tool to move **offsite backup files** into GCS.  
+- **Multi-Regional bucket** ensures global access and performance for worldwide teams.  
+- After loading into GCS, logs can be queried via **BigQuery external tables** (BigLake) with ANSI SQL.  
+- **BigQuery Data Transfer Service** loads directly into BigQuery datasets, not Cloud Storage → C/D are invalid.  
+- **Regional bucket** (B/D) does not meet global access requirement.
+
+---
+
+#### Q70: Storage design for very large text files with ANSI SQL
+
+**Question:**  
+You are designing storage for very large text files in a Google Cloud data pipeline. Requirements:  
+- Support **ANSI SQL queries**.  
+- Support **compression**.  
+- Support **parallel load** from input locations, following Google best practices.  
+
+Options:  
+A. Transform text files to compressed Avro using Cloud Dataflow. Use BigQuery for storage and query.  
+<mark>B. Transform text files to compressed Avro using Cloud Dataflow. Use Cloud Storage and BigQuery permanent linked tables for query.</mark>  
+C. Compress text files to gzip using Grid Computing Tools. Use BigQuery for storage and query.  
+D. Compress text files to gzip using Grid Computing Tools. Use Cloud Storage, then import into Cloud Bigtable for query.  
+
+**Correct Answer:**  
+B  
+
+**Explanation:**  
+- **Avro** is Google’s recommended format for BigQuery: supports schema, compression, and parallel load.  
+- **Cloud Storage + permanent external tables** allow storage of massive files and querying via BigQuery ANSI SQL.  
+- **A** loads everything into BigQuery storage → higher costs and less flexibility.  
+- **C/D** use gzip or Bigtable, which are not efficient for parallel loading or ANSI SQL.  
+- Therefore, **B** is the best practice for scalable, compressed, ANSI SQL–ready pipelines.
