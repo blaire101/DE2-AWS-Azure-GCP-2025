@@ -1943,48 +1943,167 @@ C
 
 ---
 
-#### Q69: Transfer YouTube channel backup logs for ANSI SQL analysis
+#### Q69: YouTube channel log data transfer for ANSI SQL analysis
 
-**Question:**  
-Your infrastructure includes a set of YouTube channels. You need to create a process to send YouTube channel data to Google Cloud so global marketing teams can perform **ANSI SQL analysis** on up-to-date log data. How should you transfer the logs?  
+**Question:**
+Your infrastructure includes YouTube channels. You need to transfer YouTube channel data into Google Cloud so worldwide marketing teams can perform **ANSI SQL analysis** on up-to-date logs. What should you do?
 
-Options:  
-<mark>A. Use Storage Transfer Service to transfer the offsite backup files to a Cloud Storage Multi-Regional storage bucket as a final destination.</mark>  
-B. Use Storage Transfer Service to transfer the offsite backup files to a Cloud Storage Regional bucket as a final destination.  
-C. Use BigQuery Data Transfer Service to transfer the offsite backup files to a Cloud Storage Multi-Regional storage bucket as a final destination.  
-D. Use BigQuery Data Transfer Service to transfer the offsite backup files to a Cloud Storage Regional bucket as a final destination.  
+**Options:**  
+A. Use Storage Transfer Service to transfer offsite backup files to **Cloud Storage Multi-Regional** bucket as final destination.  
+B. Use Storage Transfer Service to transfer offsite backup files to **Cloud Storage Regional** bucket as final destination.  
+C. Use **BigQuery Data Transfer Service** to transfer offsite backup files to **Cloud Storage Multi-Regional** bucket.  
+D. Use **BigQuery Data Transfer Service** to transfer offsite backup files to **Cloud Storage Regional** bucket.  
 
-**Correct Answer:**  
-A  
+**Correct Answer:** A
 
-**Explanation:**  
-- **Storage Transfer Service** is the correct tool to move **offsite backup files** into GCS.  
-- **Multi-Regional bucket** ensures global access and performance for worldwide teams.  
-- After loading into GCS, logs can be queried via **BigQuery external tables** (BigLake) with ANSI SQL.  
-- **BigQuery Data Transfer Service** loads directly into BigQuery datasets, not Cloud Storage → C/D are invalid.  
-- **Regional bucket** (B/D) does not meet global access requirement.
+**Explanation:**
+
+* **A**: Storage Transfer Service moves backup files into Cloud Storage → from there you can query with BigQuery (external tables / BigLake). Multi-Regional bucket ensures global access for distributed teams.
+* **B**: Regional bucket is cheaper but not global; less aligned with worldwide requirement.
+* **C/D**: BigQuery Data Transfer Service only loads into **BigQuery datasets**, not GCS. Options C/D are invalid.
 
 ---
 
 #### Q70: Storage design for very large text files with ANSI SQL
 
+**Question:**
+You are designing storage for very large text files in a Google Cloud data pipeline. Requirements:
+
+* Support **ANSI SQL queries**.
+* Support **compression**.
+* Support **parallel load** from input locations (Google best practices).
+
+**Options:**  
+A. Transform text files to compressed **Avro** using Cloud Dataflow. Store in BigQuery for storage and query.  
+B. <mark>Transform text files to compressed **Avro** using Cloud Dataflow. Store in **Cloud Storage** and query via permanent BigQuery external tables.</mark>  
+C. Compress text files to **gzip** using Grid Computing Tools. Store in BigQuery for storage and query.  
+D. Compress text files to **gzip** using Grid Computing Tools. Store in Cloud Storage, then import into **Cloud Bigtable** for query.  
+
+**Correct Answer:** B
+
+**Explanation:**
+
+* **B**: Best practice → Store Avro in Cloud Storage (cheap, compressed, parallel load). BigQuery external tables allow ANSI SQL queries without fully loading into BQ storage.
+* **A**: Works but increases storage costs in BigQuery.
+* **C/D**: Gzip is slower, not parallel-friendly; Bigtable doesn’t support ANSI SQL.
+
+---
+
+#### Q71: Auto-label blog posts without ML expertise
+
 **Question:**  
-You are designing storage for very large text files in a Google Cloud data pipeline. Requirements:  
-- Support **ANSI SQL queries**.  
-- Support **compression**.  
-- Support **parallel load** from input locations, following Google best practices.  
+You need to add **subject labels** to users’ blog posts quickly with **no ML expertise or extra dev resources**.  
 
-Options:  
-- A. Transform text files to compressed Avro using Cloud Dataflow. Use BigQuery for storage and query.  
-- <mark>B. Transform text files to compressed Avro using Cloud Dataflow. Use Cloud Storage and BigQuery permanent linked tables for query.</mark>  
-- C. Compress text files to gzip using Grid Computing Tools. Use BigQuery for storage and query.  
-- D. Compress text files to gzip using Grid Computing Tools. Use Cloud Storage, then import into Cloud Bigtable for query.  
+**Options:**  
+A. <mark>Call the **Cloud Natural Language API** and use **Entity Analysis** results as labels.</mark>  
+B. Call the Cloud Natural Language API and use **Sentiment Analysis** as labels.  
+C. Build/train a TensorFlow text classifier; deploy on Cloud ML Engine; call from the app.  
+D. Build/train a TensorFlow model; deploy on GKE; call from the app.  
 
-**Correct Answer:**  B  
+**Correct Answer:** A  
 
 **Explanation:**  
-- **Avro** is Google’s recommended format for BigQuery: supports schema, compression, and parallel load.  
-- **Cloud Storage + permanent external tables** allow storage of massive files and querying via BigQuery ANSI SQL.  
-- **A** loads everything into BigQuery storage → higher costs and less flexibility.  
-- **C/D** use gzip or Bigtable, which are not efficient for parallel loading or ANSI SQL.  
-- Therefore, **B** is the best practice for scalable, compressed, ANSI SQL–ready pipelines.
+- **A** uses a pre-trained API (fastest path) and returns label-like entities (person/org/location/product).  
+- **B** returns emotion/attitude, not subjects.  
+- **C/D** require custom ML work (slow, resource-heavy).  
+
+---
+
+#### Q72: Cheapest storage for 20 TB CSV with ANSI SQL via multiple engines
+
+**Question:**  
+Store **20 TB CSV** and let multiple teams query aggregates while minimizing **query cost**. Data is in **Cloud Storage** and queried by multiple engines.  
+
+**Options:**  
+A. Cloud **Bigtable** for storage; query with **HBase shell** on GCE.  
+B. Cloud **Bigtable** for storage; link as **permanent tables** in BigQuery.  
+C. <mark>**Cloud Storage** for storage; link as **permanent external tables** in BigQuery.</mark>  
+D. **Cloud Storage** for storage; link as **temporary tables** in BigQuery.  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- **C** stores cheaply in GCS and uses **permanent external tables** for reusable ANSI SQL without loading into BQ storage.  
+- **A/B**: Bigtable suits NoSQL/point lookups, not aggregate analytics economy.  
+- **D**: Temporary tables are ad-hoc and not shareable.  
+
+---
+
+#### Q73: Relational workload, horizontal transactions + range queries
+
+**Question:**  
+Two relational tables (~10 TB) must support **horizontally scalable transactions** and **range queries on non-key columns**.  
+
+**Options:**  
+A. **Cloud SQL** with secondary indexes.  
+B. **Cloud SQL** + Dataflow transforms.  
+C. <mark>**Cloud Spanner** with **secondary indexes**.</mark>  
+D. **Cloud Spanner** + Dataflow transforms.  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- **C**: Only **Cloud Spanner** provides **horizontal scale + transactions**; secondary indexes optimize range queries.  
+- **A/B**: Cloud SQL scales vertically; Dataflow doesn’t fix scaling/transactions.  
+- **D**: ETL not required for the query pattern.  
+
+---
+
+#### Q74: 50 TB financial time-series, frequent updates, Hadoop migration
+
+**Question:**  
+Store **50 TB time-series** data with **frequent updates/streaming** and migrate existing **Hadoop** jobs.  
+
+**Options:**  
+A. <mark>**Cloud Bigtable**</mark>  
+B. **BigQuery**  
+C. **Cloud Storage**  
+D. **Cloud Datastore**  
+
+**Correct Answer:** A  
+
+**Explanation:**  
+- **Bigtable** is ideal for **time-series** with high write/read throughput and HBase API compatibility (Dataproc/Hadoop).  
+- **BigQuery** is for analytical queries, not frequent row updates.  
+- **GCS/Datastore** don’t fit high-throughput time-series writes.  
+
+---
+
+#### Q75: Share aggregates securely across projects with cost isolation
+
+**Question:**  
+Expose only **aggregated** BigQuery results to other projects, **hide user-level data**, **minimize storage**, and **bill query cost to the consumer project**.  
+
+**Options:**  
+A. <mark>Create and share an **authorized view** that returns aggregates.</mark>  
+B. Create/share a new dataset and a view with aggregates.  
+C. Create/share a new dataset and a precomputed aggregate **table**.  
+D. Grant **dataViewer** IAM on the dataset.  
+
+**Correct Answer:** A  
+
+**Explanation:**  
+- **Authorized views** restrict raw data, avoid duplication, and billing goes to the querying project; storage isn’t duplicated.  
+- **B/C** add management/storage overhead (and C duplicates data).  
+- **D** exposes raw tables.  
+
+---
+
+#### Q76: Where to store data requiring auditable access records
+
+**Question:**  
+Regulations require an **auditable record of access** to certain data (assume expiring logs are archived correctly). Where to store the **regulated data**?  
+
+**Options:**  
+A. Encrypt in **Cloud Storage** with user-supplied keys; give separate decryption keys.  
+B. <mark>Store in a **BigQuery** dataset restricted to authorized users; rely on **Data Access logs** for auditability.</mark>  
+C. Store in **Cloud SQL** with separate DB users; use **Admin activity logs**.  
+D. Use a **Cloud Storage** bucket only reachable via an App Engine service that logs access before sharing links.  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- **B**: BigQuery’s **Data Access logs** + IAM provide native, fine-grained query/access auditing.  
+- **A**: Encryption ≠ access audit trail.  
+- **C**: Admin logs cover admin actions, not data read access granularity.  
+- **D**: Custom logging adds complexity and is easier to bypass.  
