@@ -2435,4 +2435,199 @@ D. <mark>Install Stackdriver Agent and configure the MySQL plugin</mark>
 - C: logging only, not metrics.  
 
 
+#### Q91: Credit default rates — model choice
+
+**Question:**  
+You work for a bank with a labeled dataset of already granted loans and whether they defaulted. You must train a model to predict **default rates** for applicants.  
+
+**Options:**  
+A. Increase the size of the dataset by collecting additional data  
+B. <mark>Train a linear regression to predict a credit default risk score</mark>  
+C. Remove the bias from the data and collect applications that have been declined loans  
+D. Match loan applicants with their social profiles to enable feature engineering  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- Predicting a **rate/score** can be framed as a regression target; linear regression yields a continuous risk score.  
+- A/C/D may be useful later, but don’t directly deliver a working model now (and D risks privacy/compliance issues).  
+
+
+---
+
+#### Q92: 2TB relational DB to GCP — minimize refactor & cost
+
+**Question:**  
+Migrate a **2TB relational database** to GCP. Minimal refactoring; cost is primary concern.  
+
+**Options:**  
+A. Cloud Spanner  
+B. Cloud Bigtable  
+C. Cloud Firestore  
+D. <mark>Cloud SQL</mark>  
+
+**Correct Answer:** D  
+
+**Explanation:**  
+- Cloud SQL is a **managed relational** service → lowest refactor effort and cost for 2TB.  
+- Spanner is powerful but costlier and requires schema/SQL changes; Bigtable/Firestore are NoSQL.  
+
+
+---
+
+#### Q93: Bigtable prod + hourly analytics — workload isolation
+
+**Question:**  
+Real-time Bigtable app (heavy read/write). New **hourly** analytics over whole DB; must protect production reliability.  
+
+**Options:**  
+A. Export dump to GCS and run analytics on files  
+B. Add second cluster with **multi-cluster** routing; live app vs batch profiles  
+C. <mark>Add second cluster with **single-cluster** routing; live app vs batch profiles</mark>  
+D. Double the size of existing cluster and run both workloads there  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- Replicate instance; use **app profiles** to route prod traffic to one cluster and analytics to the other via **single-cluster routing** to avoid interference.  
+- B is for HA/failover; here isolation is the key.  
+
+
+---
+
+#### Q94: Beam — enrich Pub/Sub with BigQuery reference data
+
+**Question:**  
+Enrich **Pub/Sub** events with small static reference data from **BigQuery**; write enriched results back to BigQuery.  
+
+**Options:**  
+A. Batch job, PubSubIO, side-inputs  
+B. Streaming job, PubSubIO, JdbcIO, side-outputs  
+C. <mark>Streaming job, PubSubIO, BigQueryIO, side-inputs</mark>  
+D. Streaming job, PubSubIO, BigQueryIO, side-outputs  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- Streaming from Pub/Sub; **side inputs** hold small BQ reference set; **BigQueryIO** writes results.  
+
+
+---
+
+#### Q95: Scale Bigtable writes — what to monitor (choose 2)
+
+**Question:**  
+Pipeline writes to Bigtable with good row keys. When should you scale the cluster?  
+
+**Options:**  
+A. Key Visualizer: Read pressure index > 100  
+B. Key Visualizer: Write pressure index > 100  
+C. <mark>Monitor **write latency**; sustained increase ⇒ add nodes</mark>  
+D. <mark>Monitor **storage utilization**; > ~70% of max ⇒ add nodes</mark>  
+E. Monitor read latency; if > 100 ms ⇒ add nodes  
+
+**Correct Answer:** C, D  
+
+**Explanation:**  
+- **C:** Sustained write latency growth indicates insufficient capacity.  
+- **D:** Google recommends adding nodes when storage utilization exceeds ~**70%**.  
+
+
+---
+
+#### Q96: Daily NLP on social posts — archive raw & analyze cheaply
+
+**Question:**  
+Batch-load posts daily, run Cloud **Natural Language API**, extract topics/sentiment, **archive raw** data, and build dashboards.  
+
+**Options:**  
+A. Store posts + extracted data in BigQuery  
+B. Store posts + extracted data in Cloud SQL  
+C. <mark>Store **raw posts in Cloud Storage**, write **extracted data to BigQuery**</mark>  
+D. Feed posts directly to API from source, write extracted data to BigQuery  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- GCS is ideal/cheap for **raw archival**; BigQuery is ideal for **analytics / dashboards** on extracted features.  
+
+
+---
+
+#### Q97: Transform GCS data — no programming / no SQL
+
+**Question:**  
+Historic data in GCS; need error detection and transformations **without coding or SQL**.  
+
+**Options:**  
+A. Cloud Dataflow with Beam  
+B. <mark>Cloud Dataprep with recipes</mark>  
+C. Cloud Dataproc with Hadoop job  
+D. Federated BigQuery tables with queries  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- **Dataprep** (Trifacta) provides **visual, no-code** data profiling, cleansing, and transformation.  
+
+
+---
+
+#### Q98: Upload historic data to GCS — no inbound from external IPs
+
+**Question:**  
+Security forbids external IP access **into** on-prem. After initial upload, add daily data from on-prem apps.  
+
+**Options:**  
+A. <mark>Run **gsutil rsync** from on-prem servers</mark>  
+B. Use Dataflow to write to GCS  
+C. Dataproc job to transfer  
+D. FTP to a GCE VM then move to GCS  
+
+**Correct Answer:** A  
+
+**Explanation:**  
+- Outbound from on-prem to GCS is allowed; **gsutil rsync** handles incremental daily syncs simply and securely.  
+
+
+---
+
+#### Q99: BigQuery full scan — filter on timestamp & ID
+
+**Question:**  
+A query filters by **timestamp** and **ID** but still **full scans**. Minimize scanned bytes with minimal SQL changes.  
+
+**Options:**  
+A. Separate table per ID  
+B. LIMIT  
+C. <mark>Recreate table with a **partitioning** column and a **clustering** column</mark>  
+D. maximum_bytes_billed flag  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- **Partition** on time to prune partitions; **cluster** on ID to prune blocks → less data scanned without changing queries much.  
+- LIMIT doesn’t reduce bytes scanned; D only caps billing, not scan.  
+
+
+---
+
+#### Q100: 50k sensors every minute — sub-minute availability in BQ
+
+**Question:**  
+Insert minute-resolution data from **50,000 sensors** into BigQuery, with data available within **~1 minute**; expect growth.  
+
+**Options:**  
+A. bq load every 60 seconds  
+B. <mark>Use a **Cloud Dataflow** pipeline to **stream** into BigQuery</mark>  
+C. INSERT a batch every 60 seconds  
+D. MERGE updates every 60 seconds  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- **Streaming inserts** via Dataflow provide near-real-time availability and scale for growing, high-rate sensor data.  
+
+
+
 
