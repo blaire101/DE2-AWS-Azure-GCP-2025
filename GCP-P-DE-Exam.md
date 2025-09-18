@@ -3515,63 +3515,74 @@ D. <mark>Stop with **Drain**, then start a new job</mark> ✅
 
 ---
 
-#### Q144: Move 2 PB to GCS with 20 Mb/s egress in 6 months
+#### Q144: Move 2 PB data to GCS with only 20 Mb/s bandwidth in 6 months
+
+**Question:**  
+Need to migrate 2 PB of historical data from on-premises storage to Cloud Storage within 6 months, outbound bandwidth only 20 Mb/s.
 
 **Options:**  
-A. <mark>Transfer Appliance</mark> ✅  
-B. `gsutil cp -J` (compress)  
-C. Public URL + Storage Transfer Service  
-D. Throttle `gsutil` ≤ 20 Mb/s  
+A. <mark>Use Transfer Appliance to copy the data</mark> ✅  
+B. Use `gsutil cp -J` with compression  
+C. Create private URL and use Storage Transfer Service  
+D. Use `gsutil cp` with throttling to ≤20 Mb/s  
 
-**Correct Answer:** A
+**Correct Answer:** A  
 
 **Explanation:**  
-- ✅ **A is correct**: **Transfer Appliance** is designed for **PB-scale data migration** where bandwidth is limited, meeting the 6-month deadline.  
-- ❌ **B**: Compression helps a little but doesn’t solve multi-PB transfer at 20 Mb/s.  
-- ❌ **C**: Still network-bound, cannot overcome bandwidth limits.  
-- ❌ **D**: Throttling avoids traffic impact but doesn’t improve transfer time—it would take decades.
+- ✅ **A is correct**: Transfer Appliance is designed for PB-scale migrations when bandwidth is constrained; avoids 19+ months of online transfer.  
+- ❌ **B**: Compression helps but still far too slow.  
+- ❌ **C**: Still limited by 20 Mb/s network.  
+- ❌ **D**: Throttling doesn’t solve the timeline problem.  
 
 ---
 
-#### Q145: Monthly CSVs, schema changes every third month; analysts must self-serve
+#### Q145: Monthly CSV ingestion, schema changes every 3 months
+
+**Question:**  
+CSV files arrive monthly, schema changes every third month. Analysts (non-developers) must cleanse and transform using a graphical tool with scheduling.
 
 **Options:**  
-A. <mark>Dataprep (Trifacta) recipes + schedule</mark> ✅  
-B. Load to BQ then SQL transform/merge  
-C. Dataflow (Python) for analysts  
-D. Dataproc + Spark SQL + HDFS  
+A. <mark>Dataprep (Trifacta) recipes + scheduling</mark> ✅  
+B. Load into BigQuery, use SQL transform/merge  
+C. Analysts write Dataflow pipeline in Python  
+D. Use Dataproc + Spark SQL + HDFS  
 
-**Correct Answer:** A
+**Correct Answer:** A  
 
 **Explanation:**  
-- ✅ **A is correct**: Dataprep provides a **graphical, no-code** interface, supports **scheduling**, and gracefully handles **schema changes**. It empowers analysts directly without coding.  
-- ❌ **B**: Requires SQL skills, not analyst-friendly.  
-- ❌ **C**: Writing Dataflow in Python requires developers, not suited for analysts.  
-- ❌ **D**: Spark SQL on Dataproc is code-heavy and not aligned with the requirement for a graphical tool.
+- ✅ **A is correct**: Dataprep provides GUI-based transformation, analyst-friendly, handles schema drift, supports scheduled jobs.  
+- ❌ **B**: Requires SQL coding, less analyst-friendly.  
+- ❌ **C**: Requires Python skills, not suitable for non-developers.  
+- ❌ **D**: Spark SQL powerful but heavy and not no-code.  
 
 ---
 
-#### Q146: Use Hive on Dataproc with ORC in GCS, need some HDFS replication — *(Choose two)*
+#### Q146: Use Hive on Dataproc with ORC in GCS, need some HDFS replication *(Choose two)*
+
+**Question:**  
+Migrated ORC files to GCS, want Hive on Dataproc, with some data in HDFS for performance.
 
 **Options:**  
-A. `gsutil` GCS → HDFS; mount locally  
-B. `gsutil` GCS → any node; mount locally  
-C. <mark>`gsutil` GCS → master, then copy into HDFS; mount from HDFS</mark> ✅  
-D. <mark>Use GCS connector for **external** Hive tables; then replicate to **managed** tables</mark> ✅  
-E. Load to BigQuery; mount via BQ connector; replicate  
+A. `gsutil` → HDFS directly; mount Hive locally  
+B. `gsutil` → any node; mount Hive locally  
+C. <mark>`gsutil` → master node → copy to HDFS; mount from HDFS</mark> ✅  
+D. <mark>Use GCS connector for Hive external tables, then replicate to managed tables</mark> ✅  
+E. Load into BigQuery; use BQ connector; replicate  
 
-**Correct Answers:** C, D
+**Correct Answer:** C, D  
 
 **Explanation:**  
-- ✅ **C**: Copying via the master node into **HDFS** is a practical approach for high-performance Hive queries.  
-- ✅ **D**: The **GCS connector** enables external Hive tables directly on GCS, which can then be replicated into native Hive tables for faster performance.  
-- ❌ **A/B**: Copying to a node without moving into HDFS is incomplete and won’t maximize performance.  
-- ❌ **E**: Loading into BigQuery first introduces unnecessary complexity and overhead.
-
+- ✅ **C**: Practical way to move hot data into HDFS for faster I/O.  
+- ✅ **D**: GCS connector allows external Hive tables on GCS, replicate to native for performance.  
+- ❌ **A/B**: Incomplete; don’t properly load into HDFS.  
+- ❌ **E**: Adds unnecessary BigQuery step.  
 
 ---
 
-#### Q147: Long-running, interdependent batch jobs (shell, Hadoop, BigQuery) with retries
+#### Q147: Orchestrating long batch jobs with dependencies & retries
+
+**Question:**  
+Several long-running batch jobs (shell, Hadoop, BigQuery), need scheduling, dependency management, retries.
 
 **Options:**  
 A. Cloud Scheduler  
@@ -3579,32 +3590,36 @@ B. Cloud Dataflow
 C. Cloud Functions  
 D. <mark>Cloud Composer (Airflow)</mark> ✅  
 
-**Correct Answer:** D
+**Correct Answer:** D  
 
 **Explanation:**  
-- ✅ **D is correct**: **Cloud Composer** (Airflow) supports **complex DAG orchestration**, retries, and scheduling for heterogeneous tasks (shell scripts, Hadoop jobs, BigQuery queries).  
-- ❌ **A**: Cloud Scheduler only triggers jobs; it can’t manage dependencies or retries across multi-step workflows.  
-- ❌ **B**: Dataflow is for streaming/batch ETL pipelines, not general orchestration.  
-- ❌ **C**: Cloud Functions are event-driven and short-lived; unsuitable for long-running workflows.
-
+- ✅ **D is correct**: Composer manages complex DAGs, dependencies, retries, schedules.  
+- ❌ **A**: Scheduler only triggers jobs, no orchestration.  
+- ❌ **B**: Dataflow is for data pipelines, not cross-service orchestration.  
+- ❌ **C**: Functions are event-driven, not suited for multi-hour batch with retries.  
 
 ---
 
 #### Q148: Real-time camera-based damage detection on packages
 
-**Options:**  
-A. BigQuery ML in batches  
-B. <mark>Train AutoML (Vertex AI Vision/AutoML Vision) on your images; serve via API</mark> ✅  
-C. Cloud Vision API pre-trained damage detection  
-D. TensorFlow model in Cloud Datalab notebook  
+**Question:**  
+A shipping company wants to detect and flag damaged packages in real time using cameras on delivery lines.
 
-**Correct Answer:** B
+**Options:**  
+A. Use BigQuery ML to train and analyze in batches  
+B. <mark>Train AutoML Vision model on your images, build API for real-time use</mark> ✅  
+C. Use Cloud Vision API pre-trained models to detect damage  
+D. Train TensorFlow model in Cloud Datalab notebook  
+
+**Correct Answer:** B  
 
 **Explanation:**  
-- ✅ **B is correct**: **AutoML Vision** lets you train a **custom model** for domain-specific “damage detection” and serve it via an API for **real-time inference**.  
-- ❌ **A**: BigQuery ML is designed for structured/tabular data, not image processing.  
-- ❌ **C**: Cloud Vision API is pre-trained for generic objects, not custom “damage” classification.  
-- ❌ **D**: TensorFlow + notebooks require heavy custom dev/ops effort, not as efficient as AutoML for this use case.
+- ✅ **B is correct**: “Damage” is domain-specific, requiring a **custom model**. AutoML Vision enables training on your own corpus and serving via API for real-time detection.  
+- ❌ **A**: BigQuery ML is batch-oriented, not real-time image analysis.  
+- ❌ **C**: Vision API is generic; lacks “damage” label.  
+- ❌ **D**: TensorFlow DIY is valid but heavier; not fastest to production.  
+
+---
 
 #### Q149: Limit table visibility per team after migrating to BigQuery
 
@@ -3617,53 +3632,60 @@ B. Create simple SQL views in same dataset; grant viewers on views
 C. Create authorized views in same dataset; grant viewers on views  
 D. Create authorized views per team in separate datasets; grant dataset access appropriately  
 
-**Correct Answer:** A
+**Correct Answer:** A  
 
 **Explanation:**  
-- ✅ **A is correct**: BigQuery now supports **table-level IAM**, so you can grant each team access only to the tables they need.  
-- ❌ **B**: Plain SQL views don’t provide access isolation; users could still query underlying tables if they have dataset access.  
-- ❌ **C**: Authorized views work for row/column-level filtering, but here the requirement is just table-level visibility.  
-- ❌ **D**: Creating separate datasets adds unnecessary overhead and complexity.
-
+- ✅ **A is correct**: BigQuery now supports **table-level IAM**, so you can restrict access per team at table granularity.  
+- ❌ **B**: Plain views don’t isolate access; users might still query source tables.  
+- ❌ **C**: Authorized views useful for row/column filtering, not plain table isolation.  
+- ❌ **D**: Separate datasets add complexity with no benefit here.  
 
 ---
 
-#### Q150: Dataproc job is **disk I/O-intensive** and slow with GCS-only intermediates
+#### Q150: Dataproc job is disk I/O-intensive and slow with GCS-only intermediates
+
+**Question:**  
+One Dataproc Hadoop job is disk I/O-heavy and runs slowly when intermediates are stored in Cloud Storage.  
 
 **Options:**  
-A. Add memory so intermediates fit in RAM  
-B. <mark>Add persistent disk and store intermediates on **native HDFS**</mark> ✅  
+A. Add memory to keep intermediates in RAM  
+B. <mark>Add persistent disk and store intermediates on native HDFS</mark> ✅  
 C. Add more vCPUs to scale NIC bandwidth  
 D. Add extra NICs and bond links  
 
-**Correct Answer:** B
+**Correct Answer:** B  
 
 **Explanation:**  
-- ✅ **B is correct**: For **disk I/O-heavy workloads**, shuffle/intermediate data should be written to **local HDFS (persistent disks)** instead of remote Cloud Storage. This reduces latency and improves performance.  
-- ❌ **A**: Memory alone cannot guarantee holding all intermediate data; large shuffles will still spill to disk.  
-- ❌ **C**: Adding CPU cores mainly helps compute; it doesn’t solve disk-bound performance.  
-- ❌ **D**: Extra NICs or link aggregation won’t help, since the bottleneck is disk I/O, not network throughput.
-
-
-#### Q151: Lift-and-shift Spark ML training to Google Cloud (data lands in BigQuery)
-
-**Options:**  
-A. Use Vertex AI for training existing Spark ML models  
-B. Rewrite models on TensorFlow and use Vertex AI  
-C. <mark>Use Dataproc for Spark ML; read training data directly from BigQuery</mark> ✅  
-D. Spark on Compute Engine; train on data exported from BigQuery  
-
-**Correct Answer:** C
-
-**Explanation:**  
-- ✅ **C is correct**: **Dataproc** is the managed, rapid **lift-and-shift** path for existing **Spark MLlib** code. Use the **BigQuery connector** to read data directly from BigQuery—no export jobs required.  
-- ❌ **A**: Vertex AI doesn’t natively run **Spark MLlib** training; you’d need notable adaptation (or Dataproc Serverless integrations you still must wire up). Not the fastest lift-and-shift.  
-- ❌ **B**: Requires **rewriting** models to TensorFlow—explicitly not “rapid.”  
-- ❌ **D**: Rolling your own Spark on GCE is **unmanaged** and forces **BQ exports** (extra cost/ops), slower than reading BigQuery in-place.
+- ✅ **B is correct**: Disk-intensive workloads benefit from **local HDFS storage** for shuffle/intermediates; use GCS for input/output only.  
+- ❌ **A**: RAM-only is fragile for large shuffle; not scalable.  
+- ❌ **C/D**: Extra CPU/NIC doesn’t solve disk bottleneck.  
 
 ---
 
-#### Q152: 40 TB model; hourly GeoJSON telemetry; predictions + geospatial; dashboard
+#### Q151: Migrate Spark ML pipelines, data moved to BigQuery
+
+**Question:**  
+You need rapid lift-and-shift of Spark ML pipelines, data now in BigQuery.  
+
+**Options:**  
+A. Use Vertex AI to train Spark ML models  
+B. Rewrite models in TensorFlow for Vertex AI  
+C. <mark>Use Dataproc for Spark ML; read directly from BigQuery</mark> ✅  
+D. Spin up Spark cluster on Compute Engine; export BigQuery data first  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C is correct**: Dataproc supports Spark ML natively and integrates with BigQuery connector. Easiest migration with minimal code changes.  
+- ❌ **A/B**: Vertex AI doesn’t support Spark ML directly; requires rewrite.  
+- ❌ **D**: Export adds overhead, less efficient than BigQuery connector.  
+
+---
+
+#### Q152: Predict shipping delays from 40 TB of telemetry (GeoJSON)
+
+**Question:**  
+Need storage with native ML + geospatial processing to train predictive models and power dashboards.  
 
 **Options:**  
 A. <mark>BigQuery</mark> ✅  
@@ -3671,52 +3693,63 @@ B. Cloud Bigtable
 C. Cloud Datastore  
 D. Cloud SQL for PostgreSQL  
 
-**Correct Answer:** A
+**Correct Answer:** A  
 
 **Explanation:**  
-- ✅ **A is correct**: **BigQuery** handles **tens of TBs**, has **BigQuery ML** for native **prediction**, and **GIS/GEOGRAPHY** functions for **geospatial** processing (ingest GeoJSON, regional queries), plus easy BI/dashboarding.  
-- ❌ **B**: Bigtable is key-value/columnar for low-latency ops—not SQL analytics/ML/GIS.  
-- ❌ **C**: (Datastore/Firestore) unsuitable for analytics/ML at this scale.  
-- ❌ **D**: Cloud SQL (MySQL/Postgres) isn’t designed for **40 TB** analytical workloads; PostGIS helps GIS but not scale/ML natively.
+- ✅ **A is correct**: BigQuery supports **BigQuery ML** + **GIS functions** for GeoJSON; scales to 40 TB and integrates with BI dashboards.  
+- ❌ **B**: Bigtable lacks SQL/ML/geospatial.  
+- ❌ **C/D**: Not suited for TB-scale analytical + ML workloads.  
 
 ---
 
-#### Q153: Kafka stream ~5k msg/s; alert when **1-hour moving average** < 4000 msg/s
+#### Q153: IoT pipeline, Kafka stream drops below 4000 msg/s (moving average)
+
+**Question:**  
+Alert when moving average over 1h < 4000 msg/s, normal ~5000 msg/s.  
 
 **Options:**  
-A. <mark>Dataflow + KafkaIO; sliding 1h window every 5m; compute average & alert</mark> ✅  
-B. Dataflow + KafkaIO; fixed 1h window; alert on close  
-C. Kafka → Pub/Sub → Bigtable; hourly Scheduler job  
-D. Kafka → Pub/Sub → BigQuery; 5-min Scheduler job on last hour  
+A. <mark>Dataflow KafkaIO + sliding window (1h, every 5min)</mark> ✅  
+B. Dataflow KafkaIO + fixed 1h window  
+C. Kafka → Pub/Sub → Bigtable + Cloud Scheduler hourly check  
+D. Kafka → Pub/Sub → BigQuery + Cloud Scheduler every 5min  
 
-**Correct Answer:** A
+**Correct Answer:** A  
 
 **Explanation:**  
-- ✅ **A is correct**: **Sliding (hopping) windows** compute a **moving average** (e.g., 1h window, 5-min period) for near-real-time alerts.  
-- ❌ **B**: Fixed (tumbling) 1-hour windows only evaluate on hour boundaries—**not** a moving average.  
-- ❌ **C/D**: Persist-then-poll patterns add **latency/complexity** versus native streaming windowing.
+- ✅ **A is correct**: Sliding window updates average every 5 minutes → real-time alerts.  
+- ❌ **B**: Fixed window only alerts hourly; misses granularity.  
+- ❌ **C/D**: Adds unnecessary pipelines; more complex, higher latency.  
 
 ---
 
-#### Q154: Cloud SQL for MySQL—HA for **zone failure**
+#### Q154: Cloud SQL MySQL with high availability across zones
+
+**Question:**  
+Need HA for MySQL in Cloud SQL in case of zone failure.  
 
 **Options:**  
-A. <mark>Create an instance and a **failover replica** in another zone (same region)</mark> ✅  
-B. Instance + **read replica** in another zone  
-C. Instance + **external** read replica in another region  
-D. Instance + automatic backups to GCS  
+A. <mark>Create primary in one zone + failover replica in another zone</mark> ✅  
+B. Primary + read replica in another zone  
+C. Primary + external read replica in another region  
+D. Primary + Cloud Storage backups  
 
-**Correct Answer:** A
+**Correct Answer:** A  
 
 **Explanation:**  
-- ✅ **A is correct** (legacy phrasing but aligned intent): HA uses **standby in another zone** for automatic **failover** on zonal outages (now implemented via **regional** HA).  
-- ❌ **B**: Read replicas **don’t auto-failover**; they’re for reads/DR.  
-- ❌ **C**: Cross-region read replica ≠ zonal HA; higher-latency DR.  
-- ❌ **D**: Backups aid **recovery**, not **high availability**.
+- ✅ **A is correct**: Legacy Cloud SQL HA = **failover replica** in another zone; automatic failover.  
+- ❌ **B**: Read replicas are for scaling, not HA.  
+- ❌ **C**: Cross-region replica = DR, not HA.  
+- ❌ **D**: Backups help recovery, not real-time failover.  
 
 ---
 
-#### Q155: Central ingestion/delivery with **offset seeking**, **hundreds of topics**, **per-key ordering**
+#### Q155: Centralized messaging system with offset seek + per-key ordering
+
+**Question:**  
+Requirements:  
+- Seek to specific offset in topic  
+- Hundreds of pub/sub topics  
+- Retain per-key ordering  
 
 **Options:**  
 A. <mark>Apache Kafka</mark> ✅  
@@ -3724,71 +3757,82 @@ B. Cloud Storage
 C. Dataflow  
 D. Firebase Cloud Messaging  
 
-**Correct Answer:** A
+**Correct Answer:** A  
 
 **Explanation:**  
-- ✅ **A is correct**: **Kafka** supports **seek by offset**, pub/sub on many **topics**, and **per-key ordering** via partitioning.  
-- ❌ **B**: Object storage, no topics/offset semantics.  
-- ❌ **C**: Processing framework, not a messaging store with offsets.  
-- ❌ **D**: Mobile push notifications, not data ingestion with offsets.
+- ✅ **A is correct**: Kafka uniquely supports **offset seek** and **per-key ordering** across topics.  
+- ❌ **B**: Storage is not a messaging system.  
+- ❌ **C**: Dataflow is a processing engine, not message broker.  
+- ❌ **D**: Firebase is for push notifications, not streaming ingestion.  
 
 ---
 
-#### Q156: Migrate on-prem Hadoop; managed, **fault-tolerant** & **cost-effective** for long-running batch
+#### Q156: Migrate on-prem Hadoop to managed cloud, batch jobs, cost-sensitive
+
+**Question:**  
+Need managed Hadoop, fault-tolerant, cost-effective, long batch jobs.  
 
 **Options:**  
-A. <mark>Dataproc + **standard** PD; ~50% **preemptible** workers; data in **Cloud Storage** (use `gs://`)</mark> ✅  
-B. Dataproc + **SSD** PD; 50% preemptible; data in GCS  
-C. Self-managed Hadoop/Spark on GCE (standard) + GCS connector  
-D. Self-managed Hadoop/Spark on **preemptible** GCE; data in HDFS  
+A. <mark>Dataproc + standard persistent disk + 50% preemptible workers + GCS</mark> ✅  
+B. Dataproc + SSD disks + 50% preemptible workers + GCS  
+C. Self-managed Hadoop on Compute Engine + Cloud Storage connector  
+D. Hadoop on preemptible VMs with HDFS  
 
-**Correct Answer:** A
+**Correct Answer:** A  
 
 **Explanation:**  
-- ✅ **A is correct**: Managed **Dataproc**, **standard disks** (cheaper), **preemptible** workers for cost, and durable data in **GCS** with `gs://` paths—fits batch + cost + fault-tolerance.  
-- ❌ **B**: **SSD** adds cost without stated low-latency I/O need.  
-- ❌ **C/D**: **Unmanaged** clusters increase ops burden; D also keeps data in **HDFS** (riskier with preemptions).
+- ✅ **A is correct**: Standard PD cheaper than SSD; mix of preemptible/non-preemptible nodes for cost + reliability; GCS for durable storage.  
+- ❌ **B**: SSD adds cost, not required unless high I/O.  
+- ❌ **C/D**: Not managed, harder to operate.  
 
+---
 
-#### Q157: Improve AUC of SVM classifier (AUC = 0.87)
+#### Q157: Improve SVM classifier AUC (currently 0.87)
+
+**Question:**  
+How to improve AUC of SVM model.  
 
 **Options:**  
 A. <mark>Perform hyperparameter tuning</mark> ✅  
-B. Train a classifier with deep neural networks  
-C. Deploy the model and measure real-world AUC  
-D. Scale predictions with a tuning factor  
+B. Replace with deep neural network  
+C. Deploy model; real-world AUC is always higher  
+D. Scale predictions output  
 
-**Correct Answer:** A
+**Correct Answer:** A  
 
 **Explanation:**  
-- ✅ **A is correct**: Adjusting **hyperparameters** (e.g., kernel type, C, gamma) often improves SVM performance and thus AUC.  
-- ❌ **B**: Deep learning doesn’t always beat SVMs; with tabular data and AUC 0.87 already, neural nets may overfit or add complexity.  
-- ❌ **C**: Real-world AUC is not guaranteed to be higher; it can be lower due to generalization error.  
-- ❌ **D**: Scaling predictions doesn’t change ranking, and AUC is **rank-based**.
-
+- ✅ **A is correct**: Tune kernel, C, gamma → better AUC.  
+- ❌ **B**: Neural nets not guaranteed better; costly.  
+- ❌ **C**: Wrong; validation AUC ≠ real-world higher.  
+- ❌ **D**: Scaling predictions doesn’t change ROC ranking.  
 
 ---
 
-#### Q158: Dataproc init actions without Internet access (secure VPC)
+#### Q158: Dataproc init actions without internet access
+
+**Question:**  
+Company forbids Dataproc nodes from internet access; still need dependencies at startup.  
 
 **Options:**  
-A. Deploy Cloud SQL Proxy on master  
-B. Use SSH tunnel for Internet  
-C. <mark>Copy dependencies to a Cloud Storage bucket within VPC</mark> ✅  
-D. Add service account to Network User role  
+A. Deploy Cloud SQL Proxy  
+B. Use SSH tunnel for internet access  
+C. <mark>Copy dependencies to GCS bucket inside VPC perimeter</mark> ✅  
+D. Add Dataproc service account to Network User role  
 
-**Correct Answer:** C
+**Correct Answer:** C  
 
 **Explanation:**  
-- ✅ **C is correct**: Place dependencies in a **GCS bucket** accessible via **Private Google Access** inside the VPC. Dataproc nodes fetch them securely during initialization.  
-- ❌ **A**: Cloud SQL Proxy is irrelevant; doesn’t solve dependency installation.  
-- ❌ **B**: SSH tunneling violates the no-Internet policy.  
-- ❌ **D**: Network User role grants VPC permissions but doesn’t provide dependency files.
-
+- ✅ **C is correct**: Store init scripts/deps in private GCS bucket; nodes fetch via Private Google Access.  
+- ❌ **A**: Cloud SQL Proxy irrelevant.  
+- ❌ **B**: SSH tunnel violates security policy.  
+- ❌ **D**: IAM role doesn’t solve dependency fetching.  
 
 ---
 
-#### Q159: Database requirements (fully managed, auto-scale up, transactional consistency, 6 TB, SQL)
+#### Q159: Choose database — fully managed, SQL, transactional, 6 TB, auto-scale
+
+**Question:**  
+Requirements: fully managed, transactional, SQL, up to 6 TB, scales automatically.  
 
 **Options:**  
 A. <mark>Cloud SQL</mark> ✅  
@@ -3796,18 +3840,20 @@ B. Cloud Bigtable
 C. Cloud Spanner  
 D. Cloud Datastore  
 
-**Correct Answer:** A
+**Correct Answer:** A  
 
 **Explanation:**  
-- ✅ **A is correct**: **Cloud SQL** is fully managed, supports **ACID transactions**, SQL, and **automatic storage increase** up to **64 TB**.  
-- ❌ **B**: Bigtable is NoSQL, not ACID/SQL.  
-- ❌ **C**: Cloud Spanner scales globally and horizontally but is expensive; requirement is only **6 TB**, so SQL suffices.  
-- ❌ **D**: Datastore/Firestore isn’t relational SQL and not ACID for multi-row transactions.
-
+- ✅ **A is correct**: Cloud SQL supports **up to 64 TB**, SQL, ACID, auto storage increase → meets requirements.  
+- ❌ **B**: Bigtable = NoSQL, not transactional.  
+- ❌ **C**: Spanner is global-scale, costlier, overkill here.  
+- ❌ **D**: Datastore = NoSQL, not SQL/transactional.  
 
 ---
 
-#### Q160: Migrate on-prem 20 TB operational transaction DB to GCP
+#### Q160: Migrate 20 TB operational OLTP DB to GCP
+
+**Question:**  
+Mid-sized enterprise, 20 TB transactional DB migration.  
 
 **Options:**  
 A. <mark>Cloud SQL</mark> ✅  
@@ -3815,372 +3861,401 @@ B. Cloud Bigtable
 C. Cloud Spanner  
 D. Cloud Datastore  
 
-**Correct Answer:** A
+**Correct Answer:** A  
 
 **Explanation:**  
-- ✅ **A is correct**: Cloud SQL supports up to **64 TB** now, fully managed, ACID-compliant, and ideal for OLTP workloads. Fits 20 TB size.  
-- ❌ **B**: Bigtable is NoSQL, no SQL support.  
-- ❌ **C**: Spanner works, but overkill unless global scale/multi-region is required.  
-- ❌ **D**: Datastore isn’t relational and not suitable for operational transaction systems.
+- ✅ **A is correct**: Cloud SQL supports up to 64 TB now, fits 20 TB OLTP workloads. Familiar SQL, ACID transactions.  
+- ❌ **B**: Bigtable is NoSQL, unsuitable for OLTP.  
+- ❌ **C**: Spanner good for global scale, but overkill for single 20 TB workload.  
+- ❌ **D**: Datastore is NoSQL, not fit for transactional RDBMS replacement.  
 
+
+#### Q161: Store time-series CPU and memory usage for millions of computers
+
+**Question:**  
+You need to store CPU and memory metrics sampled every second for millions of computers. Analysts will run real-time, ad hoc analytics. You want to avoid being charged per query and need a schema design that scales with future growth.
+
+**Options:**  
+A. Create a table in BigQuery, and append samples per second  
+B. Create a wide BigQuery table with a column for each second and update rows  
+C. <mark>Create a narrow Bigtable table with row key = computer ID + timestamp per second</mark> ✅  
+D. Create a wide Bigtable table with row key = computer ID + minute, each second as column data  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C is correct**: Narrow schema in Bigtable is the best practice for time-series data. Row key = `computer_id#timestamp` ensures scalability, efficient retrieval, and schema flexibility for future metrics.  
+- ❌ **A/B**: BigQuery charges per query scan, not ideal for high-frequency metrics. Wide schema (B) quickly hits row size/column limits.  
+- ❌ **D**: Wide schema makes schema evolution painful (adding metrics = adding many columns).  
 
 ---
 
-#### Q161: Time series CPU/memory samples every second, millions of computers, avoid per-query charges
+#### Q162: Archive data in Cloud Storage using "Trust No One" (TNO) encryption
+
+**Question:**  
+You must archive sensitive data to Cloud Storage with TNO encryption, ensuring even cloud provider staff cannot decrypt it.
 
 **Options:**  
-A. BigQuery, append per sample  
-B. BigQuery, wide table (one row per interval)  
-C. <mark>Bigtable narrow table; row key = computer ID + timestamp</mark> ✅  
-D. Bigtable wide table; row key per minute, columns for each second  
+A. <mark>Create symmetric KMS key; encrypt files with `gcloud kms encrypt` + unique AAD; upload; keep AAD outside GCP</mark> ✅  
+B. Encrypt with KMS, upload, then destroy the key  
+C. Use CSEK in `.boto` file; upload; save CSEK in Cloud Memorystore  
+D. Use CSEK in `.boto` file; upload; save CSEK in a separate project only security team can access  
 
-**Correct Answer:** C
+**Correct Answer:** A  
 
 **Explanation:**  
-- ✅ **C is correct**: **Bigtable** is designed for **time-series** at scale; a **tall/narrow schema** (one event per row) with row key = ID+time is best practice.  
-- ❌ **A/B**: BigQuery charges **per query scan**; not optimal for high-frequency inserts.  
-- ❌ **D**: Wide schema limits flexibility; adding new metrics means schema changes and bloated rows.
-
+- ✅ **A is correct**: Encrypt files locally with **Cloud KMS + AAD**, then upload. Keeping **AAD outside GCP** ensures the provider cannot decrypt. Implements TNO principle.  
+- ❌ **B**: Destroying the key prevents decryption by anyone, including you.  
+- ❌ **C**: Cloud Memorystore is not secure permanent storage for encryption keys.  
+- ❌ **D**: CSEK inside GCP still means the provider could access it; less aligned with TNO than A.  
 
 ---
 
-#### Q162: Trust No One (TNO) encryption for archival data
+#### Q163: Monitor BigQuery, Dataflow, Dataproc pipelines across projects
+
+**Question:**  
+You need to perform health checks and monitoring of pipelines in BigQuery, Dataflow, and Dataproc across multiple projects, and notify the team on failure. Prefer managed services.
 
 **Options:**  
-A. <mark>Encrypt with KMS key + AAD; keep AAD outside Google Cloud</mark> ✅  
-B. Encrypt with KMS key; then destroy/rotate key  
-C. Use CSEK in `.boto`; store in Memorystore  
-D. Use CSEK in `.boto`; store in separate project  
+A. <mark>Export to Cloud Monitoring and configure Alerting policies</mark> ✅  
+B. Run Airflow on VM, export to Monitoring  
+C. Export logs to BigQuery, use App Engine to parse and email alerts  
+D. Build App Engine app to consume logs via API and send alerts  
 
-**Correct Answer:** A
+**Correct Answer:** A  
 
 **Explanation:**  
-- ✅ **A is correct**: Encrypt with **Cloud KMS** but require **AAD** stored externally; without AAD, even Google cannot decrypt. This implements TNO.  
-- ❌ **B**: Destroying keys makes decryption impossible.  
-- ❌ **C**: Memorystore is volatile; not for permanent secret storage.  
-- ❌ **D**: Storing keys inside GCP (even in another project) means Google could still theoretically access them.
-
+- ✅ **A is correct**: Cloud Monitoring is fully managed, supports metrics/logs from BigQuery/Dataflow/Dataproc, and can create cross-project alerting policies.  
+- ❌ **B**: Airflow on VM is self-managed, not aligned with “prefer managed services.”  
+- ❌ **C/D**: Custom solutions increase complexity, not needed when Monitoring already provides native alerts.  
 
 ---
 
-#### Q163: Health checks & monitoring for BigQuery, Dataflow, Dataproc across projects
+#### Q164: Prepare city name data for BigQuery ML linear regression
+
+**Question:**  
+You are training a linear regression model in BigQuery ML. The **city name** is a key predictive variable. Data must be organized in columns. You want the **least coding effort** while keeping predictive power.
 
 **Options:**  
-A. <mark>Export to Cloud Monitoring, set Alerting policy</mark> ✅  
-B. VM with Airflow, export to Monitoring  
-C. Export logs to BQ; App Engine job parses logs  
-D. App Engine app consumes logs, sends alerts  
-
-**Correct Answer:** A
-
-**Explanation:**  
-- ✅ **A is correct**: **Cloud Monitoring** is managed, integrates with GCP services, supports **cross-project**, and provides alert policies.  
-- ❌ **B**: Self-managed Airflow VM = extra ops, not required.  
-- ❌ **C/D**: Building custom log parsers/apps is overkill when a managed product already does it.
-
-
----
-
-#### Q164: BigQuery ML linear regression; categorical city variable; minimal coding
-
-**Options:**  
-A. Drop city column  
-B. <mark>Use SQL in BigQuery to one-hot encode city</mark> ✅  
-C. TensorFlow with vocab list  
-D. Data Fusion: assign city to numeric region  
-
-**Correct Answer:** B
-
-**Explanation:**  
-- ✅ **B is correct**: **One-hot encoding** in BigQuery SQL preserves predictive city-level info, minimal coding, directly compatible with BigQuery ML.  
-- ❌ **A**: Drops predictive info entirely.  
-- ❌ **C**: Adds complexity outside BigQuery ML.  
-- ❌ **D**: Grouping into regions loses city-level granularity.
-
-
----
-
-#### Q165: Banking system transactions across North America, need ACID + SQL
-
-**Options:**  
-A. Spanner with stale reads  
-B. <mark>Spanner with locking read-write transactions</mark> ✅  
-C. BigQuery, disable cache  
-D. Cloud SQL + federated query  
-
-**Correct Answer:** B
-
-**Explanation:**  
-- ✅ **B is correct**: **Cloud Spanner** provides **globally distributed ACID**, scales horizontally, and supports **SQL with locking read-write transactions**, ideal for banking.  
-- ❌ **A**: Stale reads break consistency; not acceptable for transactions.  
-- ❌ **C**: BigQuery isn’t for transactional workloads; no row-level ACID.  
-- ❌ **D**: Cloud SQL is ACID but limited in scale and regions; federated queries irrelevant here.
-
-
----
-
-#### Q166: BigQuery performance issue—Kafka stream, ingest-date partition, geospatial queries on lifecycle
-
-**Options:**  
-A. Clustering on ingest date  
-B. <mark>Clustering on package-tracking ID</mark> ✅  
-C. Tier old data to GCS external table  
-D. Partition on package delivery date  
-
-**Correct Answer:** B
-
-**Explanation:**  
-- ✅ **B is correct**: Clustering on **package ID** means queries filtering by **package lifecycle** scan fewer blocks, boosting performance.  
-- ❌ **A**: Already partitioned by ingest date; clustering on same field adds little.  
-- ❌ **C**: External tables in GCS slow down queries.  
-- ❌ **D**: Delivery date may be NULL until delivered; lifecycle queries still need package ID filtering.
-
-#### Q167: Migration strategy from on-prem Spark/Hive/HDFS to GCP (2 months deadline)
-
-**Options:**  
-A. Migrate workloads to Dataproc + HDFS; modernize later.  
-B. <mark>Migrate workloads to Dataproc + Cloud Storage; modernize later.</mark> ✅  
-C. Migrate Spark to Dataproc + HDFS, modernize Hive for BigQuery.  
-D. Modernize Spark for Dataflow and Hive for BigQuery.  
+A. Create a new view without city column  
+B. <mark>Use SQL in BigQuery to one-hot encode the city column into binary columns</mark> ✅  
+C. Use TensorFlow with a vocabulary file for categorical variable  
+D. Use Cloud Data Fusion to assign each city a numeric region code  
 
 **Correct Answer:** B  
 
 **Explanation:**  
-- ✅ **B is correct**:  
-  - **Dataproc** provides a quick lift-and-shift for Spark/Hive jobs.  
-  - **Cloud Storage** replaces HDFS, enabling **separation of compute and storage** → elastic scaling + cost savings.  
-  - Meets the **2-month deadline** and allows **later modernization** to serverless (BigQuery, Dataflow).  
+- ✅ **B is correct**: One-hot encoding transforms categorical city names into binary columns, preserving predictive power and making them usable in linear regression. BigQuery supports SQL-based one-hot encoding with minimal coding.  
+- ❌ **A**: Dropping city column removes an important predictor.  
+- ❌ **C**: TensorFlow vocab adds extra infra/code; not minimal.  
+- ❌ **D**: Assigning arbitrary numeric codes loses granularity and introduces false ordering.  
 
-- ❌ **A**: Keeping HDFS in Dataproc still requires cluster maintenance and defeats the cost-saving/storage-separation benefits.  
+---
 
-- ❌ **C**: Hybrid modernization (some on Dataproc, some BigQuery) within 2 months is risky and may exceed timeline.  
+#### Q165: Database for North American bank transactions (ACID required)
 
-- ❌ **D**: Full modernization to Dataflow/BigQuery in 2 months is unrealistic. Migration first, modernization later is safer.  
-
-#### Q168: Redact Government ID while allowing CSRs to view when necessary
+**Question:**  
+A bank operates across North America. You need a **SQL database with ACID compliance** to handle **account transactions**.  
 
 **Options:**  
-A. Use BigQuery AEAD encryption, save keys in another table.  
-B. Use BigQuery column-level security; grant CSR group access.  
-C. Use DLP to hash values before BigQuery.  
-D. <mark>Use DLP to apply format-preserving encryption (FPE) tokens before BigQuery</mark> ✅  
+A. Cloud Spanner with stale reads  
+B. <mark>Cloud Spanner with locking read-write transactions</mark> ✅  
+C. BigQuery with cache disabled  
+D. Cloud SQL with BigQuery federated queries  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B is correct**: Cloud Spanner supports **locking read-write transactions** ensuring ACID compliance and strong consistency, critical for banking.  
+- ❌ **A**: Stale reads reduce consistency, violating ACID.  
+- ❌ **C**: BigQuery is analytical, not OLTP.  
+- ❌ **D**: Cloud SQL is ACID but limited in scale compared to Spanner for global banking.  
+
+---
+
+#### Q166: Optimize BigQuery queries on package-tracking table
+
+**Question:**  
+Package-tracking data streams from Kafka → BigQuery. Table is **partitioned by ingestion date**. Query performance has degraded.  
+
+**Options:**  
+A. Cluster on ingestion date  
+B. <mark>Cluster on package-tracking ID</mark> ✅  
+C. Move older data to GCS external tables  
+D. Partition by delivery date  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B is correct**: Clustering by **package ID** optimizes lifecycle queries, as most filters are on tracking ID.  
+- ❌ **A**: Clustering on ingestion date is redundant; already partitioned.  
+- ❌ **C**: External tables slow down queries further.  
+- ❌ **D**: Delivery date is often null until completion; not reliable for partitioning.  
+
+---
+
+#### Q167: Migrate large Spark/Hive/HDFS cluster to cloud in 2 months
+
+**Question:**  
+On-prem Spark + Hive + HDFS cluster must migrate in **2 months**. Usage fluctuates; goal = reduce infra overhead + cost, later modernize.  
+
+**Options:**  
+A. Dataproc + HDFS; modernize later  
+B. <mark>Dataproc + Cloud Storage; modernize later</mark> ✅  
+C. Spark → Dataproc + HDFS; Hive → BigQuery  
+D. Spark → Dataflow; Hive → BigQuery  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B is correct**: Fastest lift-and-shift → Dataproc for Spark/Hive compute, Cloud Storage replacing HDFS. Meets 2-month deadline + cost savings.  
+- ❌ **A**: Keeping HDFS means continuing cluster ops overhead.  
+- ❌ **C/D**: Modernization in 2 months is unrealistic.  
+
+---
+
+#### Q168: Redact government IDs in Pub/Sub → BigQuery pipeline
+
+**Question:**  
+Customer registration data flows into Pub/Sub then BigQuery. Requirement: **redact IDs** but allow customer service reps to view originals when needed.  
+
+**Options:**  
+A. BigQuery AEAD encryption + separate key table  
+B. BigQuery column-level security on ID column  
+C. Cloud DLP cryptographic hash of IDs  
+D. <mark>Cloud DLP format-preserving encryption (FPE) before BigQuery</mark> ✅  
 
 **Correct Answer:** D  
 
 **Explanation:**  
-- ✅ **D is correct**: DLP with **format-preserving encryption** secures IDs while keeping them reversible. CSRs can decrypt when needed, others see only tokens.  
-- ❌ **A**: Storing keys in a table inside BigQuery weakens security and adds key management risk.  
-- ❌ **B**: Column-level security hides values but doesn’t **redact** them; data still exists in plaintext in BigQuery.  
-- ❌ **C**: Hashing is irreversible, so CSRs could never see the original values.  
+- ✅ **D is correct**: DLP with **format-preserving encryption** redacts IDs by default but allows authorized users to decrypt when necessary.  
+- ❌ **A**: AEAD requires manual key mgmt; doesn’t solve selective access.  
+- ❌ **B**: Column-level security only hides data, doesn’t redact/encrypt.  
+- ❌ **C**: Hashing is irreversible → customer service reps cannot recover originals.  
 
 ---
+ 
+#### Q169: BigQuery modeling for purchases (30-day queries + geo trends)
 
-#### Q169: BigQuery schema for purchases across stores (time + geo queries)
+**Question:**  
+You are migrating a purchases table to BigQuery. Queries: last 30 days of sales, trends by state, city, store. How should you model?  
 
 **Options:**  
-A. <mark>Partition by transaction time; cluster by state → city → store ID</mark> ✅  
-B. Partition by transaction time; cluster by store ID → city → state.  
-C. Cluster only by state → city → store ID.  
-D. Cluster only by store ID → city → state.  
+A. <mark>Partition by transaction time; cluster by state → city → store</mark> ✅  
+B. Partition by transaction time; cluster by store → city → state  
+C. Cluster by state → city → store (no partition)  
+D. Cluster by store → city → state (no partition)  
 
 **Correct Answer:** A  
 
 **Explanation:**  
-- ✅ **A is correct**:  
-  - **Partitioning on transaction time** → efficient queries for “last 30 days.”  
-  - **Clustering by state → city → store** matches common query filters (geo hierarchy).  
+- ✅ **A is correct**: Partitioning by transaction time optimizes 30-day queries; clustering by geographic hierarchy prunes data efficiently.  
+- ❌ **B**: Wrong clustering order; doesn’t align with common queries.  
+- ❌ **C/D**: No partitioning → scans all time data, slower & costly.
 
-- ❌ **B**: Store ID first gives less benefit when queries often start by state/city.  
-- ❌ **C/D**: Without partitioning, scanning large time ranges would be costly.  
+#### Q170: Pub/Sub deploy risk (erroneous acks)
 
----
-
-#### Q170: Prevent Pub/Sub message loss when subscriber may wrongly ACK
+**Question:**  
+When deploying a new subscriber, messages might be acknowledged incorrectly and lost. How to recover?  
 
 **Options:**  
-A. Test with Pub/Sub emulator before deploying.  
-B. <mark>Create Pub/Sub snapshot before deployment; use Seek to re-deliver messages since snapshot</mark> ✅  
-C. Use Cloud Build timestamp logs + Seek.  
-D. Enable dead-lettering to capture unacked messages.  
+A. Use Pub/Sub emulator to test locally  
+B. <mark>Create Pub/Sub snapshot pre-deploy; use Seek to re-deliver</mark> ✅  
+C. Use Cloud Build timestamp with Seek  
+D. Enable dead-letter queue  
 
 **Correct Answer:** B  
 
 **Explanation:**  
-- ✅ **B is correct**: Snapshots let you **replay messages** if subscriber logic mis-ACKs after deployment. Seek resets ACK state to snapshot.  
-- ❌ **A**: Emulator testing prevents bugs but doesn’t solve recovery if mis-ACK happens in prod.  
-- ❌ **C**: Seek by timestamp requires retention of acked messages; not default in this scenario.  
-- ❌ **D**: Dead-letter queues only capture **not-acked** messages. Mis-acked ones are lost.  
+- ✅ **B is correct**: Snapshots + Seek let you replay messages from before deployment → no data loss.  
+- ❌ **A**: Emulator only helps testing, not recovery.  
+- ❌ **C**: Requires retaining acked messages, not enabled here.  
+- ❌ **D**: DLQ only works for unacked failures, not erroneous acks.
 
-#### Q171: Prevent training–serving skew with BQML
+#### Q171: Prevent skew in BQML predictions
 
-**Options:**  
-A. <mark>Define preprocessing in `TRANSFORM` when creating the model; at prediction/eval, just call `ML.EVALUATE` / `ML.PREDICT` on raw data</mark> ✅  
-B. Use `TRANSFORM` for training; before predictions, run a saved query to transform raw data.  
-C. Put preprocessing in a BigQuery **view** and train on the view; at prediction time, send raw data.  
-D. Preprocess with Dataflow; at prediction time, send raw data.
-
-**Correct Answer:** A
-
-**Explanation:**  
-- ✅ **A**: `TRANSFORM` stores preprocessing with the model, so BigQuery **auto-applies identical transforms** at evaluate/predict time—eliminating skew.  
-- ❌ **B**: Separate saved query risks drift (someone changes it, order of ops differs, params change).  
-- ❌ **C**: A view helps for training but **isn’t auto-applied** at prediction; sending raw data would skip the transforms.  
-- ❌ **D**: External ETL isn’t automatically bound to the model; easy to diverge from training prep.
-
----
-
-#### Q172: 30-second moving average every 5 seconds (Pub/Sub → Dataflow)
+**Question:**  
+You train a BigQuery ML model with preprocessing. How to prevent training–serving skew at prediction time?  
 
 **Options:**  
-A. Fixed window 5s + processing-time trigger +30s delay  
-B. Fixed window 30s + watermark +5s delay  
-C. Sliding window 5s + processing-time trigger +30s delay  
-D. <mark>Sliding window 30s, period 5s; trigger `AfterWatermark.pastEndOfWindow()`</mark> ✅
-
-**Correct Answer:** D
-
-**Explanation:**  
-- ✅ **D**: A **sliding (hopping)** window of **30s** with **5s period** computes the rolling average every 5s over the last 30s; watermark trigger emits when the event-time window is complete.  
-- ❌ **A/C**: Processing-time triggers don’t align with event-time correctness; also window sizes don’t match the 30s moving range.  
-- ❌ **B**: Fixed (tumbling) 30s emits only every 30s, not every 5s.
-
----
-
-#### Q173: Pub/Sub events aggregated by disjoint hourly intervals, scalable to high volume
-
-**Options:**  
-A. Cloud Function per message (Pub/Sub trigger).  
-B. Hourly scheduled Cloud Function pulling from Pub/Sub.  
-C. Hourly **batch** Dataflow job pulling from Pub/Sub.  
-D. <mark>Continuous **streaming** Dataflow reading Pub/Sub; aggregate with **tumbling (fixed) hourly windows**; load to BigQuery</mark> ✅
-
-**Correct Answer:** D
-
-**Explanation:**  
-- ✅ **D**: Streaming Dataflow + **tumbling windows** scales elastically with high event volume, keeps up in near-real-time, and writes hourly aggregates to BigQuery.  
-- ❌ **A**: One-message-per-invocation Functions don’t aggregate efficiently at scale.  
-- ❌ **B**: Pulling from Pub/Sub via scheduled Functions is brittle and doesn’t scale well.  
-- ❌ **C**: Batch + Pub/Sub is awkward; you risk missing/duplicating and lose streaming scalability.
-
-#### Q174: Which intents should you automate first in Dialogflow?
-
-**Options:**  
-A. <mark>Automate the 10 intents that cover 70% of the requests</mark> ✅  
-B. Automate the more complicated requests first.  
-C. Automate a blend of short and long intents.  
-D. Automate rare intents with unique keywords.  
+A. <mark>Define preprocessing in `TRANSFORM` clause; auto-applied at prediction</mark> ✅  
+B. Use TRANSFORM for training, apply saved query at prediction  
+C. Use a BigQuery view for preprocessing both training and prediction  
+D. Preprocess with Dataflow, then predict raw  
 
 **Correct Answer:** A  
 
 **Explanation:**  
-- ✅ **A is correct**: Start with the **high-volume simple intents (70%)** — this follows the **Pareto principle (80/20 rule)**. Automating these frees live agents to focus on the smaller but complex 30%.  
-- ❌ **B**: Automating complex, low-frequency requests first adds minimal impact and slows time-to-value.  
-- ❌ **C**: A “blend” delays benefits; prioritization should focus on volume and impact.  
-- ❌ **D**: Optimizing rare or unique intents is inefficient and won’t reduce agent workload.  
+- ✅ **A is correct**: BigQuery ML auto-applies `TRANSFORM` steps to predictions, preventing skew.  
+- ❌ **B/C**: Require manual re-apply of transforms → risk of mismatch.  
+- ❌ **D**: Adds complexity, not needed for this use case.
 
----
+#### Q172: Moving average every 5s over past 30s in Dataflow
 
-#### Q175: Optimize BigQuery query performance without extra storage cost
+**Question:**  
+Pub/Sub → Dataflow: need moving average of last 30s data, recomputed every 5s.  
 
 **Options:**  
-A. Denormalize the data.  
-B. Shard by customer ID.  
-C. Materialize dimensions in views.  
+A. Fixed 5s window + delayed trigger  
+B. Fixed 30s window + delayed trigger  
+C. Sliding 5s window + delayed trigger  
+D. <mark>Sliding 30s window with 5s period; trigger AfterWatermark</mark> ✅  
+
+**Correct Answer:** D  
+
+**Explanation:**  
+- ✅ **D is correct**: Sliding window covers 30s history, advances every 5s, matches requirement.  
+- ❌ **A/B**: Fixed windows emit at wrong intervals.  
+- ❌ **C**: Window length too short, only 5s of data.
+
+#### Q173: Aggregate Pub/Sub events hourly → BigQuery
+
+**Question:**  
+Need to aggregate events into **hourly buckets** before loading to BigQuery, at scale.  
+
+**Options:**  
+A. Cloud Function per message  
+B. Hourly Cloud Function batch  
+C. Hourly batch Dataflow job  
+D. <mark>Streaming Dataflow job with tumbling (hourly) windows</mark> ✅  
+
+**Correct Answer:** D  
+
+**Explanation:**  
+- ✅ **D is correct**: Streaming Dataflow scales for large event volumes; tumbling window = disjoint hourly buckets.  
+- ❌ **A/B**: Functions don’t scale for large streaming input.  
+- ❌ **C**: Batch mode risks message backlog & Pub/Sub limits.
+
+#### Q174: Dialogflow chatbot intents (70% simple, 30% complex)
+
+**Question:**  
+Which intents should be automated first?  
+
+**Options:**  
+A. <mark>Automate top 10 simple intents (70% traffic)</mark> ✅  
+B. Automate long, complex intents first  
+C. Mix simple + complex intents  
+D. Automate rare intents (avoid confusion)  
+
+**Correct Answer:** A  
+
+**Explanation:**  
+- ✅ **A is correct**: Automating high-volume, simple intents gives max benefit (Pareto 80/20).  
+- ❌ **B**: Complex cases are harder, lower ROI.  
+- ❌ **C**: Dilutes impact, slower ROI.  
+- ❌ **D**: Rare intents won’t reduce workload significantly.
+
+#### Q175: BigQuery DW slow for last 30-day queries
+
+**Question:**  
+You migrated a star-schema DW to BigQuery. Queries over past 30 days are slow. What to do without increasing storage cost?  
+
+**Options:**  
+A. Denormalize further  
+B. Shard by customer ID  
+C. Materialize dims as views  
 D. <mark>Partition by transaction date</mark> ✅  
 
 **Correct Answer:** D  
 
 **Explanation:**  
-- ✅ **D is correct**: **Date partitioning** lets BigQuery scan only the last 30 days of data instead of the entire table. It improves query performance with **no increase in storage cost**.  
-- ❌ **A**: Denormalization (nested/repeated fields) can help performance but **increases storage size**, contradicting the requirement.  
-- ❌ **B**: Sharding by customer ID doesn’t align with “last 30 days” queries and complicates schema design.  
-- ❌ **C**: Materialized views don’t reduce scanned data; they only simplify query logic.  
+- ✅ **D is correct**: Partition pruning limits scanned data to last 30 days, no extra storage.  
+- ❌ **A**: Denormalization usually increases storage.  
+- ❌ **B**: Sharding by ID not aligned with queries.  
+- ❌ **C**: Views don’t improve performance.
 
-#### Q176: Encrypt specific columns (e.g., credit card numbers) in BigQuery
+#### Q176: Clean 5 years of logs in GCS (keep originals for compliance)
+
+**Question:**  
+Some log values are out of range; must clean but keep raw data.  
 
 **Options:**  
-A. <mark>Use Cloud DLP to tokenize/encrypt sensitive columns before loading into BigQuery</mark> ✅  
-B. Enable CMEK (Customer-Managed Encryption Keys) on the dataset.  
-C. Use column-level access controls.  
-D. Export sensitive columns to Cloud KMS for encryption, keep non-sensitive in BigQuery.  
+A. Load to BigQuery, skip bad rows  
+B. Copy in GCE VM, skip bad rows  
+C. <mark>Dataflow: read GCS, fix values, write cleaned copy to new GCS dataset</mark> ✅  
+D. Dataflow overwrite original GCS files  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C is correct**: Dataflow pipeline fixes errors, keeps originals intact for compliance.  
+- ❌ **A/B**: Lose data or add ops overhead.  
+- ❌ **D**: Overwrites raw data → violates compliance.
+
+#### Q177: Rebuild batch pipeline (PySpark too slow, >12h)
+
+**Question:**  
+You want serverless, SQL-based transformations. Data is already in GCS.  
+
+**Options:**  
+A. Convert to SparkSQL on Dataproc  
+B. Load into Cloud SQL + federated queries  
+C. <mark>Load into BigQuery, transform with SQL, write new tables</mark> ✅  
+D. Use Apache Beam Python SDK  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C is correct**: BigQuery = serverless, SQL-native, fast for structured batch ETL.  
+- ❌ **A**: Dataproc requires cluster mgmt (not serverless).  
+- ❌ **B**: Cloud SQL can’t scale to TBs.  
+- ❌ **D**: Beam is code-heavy, not SQL-based.
+
+#### Q178: Dataflow pipeline slow (gzip text, SideInputs)
+
+**Question:**  
+Text ingestion pipeline with SideInputs runs too slow. How to improve?  
+
+**Options:**  
+A. Switch to Avro files  
+B. Reduce batch size  
+C. Retry error records  
+D. <mark>Use CoGroupByKey instead of SideInput</mark> ✅  
+
+**Correct Answer:** D  
+
+**Explanation:**  
+- ✅ **D is correct**: Large SideInputs force data into worker memory; CoGroupByKey shuffles & scales joins.  
+- ❌ **A**: File format change doesn’t fix join bottleneck.  
+- ❌ **B**: Smaller batches increase overhead.  
+- ❌ **C**: Retries don’t improve performance.
+
+#### Q179: Time-series CPU/mem samples for millions of machines
+
+**Question:**  
+Store per-second samples; need real-time queries; avoid per-query costs; must scale.  
+
+**Options:**  
+A. Append rows to BigQuery  
+B. Wide BigQuery table (second-per-column)  
+C. <mark>Narrow Bigtable: row key = machineID + timestamp</mark> ✅  
+D. Wide Bigtable: minute + columns per second  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C is correct**: Bigtable + narrow schema = scalable, low-latency time-series design.  
+- ❌ **A/B**: BigQuery charges per query; schema inflexible.  
+- ❌ **D**: Wide schema breaks with new metrics, harder to scale.
+
+#### Q180: Encrypt archival data in Cloud Storage with Trust No One (TNO)
+
+**Question:**  
+Need to archive sensitive data in GCS; provider staff must not decrypt.  
+
+**Options:**  
+A. <mark>Encrypt with Cloud KMS key + AAD; keep AAD outside GCP</mark> ✅  
+B. Encrypt with KMS key, then delete key  
+C. Use CSEK in boto config; store key in Memorystore  
+D. Use CSEK in boto config; store key in separate project  
 
 **Correct Answer:** A  
 
 **Explanation:**  
-- ✅ **A is correct**: Cloud **DLP** supports **encryption, tokenization, and de-identification** of sensitive fields (like PII/PCI) before data enters BigQuery. This gives fine-grained column-level protection.  
-- ❌ **B**: CMEK protects the entire dataset/table at rest, not individual columns.  
-- ❌ **C**: Column ACLs restrict access but don’t encrypt or redact values.  
-- ❌ **D**: Splitting data outside BigQuery complicates pipelines and isn’t necessary when DLP can handle field-level encryption in place.  
-
----
-
-#### Q177: Query latency is high in BigQuery; need to speed up repeated analytics
-
-**Options:**  
-A. Shard tables by day.  
-B. Use BigQuery BI Engine or materialized views.  
-C. Increase BigQuery slots quota.  
-D. Cache query results in Cloud Storage.  
-
-**Correct Answer:** B  
-
-**Explanation:**  
-- ✅ **B is correct**: **BI Engine** (in-memory acceleration) or **materialized views** pre-compute and cache results, reducing latency for repeated queries and dashboards.  
-- ❌ **A**: Daily sharding is legacy, adds complexity, and is worse than native partitioning.  
-- ❌ **C**: Buying more slots increases throughput, but won’t inherently optimize repeated queries.  
-- ❌ **D**: Exporting/caching results in Cloud Storage isn’t efficient for interactive analytics.  
-
-#### Q178: Migrate on-premises MySQL to Cloud SQL with minimal downtime
-
-**Options:**  
-A. Export/import dump files into Cloud SQL.  
-B. Use `mysqldump` with replication enabled.  
-C. <mark>Use Database Migration Service (DMS) with continuous replication</mark> ✅  
-D. Create a Dataflow job to stream changes into Cloud SQL.  
-
-**Correct Answer:** C  
-
-**Explanation:**  
-- ✅ **C is correct**: **DMS** provides managed migration with **change data capture (CDC)** for near-zero downtime cutover.  
-- ❌ **A**: Dump/import is offline and downtime-heavy.  
-- ❌ **B**: Manual replication setup is error-prone and less automated.  
-- ❌ **D**: Dataflow isn’t designed for MySQL-to-MySQL replication.  
-
----
-
-#### Q179: Ensure Dataflow jobs retry on transient errors but not on invalid data
-
-**Options:**  
-A. Enable Cloud Monitoring alerts.  
-B. <mark>Use Dead Letter Queue (DLQ) for failed records + automatic retries for transient errors</mark> ✅  
-C. Use Pub/Sub snapshots.  
-D. Disable retries in Dataflow.  
-
-**Correct Answer:** B  
-
-**Explanation:**  
-- ✅ **B is correct**: Dataflow supports **DLQ patterns** to isolate bad records (schema errors, parsing issues) while still retrying transient failures (timeouts, quota errors).  
-- ❌ **A**: Monitoring alerts inform but don’t handle error routing/retries.  
-- ❌ **C**: Snapshots re-deliver all messages but don’t differentiate between transient vs permanent errors.  
-- ❌ **D**: Disabling retries risks dropping recoverable data.  
-
----
-
-#### Q180: Predict taxi trip duration (structured + historical data, SQL-friendly)
-
-**Options:**  
-A. TensorFlow in AI Platform with custom preprocessing.  
-B. AutoML Tables (Vertex AI).  
-C. <mark>BigQuery ML regression model on historical trips</mark> ✅  
-D. Dataproc Spark MLlib random forest.  
-
-**Correct Answer:** C  
-
-**Explanation:**  
-- ✅ **C is correct**: **BigQuery ML** lets analysts build regression models directly on structured, tabular data using SQL. Perfect fit for predicting **trip duration**.  
-- ❌ **A**: TensorFlow is flexible but requires custom coding and infra.  
-- ❌ **B**: AutoML Tables works but adds complexity/cost vs BQML’s direct SQL approach.  
-- ❌ **D**: Spark MLlib requires cluster management; less serverless than BigQuery ML.  
+- ✅ **A is correct**: KMS + AAD, with AAD kept outside GCP, ensures provider can’t decrypt.  
+- ❌ **B**: Key rotation/deletion breaks future decryption.  
+- ❌ **C**: Memorystore is cache, not secure storage.  
+- ❌ **D**: Keys still inside GCP → violates TNO principle.
 
 
 #### Q181: Minimize backpressure when calling external GUID service
