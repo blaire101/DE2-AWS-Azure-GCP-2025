@@ -4182,164 +4182,186 @@ D. Dataproc Spark MLlib random forest.
 - ❌ **B**: AutoML Tables works but adds complexity/cost vs BQML’s direct SQL approach.  
 - ❌ **D**: Spark MLlib requires cluster management; less serverless than BigQuery ML.  
 
-#### Q181: Auto-scale Apache Spark jobs with fluctuating demand
+
+#### Q181: Minimize backpressure when calling external GUID service
+
+**Question:**  
+Pipeline must call external service to generate GUIDs, tens of thousands messages/sec, multi-threaded. How to minimize backpressure?
 
 **Options:**  
-A. Manually resize Dataproc clusters daily.  
-B. Use Compute Engine with autoscaling MIGs.  
-C. <mark>Enable Dataproc autoscaling policies</mark> ✅  
-D. Use BigQuery instead of Spark.  
-
-**Correct Answer:** C  
-
-**Explanation:**  
-- ✅ **C is correct**: Dataproc supports **autoscaling policies** that adjust workers up/down dynamically based on YARN/CPU/memory utilization.  
-- ❌ **A**: Manual resizing is slow and error-prone.  
-- ❌ **B**: MIG autoscaling works for VM pools, but not Spark cluster jobs directly.  
-- ❌ **D**: BigQuery is great for SQL analytics but not a direct replacement for Spark pipelines.  
-
----
-
-#### Q182: Real-time anomaly detection on IoT sensor streams
-
-**Options:**  
-A. Use Pub/Sub + Dataflow + AI Platform (custom ML model).  
-B. Use Pub/Sub + BigQuery ML.  
-C. Use IoT Core + Bigtable for low-latency lookups.  
-D. <mark>Pub/Sub → Dataflow streaming pipeline with ML model inference (Vertex AI endpoint)</mark> ✅  
+A. Call out to the service via HTTP  
+B. Create the pipeline statically in the class definition  
+C. Create a new object in the startBundle method of DoFn  
+D. <mark>Batch the job into ten-second increments</mark> ✅  
 
 **Correct Answer:** D  
 
 **Explanation:**  
-- ✅ **D is correct**: Dataflow streaming can call a **Vertex AI endpoint** per event for real-time scoring, perfect for anomaly detection.  
-- ❌ **A**: Training in AI Platform is fine, but raw integration for streaming inference is missing.  
-- ❌ **B**: BigQuery ML is batch/near-real-time, not per-event anomaly detection.  
-- ❌ **C**: Bigtable is great for storage/lookup, not inference.  
+- ✅ **D is correct**: Batching reduces external HTTP calls, avoids overwhelming service, mitigates backpressure.  
+- ❌ **A**: Per-element HTTP calls cause huge backpressure.  
+- ❌ **B/C**: Address initialization, not throughput/backpressure.  
 
 ---
 
-#### Q183: Optimize BigQuery query costs for exploratory analysts
+#### Q182: Migrate 90GB files + enable real-time warehouse updates
+
+**Question:**  
+Initial migration of ~90GB files from on-prem to GCP, then continuous real-time updates to warehouse.
 
 **Options:**  
-A. Assign fixed slots to each user.  
-B. Create BI Engine reservations.  
-C. <mark>Use cost controls: limit query bytes with `maximum_bytes_billed` and recommend partitions/clustering</mark> ✅  
-D. Move queries to Cloud SQL.  
+A. Storage Transfer Service + Pub/Sub + Data Fusion  
+B. BigQuery Data Transfer Service + Pub/Sub + Dataproc  
+C. <mark>gsutil for migration; Pub/Sub + Dataflow for real-time updates</mark> ✅  
+D. gsutil for both migration and real-time updates  
 
 **Correct Answer:** C  
 
 **Explanation:**  
-- ✅ **C is correct**: Setting `maximum_bytes_billed` prevents runaway costs; partitioning/clustering reduces scanned data.  
-- ❌ **A**: Slot reservations are for predictable workloads, not ad hoc queries.  
-- ❌ **B**: BI Engine accelerates dashboards but doesn’t reduce cost of exploratory queries.  
-- ❌ **D**: Cloud SQL isn’t designed for TB-scale analytics.  
+- ✅ **C is correct**: gsutil handles sub-TB one-time migrations efficiently; Pub/Sub + Dataflow supports scalable real-time streaming.  
+- ❌ **A**: STS is for PB-scale, not 90GB.  
+- ❌ **B**: BQ DTS not suited for arbitrary on-prem sources.  
+- ❌ **D**: gsutil not usable for real-time streaming.  
 
 ---
 
-#### Q184: Capture change data from Cloud SQL into BigQuery
+#### Q183: Bigtable schema for most recent stock prices
+
+**Question:**  
+Stock price data stored in Bigtable; need fast queries for most recent prices.
 
 **Options:**  
-A. Use Dataproc + Sqoop to export.  
-B. Use Dataflow with JDBC connector in batch.  
-C. <mark>Use Datastream (CDC) → Pub/Sub/Dataflow → BigQuery</mark> ✅  
-D. Export daily CSV to Cloud Storage, then load.  
-
-**Correct Answer:** C  
-
-**Explanation:**  
-- ✅ **C is correct**: **Datastream** provides CDC from Cloud SQL (MySQL/Postgres) into BigQuery with minimal latency.  
-- ❌ **A/B**: Batch ETL jobs introduce latency.  
-- ❌ **D**: Daily batch load loses near-real-time freshness.  
-
----
-
-#### Q185: Customer churn prediction using historical labeled dataset (structured)
-
-**Options:**  
-A. Vertex AI custom TensorFlow model.  
-B. <mark>BigQuery ML logistic regression</mark> ✅  
-C. Dataproc Spark MLlib logistic regression.  
-D. Cloud Functions with scikit-learn.  
+A. One table, row key = index + timestamp  
+B. <mark>One table, row key = index + reverse timestamp</mark> ✅  
+C. Separate table per index, row key = timestamp  
+D. Separate table per index, row key = reverse timestamp  
 
 **Correct Answer:** B  
 
 **Explanation:**  
-- ✅ **B is correct**: **BQML** supports **logistic regression** for classification tasks like churn (yes/no).  
-- ❌ **A**: TensorFlow works but is overkill for tabular data.  
-- ❌ **C**: Spark MLlib is valid but less serverless and more ops-heavy.  
-- ❌ **D**: Functions aren’t built for training large ML datasets.  
+- ✅ **B is correct**: Reverse timestamp orders rows newest→oldest, efficient for “latest price” queries.  
+- ❌ **A**: Plain timestamp hotspots writes.  
+- ❌ **C/D**: Separate tables add complexity, less efficient scaling.  
 
 ---
 
-#### Q186: Process clickstream events (high throughput, schema may evolve)
-
-**Options:**  
-A. Pub/Sub → Dataflow → BigQuery (using schema evolution support).  
-B. Pub/Sub → Bigtable (low-latency lookups).  
-C. <mark>Pub/Sub → Dataflow streaming → BigQuery with JSON ingestion</mark> ✅  
-D. IoT Core → Cloud SQL.  
-
-**Correct Answer:** C  
-
-**Explanation:**  
-- ✅ **C is correct**: JSON ingestion allows **flexible schema evolution** in BigQuery while using Dataflow for transformations.  
-- ❌ **A**: Standard structured load fails if schema changes frequently.  
-- ❌ **B**: Bigtable is NoSQL for low-latency, not analytics.  
-- ❌ **D**: Cloud SQL can’t handle high throughput clickstream scale.  
-
----
-
-#### Q187: Centralize GCP billing data for analysis
-
-**Options:**  
-A. Export billing data to Cloud Storage daily.  
-B. Export billing CSV via email.  
-C. <mark>Export billing data to BigQuery</mark> ✅  
-D. Query billing API each time.  
-
-**Correct Answer:** C  
-
-**Explanation:**  
-- ✅ **C is correct**: Exporting billing data directly to BigQuery allows **SQL analytics, dashboards, cost optimization**.  
-- ❌ **A**: Cloud Storage requires extra parsing.  
-- ❌ **B**: Email CSVs aren’t scalable.  
-- ❌ **D**: API queries are real-time but not suitable for long-term trend analysis.  
-
-
-#### Q188: Startup web app → JDBC driver, Asia → global expansion
+#### Q184: BigQuery staging vs production (streaming pipeline)
 
 **Question:**  
-Startup in Asia, cost-sensitive now, later global presence. Must use **native JDBC driver**.  
+Streaming API ingestion; need staging + production table setup for reporting.
 
 **Options:**  
-A. <mark>Use Cloud Spanner (single region now → multi-region later)</mark> ✅  
-B. Cloud SQL HA first → Bigtable global later  
-C. Cloud SQL zonal first → Bigtable global later  
-D. Cloud SQL zonal first → Cloud SQL HA later  
+A. Append-only staging; update prod every 3 hours  
+B. Append-only staging; update prod every 90 minutes  
+C. <mark>Move staged data → production; clear staging every 3 hours</mark> ✅  
+D. Move staged data → production; clear staging every 30 minutes  
 
-**Correct Answer:** A  
+**Correct Answer:** C  
 
 **Explanation:**  
-- ✅ **A is correct**: Cloud Spanner supports **native JDBC driver**, regional config (low cost) can later expand to **multi-region** for global latency + HA.  
-- ❌ **B/C**: Bigtable doesn’t support JDBC; wrong for transactional workloads.  
-- ❌ **D**: Cloud SQL HA adds reliability but **not global presence**; limited scalability.  
+- ✅ **C is correct**: Matches GCP best practice; balances buffer flush timing with report freshness.  
+- ❌ **A/B**: Updating prod table directly with DML is less efficient.  
+- ❌ **D**: Too frequent → performance overhead.  
 
 ---
 
-#### Q189: Migrate **1 PB in a few hours** securely
+#### Q185: Dataflow job fails with DoFn errors
+
+**Question:**  
+Job starts, processes some elements, then fails. Monitoring shows DoFn errors.
 
 **Options:**  
-A. <mark>Dedicated Cloud Interconnect + Storage Transfer Service</mark> ✅  
-B. Transfer Appliance with manual encryption  
-C. VPN + `gcloud compute scp`  
-D. Batch gsutil uploads  
+A. Job validation  
+B. <mark>Exceptions in worker code</mark> ✅  
+C. Graph/pipeline construction  
+D. Insufficient permissions  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B is correct**: Runtime exceptions inside DoFn cause worker task failures.  
+- ❌ **A/C**: If validation/graph failed, job wouldn’t start.  
+- ❌ **D**: Permission issues block job start, not mid-execution.  
+
+---
+
+#### Q186: Daily compute usage reports by project & user
+
+**Question:**  
+Need daily reports of compute consumption by project and user.
+
+**Options:**  
+A. <mark>Export Cloud Logging → BigQuery daily; use views</mark> ✅  
+B. Filter Cloud Logging → CSV  
+C. Filter Cloud Logging → BigQuery manually  
+D. Export logs → Cloud Storage CSV + Dataprep  
 
 **Correct Answer:** A  
 
 **Explanation:**  
-- ✅ **A is correct**: Interconnect (up to 100–200 Gbps) + **Storage Transfer Service** enables PB-scale migration in **hours**, encrypted by default.  
-- ❌ **B**: Transfer Appliance turnaround is weeks, not hours.  
-- ❌ **C/D**: VPN or gsutil too slow for PB-scale.  
+- ✅ **A is correct**: Export logs into BigQuery daily, build SQL views for flexible reporting.  
+- ❌ **B/D**: CSV export = manual, unscalable.  
+- ❌ **C**: Filtering pre-BQ loses flexibility.  
+
+---
+
+#### Q187: Restrict Dev vs External team access to GCS/BQ
+
+**Question:**  
+Dev team: access Storage + BQ. External team: BQ only.
+
+**Options:**  
+A. Remove IAM on Storage for external  
+B. VPC firewall rules  
+C. VPC-SC perimeter + restrict BQ  
+D. <mark>VPC-SC perimeter + restrict GCS, add Dev to Access Level</mark> ✅  
+
+**Correct Answer:** D  
+
+**Explanation:**  
+- ✅ **D is correct**: VPC Service Controls perimeter with restricted API = Cloud Storage; Dev inside perimeter, External excluded.  
+- ❌ **A**: Removing IAM at project level doesn’t scale.  
+- ❌ **B**: Firewall doesn’t solve API-level access.  
+- ❌ **C**: Restricting BQ blocks both teams.  
+
+---
+
+#### Q188: Startup DB → optimize for cost now, global later
+
+**Question:**  
+Asia startup → cost now, global replication later; JDBC required.
+
+**Options:**  
+A. <mark>Spanner single-region → multi-region</mark> ✅  
+B. Cloud SQL HA → Bigtable multi-region  
+C. Cloud SQL zonal → Bigtable  
+D. Cloud SQL zonal → Cloud SQL HA  
+
+**Correct Answer:** A  
+
+**Explanation:**  
+- ✅ **A is correct**: Spanner supports JDBC, cheap regional mode initially, scale to multi-region globally later.  
+- ❌ **B/C**: Bigtable doesn’t support JDBC.  
+- ❌ **D**: Cloud SQL lacks global scalability.  
+
+---
+
+#### Q189: Migrate 1PB in few hours securely
+
+**Question:**  
+1 PB transfer in “a few hours,” secure connection.
+
+**Options:**  
+A. <mark>Dedicated Interconnect + Storage Transfer Service</mark> ✅  
+B. Transfer Appliance + manual encrypt/decrypt  
+C. VPN + scp in parallel  
+D. gsutil in 3TB batches  
+
+**Correct Answer:** A  
+
+**Explanation:**  
+- ✅ **A is correct**: Dedicated Interconnect (100–200 Gbps) + STS = PB-scale in hours, secure by default.  
+- ❌ **B**: TA turnaround = weeks.  
+- ❌ **C/D**: Too slow for PB-scale.  
 
 ---
 
@@ -4357,5 +4379,211 @@ D. Load directly into final table + SQL fix
 - ✅ **A is correct**: Cloud **Data Fusion** offers pipelines with built-in **cleansing, validation, type casting**, fits “pipeline” requirement.  
 - ❌ **B**: Avro format doesn’t solve quality issues.  
 - ❌ **C/D**: ELT in BigQuery possible, but not framed as **data pipeline**; less aligned with question intent.  
+
+#### Q191: Fix overfitting deep learning model for ecommerce prediction
+
+**Question:**  
+Model is overfitting on training data. How to improve accuracy on new data?
+
+**Options:**  
+A. Increase training data, and increase input features  
+B. <mark>Increase training data, and decrease input features</mark> ✅  
+C. Reduce training data, and increase input features  
+D. Reduce training data, and decrease input features  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B is correct**: More diverse training data improves generalization; fewer features reduce noise and complexity.  
+- ❌ **A**: Adding features may worsen overfitting (curse of dimensionality).  
+- ❌ **C**: Less data increases overfitting risk.  
+- ❌ **D**: Less data reduces predictive power despite fewer features.  
+
+---
+
+#### Q192: Implement chatbot for retailer (text + voice, low-code)
+
+**Question:**  
+Retailer wants chatbot for text/voice, low-code/no-code, easy keyword/intents training.
+
+**Options:**  
+A. Speech-to-Text API + App Engine app  
+B. Speech-to-Text API + Compute Engine app  
+C. Dialogflow for simple, Speech-to-Text for complex  
+D. <mark>Use Dialogflow to implement chatbot, define intents</mark> ✅  
+
+**Correct Answer:** D  
+
+**Explanation:**  
+- ✅ **D is correct**: Dialogflow is designed for low/no-code conversational bots, supports text + voice, and intents-based design.  
+- ❌ **A/B**: Require custom coding, not low-code.  
+- ❌ **C**: Adds unnecessary split; Dialogflow already integrates with Speech APIs.  
+
+---
+
+#### Q193: Stream proprietary aerospace format into BigQuery
+
+**Question:**  
+Proprietary data format, must stream efficiently into BigQuery.
+
+**Options:**  
+A. Shell script + Cloud Function batch ETL  
+B. Standard Dataflow → raw BigQuery, transform later  
+C. Hive on Dataproc → CSV → BigQuery  
+D. <mark>Apache Beam custom connector + Dataflow streaming in Avro</mark> ✅  
+
+**Correct Answer:** D  
+
+**Explanation:**  
+- ✅ **D is correct**: Custom Beam connector can read proprietary format, Dataflow handles streaming at scale, Avro is efficient and schema-friendly.  
+- ❌ **A**: Batch Cloud Functions aren’t suited for streaming.  
+- ❌ **B**: Loading raw then re-transform is inefficient.  
+- ❌ **C**: Dataproc adds ops overhead, not optimized for streaming.  
+
+---
+
+#### Q194: High-volume trade processing, secure queue + Python API
+
+**Question:**  
+Need secure queuing, trigger Python API jobs at high volume.
+
+**Options:**  
+A. <mark>Pub/Sub push subscription → Cloud Function → Python API</mark> ✅  
+B. Compute Engine app with Pub/Sub push  
+C. Queue in NoSQL DB  
+D. Cloud Composer subscribe to Pub/Sub  
+
+**Correct Answer:** A  
+
+**Explanation:**  
+- ✅ **A is correct**: Pub/Sub + Cloud Functions = serverless, scalable, secure, low latency.  
+- ❌ **B**: Compute Engine adds ops burden, not needed.  
+- ❌ **C**: NoSQL isn’t a proper queueing service.  
+- ❌ **D**: Composer is heavy; overkill for API call triggers.  
+
+---
+
+#### Q195: Low-maintenance SQL analytics for 10TB+ medical DB
+
+**Question:**  
+Need SQL-accessible, low-maintenance, cost-effective analytics on 10TB+.
+
+**Options:**  
+A. Cloud SQL + JOIN queries  
+B. <mark>BigQuery warehouse + query result caching</mark> ✅  
+C. MySQL cluster on Compute Engine  
+D. Cloud Spanner multi-region  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B is correct**: BigQuery is serverless, scales to 10TB+, optimized for SQL analytics, and supports cached query destinations.  
+- ❌ **A**: Cloud SQL not suited for huge analytical workloads.  
+- ❌ **C**: Self-managed cluster = high ops overhead.  
+- ❌ **D**: Spanner is OLTP, not analytical.  
+
+---
+
+#### Q196: Weekly 15TB transfer (POSIX, 500 Mbps)
+
+**Question:**  
+Need reliable weekly transfer from on-prem POSIX source.
+
+**Options:**  
+A. Cloud Scheduler + gsutil -m  
+B. Transfer Appliance → GKE → weekly transfer  
+C. <mark>Storage Transfer Service agent on-prem + scheduled job</mark> ✅  
+D. STS agent on GCP VM  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C is correct**: On-prem STS agent reads POSIX directly, supports scheduling and weekly sync.  
+- ❌ **A**: gsutil fragile for large recurring jobs.  
+- ❌ **B**: Transfer Appliance is for one-time PB-scale, not weekly.  
+- ❌ **D**: Installing STS in GCP VM cannot access on-prem file system.  
+
+---
+
+#### Q197: ACID DB with minimal failover intervention
+
+**Question:**  
+Need ACID database with automatic failure recovery.
+
+**Options:**  
+A. Cloud SQL MySQL + PITR  
+B. <mark>Cloud SQL PostgreSQL + High Availability</mark> ✅  
+C. Bigtable multi-cluster  
+D. BigQuery multi-region table  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B is correct**: Cloud SQL Postgres is ACID, HA ensures automatic failover (no manual work).  
+- ❌ **A**: PITR requires manual restore.  
+- ❌ **C**: Bigtable not fully ACID.  
+- ❌ **D**: BigQuery is analytical, not OLTP ACID.  
+
+---
+
+#### Q198: Workflow pipeline scheduling with GKE, Shared VPC
+
+**Question:**  
+Want Google-managed Airflow service in Shared VPC.
+
+**Options:**  
+A. Dataflow pipelines + Cloud Run triggers  
+B. Dataflow pipelines + shell scheduling  
+C. Composer in host project  
+D. <mark>Composer in Shared VPC, resources in service project</mark> ✅  
+
+**Correct Answer:** D  
+
+**Explanation:**  
+- ✅ **D is correct**: Best practice → deploy Composer in **service project** with Shared VPC connectivity.  
+- ❌ **A/B**: Not orchestration solutions.  
+- ❌ **C**: Putting Composer in host project breaks VPC isolation best practice.  
+
+---
+
+#### Q199: Customer-facing BI dashboard (BigQuery + Data Studio)
+
+**Question:**  
+High concurrency, large aggregations, minimal latency.
+
+**Options:**  
+A. <mark>BI Engine + materialized views</mark> ✅  
+B. BI Engine + logical views  
+C. BI Engine + streaming  
+D. BI Engine + authorized views  
+
+**Correct Answer:** A  
+
+**Explanation:**  
+- ✅ **A is correct**: Materialized views precompute results; BI Engine caches in-memory → lowest latency.  
+- ❌ **B**: Logical views are recomputed per query.  
+- ❌ **C**: Streaming doesn’t improve dashboard query latency.  
+- ❌ **D**: Authorized views control access, not performance.  
+
+---
+
+#### Q200: Protect PII in banking, use service accounts + DLP
+
+**Question:**  
+Need access control, encryption, compliance, service account best practices.
+
+**Options:**  
+A. IAM roles to employees + one shared SA  
+B. One SA for DB, one per user  
+C. Cloud Storage + one shared SA  
+D. <mark>Cloud Storage + multiple SAs mapped to IAM groups</mark> ✅  
+
+**Correct Answer:** D  
+
+**Explanation:**  
+- ✅ **D is correct**: Cloud Storage compliant; multiple service accounts per group = granular least-privilege access.  
+- ❌ **A**: Shared service account = bad practice.  
+- ❌ **B**: Human users shouldn’t get service accounts.  
+- ❌ **C**: Single shared SA = weak isolation.  
 
 
