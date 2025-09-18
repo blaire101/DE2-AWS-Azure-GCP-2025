@@ -900,9 +900,8 @@ A
 **Explanation:**  
 - **GUID** = stable ID → downstream dedup/idempotency trivial.  
 - Hash breaks if timestamp changes.  
-- Using payload as PK is heavy.  
+- Using payload as PK is heavy. (Payload = Effective load (useful load) It refers to the actual business data）
 
----
 
 #### Q22: Data scientist laptop underpowered
 
