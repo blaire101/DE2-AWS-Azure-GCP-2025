@@ -839,8 +839,6 @@ B, C, D
 - A requires labeled fraud data (not given).  
 - E/F are not suitable for this dataset.  
 
-Got it 👍 — here’s Q19–Q30 rewritten in the **same Markdown card format** you just showed me for Q18.
-
 
 #### Q19: Minimize storage cost when migrating Hadoop → Dataproc
 
