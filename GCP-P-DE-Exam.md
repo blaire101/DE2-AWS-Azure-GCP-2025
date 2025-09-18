@@ -1975,10 +1975,10 @@ You are designing storage for very large text files in a Google Cloud data pipel
 - Support **parallel load** from input locations, following Google best practices.  
 
 Options:  
-A. Transform text files to compressed Avro using Cloud Dataflow. Use BigQuery for storage and query.  
-<mark>B. Transform text files to compressed Avro using Cloud Dataflow. Use Cloud Storage and BigQuery permanent linked tables for query.</mark>  
-C. Compress text files to gzip using Grid Computing Tools. Use BigQuery for storage and query.  
-D. Compress text files to gzip using Grid Computing Tools. Use Cloud Storage, then import into Cloud Bigtable for query.  
+- A. Transform text files to compressed Avro using Cloud Dataflow. Use BigQuery for storage and query.  
+- <mark>B. Transform text files to compressed Avro using Cloud Dataflow. Use Cloud Storage and BigQuery permanent linked tables for query.</mark>  
+- C. Compress text files to gzip using Grid Computing Tools. Use BigQuery for storage and query.  
+- D. Compress text files to gzip using Grid Computing Tools. Use Cloud Storage, then import into Cloud Bigtable for query.  
 
 **Correct Answer:**  
 B  
