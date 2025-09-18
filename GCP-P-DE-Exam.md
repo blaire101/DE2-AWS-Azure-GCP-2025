@@ -839,4 +839,259 @@ B, C, D
 - A requires labeled fraud data (not given).  
 - E/F are not suitable for this dataset.  
 
+Got it 👍 — here’s Q19–Q30 rewritten in the **same Markdown card format** you just showed me for Q18.
+
+
+#### Q19: Minimize storage cost when migrating Hadoop → Dataproc
+
+**Question:**  
+Like-for-like migration would need **50 TB Persistent Disk per node**. CIO worries about **block storage cost**. How to **minimize storage cost**?
+
+Options:  
+<mark>A. Put the data into Cloud Storage (GCS).</mark>  
+B. Use preemptible VMs for the cluster.  
+C. Tune cluster so disks are just enough.  
+D. Move cold to GCS, keep hot on PD.  
+
+**Correct Answer:**  
+A  
+
+**Explanation:**  
+- Use **Dataproc + GCS connector**: compute ephemeral, data persists cheaply in **GCS**.  
+- Avoids massive PD footprint per node.  
+- **B** cuts compute cost, not storage.  
+- **C/D** still rely on PD; more ops overhead.  
+
+---
+
+#### Q20: Pub/Sub push endpoint duplicate messages
+
+**Question:**  
+Push subscription to HTTPS endpoint receives many **duplicate messages**. Most likely cause?
+
+Options:  
+A. Message body too large.  
+B. Expired SSL cert.  
+C. Topic has too many messages.  
+<mark>D. Endpoint not acknowledging within ack deadline.</mark>  
+
+**Correct Answer:**  
+D  
+
+**Explanation:**  
+- Pub/Sub is **at-least-once**; if not acked, Pub/Sub redelivers → duplicates.  
+- Expired cert = failure, not dupes.  
+- Too many messages doesn’t directly cause duplicates.  
+
+---
+
+#### Q21: Deduplicate retransmitted inventory payloads
+
+**Question:**  
+System retransmits when in doubt; payload includes **fields + transmission timestamp**. How to dedup?
+
+Options:  
+<mark>A. Assign GUID per data entry.</mark>  
+B. Compute hash vs history.  
+C. Store full payload as primary key.  
+D. Maintain hash table.  
+
+**Correct Answer:**  
+A  
+
+**Explanation:**  
+- **GUID** = stable ID → downstream dedup/idempotency trivial.  
+- Hash breaks if timestamp changes.  
+- Using payload as PK is heavy.  
+
+---
+
+#### Q22: Data scientist laptop underpowered
+
+**Question:**  
+Data scientist needs to analyze huge GCS + Cassandra datasets. Laptop too weak.
+
+Options:  
+A. Local Jupyter.  
+B. Cloud Shell.  
+C. Host only viz tool.  
+<mark>D. Cloud Datalab on GCE VM.</mark>  
+
+**Correct Answer:**  
+D  
+
+**Explanation:**  
+- Managed notebook close to data.  
+- Scales with VM resources.  
+- A/B limited resources.  
+- C = viz only, no analysis.  
+
+---
+
+#### Q23: 10,000 IoT devices real-time pipeline
+
+**Question:**  
+Need real-time ingestion, processing, and analysis.
+
+Options:  
+A. Datastore → export → BQ.  
+<mark>B. Pub/Sub → Dataflow (stream) → BigQuery.</mark>  
+C. GCS + Dataproc.  
+D. Batch to GCS → Cloud SQL.  
+
+**Correct Answer:**  
+B  
+
+**Explanation:**  
+- Canonical streaming stack: Pub/Sub (ingest), Dataflow (process), BQ (analyze).  
+- A/D are batch.  
+- C is slow/batch-oriented.  
+
+---
+
+#### Q24: STRING epoch → TIMESTAMP
+
+**Question:**  
+`CLICK_STREAM.DT` stored as STRING epoch. Need TIMESTAMP for sessions, minimize future query cost.
+
+Options:  
+A. Drop/reload with TIMESTAMP.  
+B. Add TIMESTAMP col, backfill.  
+C. View casting DT → TIMESTAMP.  
+<mark>E. CTAS into NEW_CLICK_STREAM with casted TS.</mark>  
+
+**Correct Answer:**  
+E  
+
+**Explanation:**  
+- One-time transform → queries run on real TIMESTAMP (no per-query cast cost).  
+- C = casts every query = costly.  
+- A/B heavy ops.  
+
+
+#### Q25: Alert on BigQuery insert job
+
+**Question:**  
+Send **instant notification** only when an **insert job** appends to one specific table.
+
+Options:  
+A. List logs via API.  
+B. Sink logs to BQ.  
+C. Sink logs to Pub/Sub (no fine filter).  
+<mark>D. Create sink with advanced filter → Pub/Sub.</mark>  
+
+**Correct Answer:**  
+D  
+
+**Explanation:**  
+- Advanced filter isolates target table + job type.  
+- Pub/Sub delivers instant events.  
+- A/B don’t notify.  
+- C lacks fine-grained filter.  
+
+
+#### Q26: Consultant with sensitive Dataflow job
+
+**Question:**  
+External consultant needs to develop Dataflow transform, but **data is sensitive**. How to proceed?
+
+Options:  
+A. Project Viewer role.  
+B. Dataflow Developer role.  
+C. Share service account.  
+<mark>D. Provide anonymized sample in separate project.</mark>  
+
+**Correct Answer:**  
+D  
+
+**Explanation:**  
+- **Least privilege**: anonymized sample → no PII exposure.  
+- A/B still expose real data.  
+- C is anti-pattern.  
+
+---
+
+#### Q27: Feature reduction for faster training
+
+**Question:**  
+Thousands of features; want faster training while preserving accuracy.
+
+Options:  
+A. Drop features correlated with label.  
+<mark>B. Combine highly correlated features.</mark>  
+C. Average features in groups of 3.  
+D. Drop features with 50% nulls.  
+
+**Correct Answer:**  
+B  
+
+**Explanation:**  
+- Removes redundancy, preserves signal.  
+- A: correlated with label = important!  
+- C: arbitrary, loses info.  
+- D: missingness ≠ useless.  
+
+---
+
+#### Q28: Dataflow reading BigQuery logs
+
+**Question:**  
+Need to read growing BigQuery logs efficiently for new features.
+
+Options:  
+A. Provide TableReference.  
+<mark>B. Use `.fromQuery` selecting only needed columns.</mark>  
+C. Use TableSchema.  
+D. Return TableRow.  
+
+**Correct Answer:**  
+B  
+
+**Explanation:**  
+- Push down projection → scan fewer bytes.  
+- Others don’t cut scanned data size.  
+
+---
+
+#### Q29: Bigtable row key design
+
+**Question:**  
+Row key for real-time dashboards with sensors.
+
+Options:  
+A. `<timestamp>`  
+B. `<sensorid>`  
+C. `<timestamp>#<sensorid>`  
+<mark>D. `<sensorid>#<timestamp>`</mark>  
+
+**Correct Answer:**  
+D  
+
+**Explanation:**  
+- Sensor-first avoids hotspotting.  
+- Supports efficient time-range per sensor.  
+- Timestamp-first = hotspotting.  
+
+---
+
+#### Q30: Analytics on busy MySQL cluster
+
+**Question:**  
+MySQL cluster overloaded. Need analytics without hurting ops.
+
+Options:  
+A. Add node + OLAP cube.  
+<mark>B. ETL data into BigQuery.</mark>  
+C. On-prem Hadoop.  
+D. Restore backup → Cloud SQL → Dataproc.  
+
+**Correct Answer:**  
+B  
+
+**Explanation:**  
+- Offload to BigQuery = scalable analytics.  
+- A = more OLTP load.  
+- C = complex, heavy ops.  
+- D = clunky multi-step.  
+
 
