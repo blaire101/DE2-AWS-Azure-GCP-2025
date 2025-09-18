@@ -986,7 +986,6 @@ D
 - A/B don’t notify.  
 - C lacks fine-grained filter.  
 
-
 #### Q26: Consultant with sensitive Dataflow job
 
 **Question:**  
@@ -996,7 +995,7 @@ Options:
 A. Project Viewer role.  
 B. Dataflow Developer role.  
 C. Share service account.  
-<mark>D. Provide anonymized sample in separate project.</mark>  
+<mark>D. Provide anonymized sample in separate project.</mark>  ✅ /əˈnɑː.nə.maɪzd/
 
 **Correct Answer:**  
 D  
@@ -1006,7 +1005,6 @@ D
 - A/B still expose real data.  
 - C is anti-pattern.  
 
----
 
 #### Q27: Feature reduction for faster training
 
@@ -1037,7 +1035,7 @@ Need to read growing BigQuery logs efficiently for new features.
 
 Options:  
 A. Provide TableReference.  
-<mark>B. Use `.fromQuery` selecting only needed columns.</mark>  
+<mark>B. Use `.fromQuery` selecting only needed columns.</mark>  ✅ `projection pushdown`  
 C. Use TableSchema.  
 D. Return TableRow.  
 
@@ -1091,4 +1089,221 @@ B
 - C = complex, heavy ops.  
 - D = clunky multi-step.  
 
+#### Q31: Updating incompatible Dataflow pipeline without data loss  
+
+**Question:**  
+Your streaming Dataflow pipeline (Pub/Sub source) needs an update that makes it **incompatible** with the current version. You must avoid data loss.  
+
+Options:  
+<mark>A. Update the current pipeline and use the drain flag.</mark>  
+B. Update the current pipeline and provide the transform mapping JSON object.  
+C. Create a new pipeline with the same Pub/Sub subscription and cancel the old one.  
+D. Create a new pipeline with a new Pub/Sub subscription and cancel the old one.  
+
+**Correct Answer:**  
+A  
+
+**Explanation:**  
+- **Drain** allows current pipeline to **finish processing in-flight data** before shutdown → no loss.  
+- **B** only works for compatible transform changes (rename/mapping), not for incompatible jobs.  
+- **C/D** risk losing unacked or duplicate messages when switching subscriptions.  
+- Safe approach: **drain old pipeline → deploy new one**.  
+
+---
+
+#### Q32: Improve Bigtable load performance (10TB initial load)  
+
+**Question:**  
+Data scientists observe poor read/write performance with Bigtable initial load (10TB). Want to improve performance at minimal cost.  
+
+Options:  
+<mark>A. Redefine schema to evenly distribute reads/writes across row space.</mark>  
+B. Wait for cluster auto-scale.  
+C. Use single row key for frequently updated values.  
+D. Use sequential numeric IDs as row keys.  
+
+**Correct Answer:**  
+A  
+
+**Explanation:**  
+- **Bigtable best practice**: avoid **hotspotting** by distributing keys evenly.  
+- **B**: cluster size ≠ schema design.  
+- **C**: single row key concentrates load → bottleneck.  
+- **D**: sequential IDs → hotspotting.  
+
+---
+
+#### Q33: Messages missing in Dataflow dashboard  
+
+**Question:**  
+Pub/Sub shows all messages published, but CFO dashboard (via Dataflow) is missing some. What to check next?  
+
+Options:  
+A. Check dashboard app rendering.  
+<mark>B. Run a fixed dataset through Dataflow pipeline and analyze output.</mark>  
+C. Use Stackdriver Monitoring on Pub/Sub.  
+D. Switch Dataflow to pull mode.  
+
+**Correct Answer:**  
+B  
+
+**Explanation:**  
+- Pub/Sub confirmed fine → issue likely **in Dataflow pipeline**.  
+- Re-run with **fixed dataset** → confirm transformations/parsing logic.  
+- **C** shows backlog metrics but not actual missing message cause.  
+- **A/D** don’t isolate pipeline logic.  
+
+---
+
+#### Q34: Flowlogistic — common storage for BigQuery & Hadoop  
+
+**Question:**  
+BigQuery is primary analytics system, but Hadoop/Spark workloads remain. Where to store **common data**?  
+
+Options:  
+A. Store in BigQuery partitioned tables.  
+B. Store in BigQuery with authorized views.  
+<mark>C. Store in GCS encoded as Avro.</mark>  
+D. Store in HDFS on Dataproc.  
+
+**Correct Answer:**  
+C  
+
+**Explanation:**  
+- **GCS + Avro** = interoperable format for both **BigQuery** and **Spark/Hadoop**.  
+- **A/B**: BigQuery-only, not usable directly by Spark.  
+- **D**: HDFS on Dataproc adds cost/ops, not recommended for common data lake.  
+
+---
+
+#### Q35: Flowlogistic — real-time tracking ingestion system  
+
+**Question:**  
+Kafka cannot scale. Need ingestion, real-time processing, reliable storage.  
+
+Options:  
+<mark>A. Cloud Pub/Sub + Cloud Dataflow + Cloud Storage.</mark>  
+B. Pub/Sub + Dataflow + Local SSD.  
+C. Pub/Sub + Cloud SQL + Cloud Storage.  
+D. Load Balancing + Dataflow + Cloud Storage.  
+
+**Correct Answer:**  
+A  
+
+**Explanation:**  
+- **Pub/Sub** = scalable global ingestion.  
+- **Dataflow** = stream + batch processing.  
+- **Cloud Storage** = durable storage for analytics.  
+- Other options misuse SQL/SSD/LB → don’t fit streaming scale.  
+
+---
+
+#### Q36: Flowlogistic — cost-effective BigQuery reporting  
+
+**Question:**  
+Sales team (non-technical) overwhelmed by huge BQ tables, queries cost too much. Best fix?  
+
+Options:  
+A. Export to Google Sheets.  
+B. Create extra table with only needed columns.  
+<mark>C. Create a view with only necessary columns.</mark>  
+D. Use IAM column-level access.  
+
+**Correct Answer:**  
+C  
+
+**Explanation:**  
+- **View**: logical subset, no extra storage, keeps data updated.  
+- **B** static table duplicates data & requires sync.  
+- **A** too small for TB-scale.  
+- **D** controls access but doesn’t simplify data.  
+
+---
+
+#### Q37: Flowlogistic — tracking messages with Pub/Sub  
+
+**Question:**  
+Devices send package-tracking messages to one Pub/Sub topic. Need to ensure package data is analyzable over time.  
+
+Options:  
+A. Timestamp added by subscriber.  
+<mark>B. Timestamp + Package ID added by publisher device.</mark>  
+C. Use NOW() in BigQuery.  
+D. Use Pub/Sub publishTime.  
+
+**Correct Answer:**  
+B  
+
+**Explanation:**  
+- **Event time from publisher** = true time of event + unique ID for ordering.  
+- **A**: subscriber receive-time may be delayed.  
+- **C**: NOW() in BQ = ingestion time, not event time.  
+- **D**: Pub/Sub publishTime = system time, not guaranteed accurate for event sequence.  
+
+---
+
+#### Q38: MJTelco — Dataflow scaling  
+
+**Question:**  
+Dataflow must handle up to 50k installations, scale compute power dynamically. Which setting?  
+
+Options:  
+A. Zone  
+B. Number of workers  
+C. Disk size per worker  
+<mark>D. Maximum number of workers</mark>  
+
+**Correct Answer:**  
+D  
+
+**Explanation:**  
+- Dataflow **autoscaling** adds/removes workers as needed → limited by **max workers**.  
+- **A** irrelevant to scaling.  
+- **B** = fixed workers, not dynamic.  
+- **C** = storage size, not compute scaling.  
+
+---
+
+#### Q39: MJTelco — visualization of telemetry  
+
+**Question:**  
+Ops team needs dashboards: 50k installs, 6 weeks data, <3h delay, <5s load time, filter suboptimal links.  
+
+Options:  
+A. Google Sheets  
+B. BigQuery + Apps Script + Sheets  
+C. Datastore + App Engine + Charts API  
+<mark>D. BigQuery + Data Studio 360 (Looker Studio)</mark>  
+
+**Correct Answer:**  
+D  
+
+**Explanation:**  
+- **BigQuery** handles large telemetry datasets.  
+- **Data Studio** (Looker Studio) = cost-free, interactive dashboards with filters/sorting.  
+- Meets latency + usability requirements.  
+- Other options too small-scale or require custom apps.  
+
+---
+
+#### Q40: MJTelco — enforce regional access in BigQuery  
+
+**Question:**  
+Each region has its own table. Need to enforce access so employees only see their region.  
+
+Options:  
+A. Put all tables in one global dataset.  
+<mark>B. Put each table in a dataset for a region.</mark>  
+C. Adjust table-level IAM.  
+D. Adjust view-level IAM.  
+<mark>E. Adjust dataset-level IAM for each region’s group.</mark>  
+
+**Correct Answer:**  
+B, E  
+
+**Explanation:**  
+- **B**: region-specific dataset separation.  
+- **E**: dataset-level IAM = scalable, easy to maintain.  
+- **A**: global dataset breaks isolation.  
+- **C/D**: possible, but harder to maintain vs dataset-level controls.  
 
