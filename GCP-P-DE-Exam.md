@@ -871,7 +871,7 @@ Options:
 A. Message body too large.  
 B. Expired SSL cert.  
 C. Topic has too many messages.  
-<mark>D. Endpoint not acknowledging within ack deadline.</mark>  
+<mark>D. Endpoint not acknowledging within ack deadline.</mark>  ✅
 
 **Correct Answer:**  
 D  
@@ -975,7 +975,7 @@ Options:
 A. List logs via API.  
 B. Sink logs to BQ.  
 C. Sink logs to Pub/Sub (no fine filter).  
-<mark>D. Create sink with advanced filter → Pub/Sub.</mark>  
+<mark>D. Create sink with advanced filter → Pub/Sub.</mark>  ✅ `protoPayload.methodName="jobservice.insert"`
 
 **Correct Answer:**  
 D  
