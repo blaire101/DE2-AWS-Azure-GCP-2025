@@ -1170,11 +1170,19 @@ D. Store in HDFS on Dataproc.
 C  
 
 **Explanation:**  
+
+- **GCS** is Google’s object storage, accessible to all systems.  
+- **Avro** is a cross-platform format with built-in schema support (row-oriented with efficient serialization).
+
+- BigQuery can directly load Avro files or query them as external tables.  
+- Spark/Hadoop can read Avro natively through their connectors.  
 - **GCS + Avro** = interoperable format for both **BigQuery** and **Spark/Hadoop**.  
+
+---
+
 - **A/B**: BigQuery-only, not usable directly by Spark.  
 - **D**: HDFS on Dataproc adds cost/ops, not recommended for common data lake.  
 
----
 
 #### Q35: Flowlogistic — real-time tracking ingestion system  
 
