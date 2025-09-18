@@ -1547,79 +1547,85 @@ B, D, E
 Here you go — tidy cards for **Q51–Q54** with quick justifications:
 
 
-#### Q51: Fix overfitting in a spam classifier (pick 3)
+#### Q51: Fix overfitting in a spam classifier (choose 3)
 
-**Question:**
+**Question:**  
 You’re overfitting the training data. Which three actions help?
 
-Options: <mark>A. Get more training examples</mark>
-B. Reduce the number of training examples <mark>C. Use a smaller set of features</mark>
-D. Use a larger set of features <mark>E. Increase the regularization parameters</mark>
-F. Decrease the regularization parameters
+Options:  
+<mark>A. Get more training examples</mark>  
+B. Reduce the number of training examples  
+<mark>C. Use a smaller set of features</mark>  
+D. Use a larger set of features  
+<mark>E. Increase the regularization parameters</mark>  
+F. Decrease the regularization parameters  
 
-**Correct Answer:**
+**Correct Answer:**  
 A, C, E
 
-**Explanation:**
-
-* **More data (A)** improves generalization.
-* **Fewer features (C)** reduces model complexity/noise.
-* **Stronger regularization (E)** penalizes overly complex fits.
-* B and F worsen overfitting; D often increases variance.
+**Explanation:**  
+- **More data (A)** → better generalization.  
+- **Fewer features (C)** → simpler model, less noise.  
+- **Stronger regularization (E)** → penalize complexity.  
+- B & F increase overfitting risk; D often raises variance.
 
 ---
 
-#### Q52: Securely automate GCS → Dataproc → BigQuery jobs
+#### Q52: Securely automate GCS → Dataproc → BigQuery
 
-**Question:**
+**Question:**  
 Nightly Spark (Dataproc) job reads **non-public** files from GCS and writes to BigQuery. How to run securely?
 
-Options:
-A. Lock bucket to only yourself
-B. Give **Project Owner** to a service account <mark>C. Use a service account with just GCS read + BigQuery write</mark>
-D. Use a user account with **Project Viewer** on the cluster
+Options:  
+A. Lock bucket to only yourself  
+B. Give **Project Owner** to a service account  
+<mark>C. Use a service account with GCS read + BigQuery write</mark>  
+D. Use a user account with **Project Viewer**  
 
-**Correct Answer:**
+**Correct Answer:**  
 C
 
-**Explanation:**
-Use **least privilege**: a **service account** with permissions only to **read the bucket** and **write to BigQuery**. Job submission can be triggered by another identity but the **workload SA** should have minimal access. B violates least-privilege; A/D don’t enable the pipeline.
+**Explanation:**  
+Follow **least privilege**: run with a **service account** scoped just to **read GCS** and **write BigQuery**.  
+B is over-privileged; A/D don’t enable a secure automated pipeline.
 
 ---
 
-#### Q53: Slow BigQuery GROUP BY
+#### Q53: BigQuery GROUP BY is very slow
 
-**Question:**
-`SELECT country, state, city FROM [project:dataset.table] GROUP BY country` runs very slowly. Query plan shows heavy skew in the Read stage. What’s the most likely cause?
+**Question:**  
+`SELECT country, state, city FROM [proj:ds.tbl] GROUP BY country` runs slowly; plan shows heavy skew in Read stage. Why?
 
-Options:
-A. Too many concurrent queries
-B. Too many partitions
-C. Many NULLs in state or city <mark>D. Most rows share the same country (data skew)</mark>
+Options:  
+A. Too many concurrent queries  
+B. Too many partitions  
+C. Many NULLs in state/city  
+<mark>D. Most rows share the same country (data skew)</mark>  
 
-**Correct Answer:**
+**Correct Answer:**  
 D
 
-**Explanation:**
-Grouping on a highly skewed key (**country**) forces most rows to the same reducer/slot → **shuffle hotspot** and slow stage. (Yes, the SELECT is odd, but the exam’s intent is **data skew** on the GROUP BY key.)
+**Explanation:**  
+Grouping on a **highly skewed key** funnels most rows to one reducer/slot → **hotspot** → slow stage.
 
 ---
 
-#### Q54: Realtime “who bid first” for a global auction
+#### Q54: Real-time “who bid first” across global servers
 
-**Question:**
-Multiple app servers create near-simultaneous bids. Collate events centrally in **real time** to decide who bid first.
+**Question:**  
+Multiple app servers emit bid events (item, amount, user, timestamp). Collate centrally in **real time** to determine who bid first.
 
-Options:
-A. Shared file + Hadoop batch
-B. Pub/Sub → push → custom endpoint → Cloud SQL
-C. Per-server MySQL + periodic merge <mark>D. Pub/Sub (per bid) → Dataflow pull subscription → decide winner</mark>
+Options:  
+A. Write to shared file; batch Hadoop  
+B. Pub/Sub → **push** → custom endpoint → Cloud SQL  
+C. Per-server MySQL, then periodic merge  
+<mark>D. Pub/Sub → pull with Dataflow; determine first in stream</mark>  
 
-**Correct Answer:**
+**Correct Answer:**  
 D
 
-**Explanation:**
-**Pub/Sub + Dataflow (streaming)** scales globally and lets you use **event timestamps/watermarks** to compute “first bid” in real time. A/C are batch or brittle; B adds a custom endpoint and Cloud SQL bottlenecks for high-throughput streaming.
+**Explanation:**  
+Use **Pub/Sub** for global ingestion and **Dataflow** streaming to process in real time using **event-time** timestamps, windowing, and tie-breaking logic. Cloud SQL (B) adds a custom endpoint, isn’t ideal for high-throughput ordered streaming, and complicates global scalability.
 
 
 #### Q55: ODBC connection to BigQuery (Legacy SQL view issue)
