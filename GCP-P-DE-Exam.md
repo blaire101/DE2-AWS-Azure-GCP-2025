@@ -2107,3 +2107,332 @@ D. Use a **Cloud Storage** bucket only reachable via an App Engine service that 
 - **A**: Encryption ≠ access audit trail.  
 - **C**: Admin logs cover admin actions, not data read access granularity.  
 - **D**: Custom logging adds complexity and is easier to bypass.  
+
+
+---
+
+
+#### Q77: Speeding up neural network training
+
+**Question:**  
+Your neural network model is taking days to train. You want to increase the training speed. What can you do?  
+
+**Options:**  
+A. Subsample your test dataset.  
+B. <mark>Subsample your training dataset.</mark>  
+C. Increase the number of input features to your model.  
+D. Increase the number of layers in your neural network.  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- **B**: Reducing the training dataset lowers the volume of data processed → faster iteration and quicker feedback during model prototyping.  
+- **A**: Subsampling the **test set** compromises evaluation, not training.  
+- **C/D**: Adding features or layers makes the model more complex, **slowing down training**.  
+- Tradeoff: Faster experimentation but potentially lower accuracy/generalization.  
+
+---
+
+#### Q78: Writing ETL pipelines on Hadoop with checkpointing
+
+**Question:**  
+You are responsible for writing ETL pipelines to run on an Apache Hadoop cluster. The pipeline will require some **checkpointing and splitting pipelines**. Which method should you use?  
+
+**Options:**  
+A. <mark>PigLatin using Pig</mark>  
+B. HiveQL using Hive  
+C. Java using MapReduce  
+D. Python using MapReduce  
+
+**Correct Answer:** A  
+
+**Explanation:**  
+- **PigLatin**: High-level scripting language built for **ETL pipelines**, supports **checkpointing** and **pipeline splitting**.  
+- **Hive**: SQL-like → designed for querying, not ETL control flow.  
+- **MapReduce (Java/Python)**: Low-level and flexible, but more complex to implement.  
+- Best balance of simplicity and ETL features = **Pig**.  
+
+---
+
+#### Q79: Maximizing hybrid transfer speeds (datacenter → GCP)
+
+**Question:**  
+Analytics data is imported daily to Cloud Storage via parallel uploads through a **transfer server in GCP**. Transfers take too long. You need to maximize **transfer speed**.  
+
+**Options:**  
+A. Increase the CPU size on your server.  
+B. Increase the size of the Google Persistent Disk on your server.  
+C. <mark>Increase your network bandwidth from your datacenter to GCP.</mark>  
+D. Increase your network bandwidth from Compute Engine to Cloud Storage.  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- **C**: The real bottleneck is **network throughput** from the on-premises datacenter to GCP → more bandwidth = faster transfers.  
+- **A/B**: CPU/disk won’t help if network is the bottleneck.  
+- **D**: Within GCP, bandwidth is usually sufficient; the constraint lies in the external datacenter connection.  
+
+---
+
+#### Q80: MJTelco — query petabyte-scale + millisecond scans
+
+**Question:**  
+MJTelco needs:  
+1. **Aggregations** over petabyte-scale datasets.  
+2. **Millisecond scans** of specific time-range rows.  
+
+Which GCP products should you recommend?  
+
+**Options:**  
+A. Cloud Datastore and Cloud Bigtable  
+B. Cloud Bigtable and Cloud SQL  
+C. <mark>BigQuery and Cloud Bigtable</mark>  
+D. BigQuery and Cloud Storage  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- **BigQuery**: Best for **petabyte-scale aggregations** with ANSI SQL.  
+- **Bigtable**: Optimized for **low-latency time-series / range scans**.  
+- **A/B/D**: Datastore/SQL can’t scale to PB analytics; GCS is for storage, not millisecond queries.  
+- Combination of **BigQuery + Bigtable** covers both analytics and fast time-range lookups.  
+
+---
+
+#### Q81: MJTelco — Visualization for suboptimal links
+
+**Question:**
+Ops team needs dashboards:
+
+* 50k installs, 6 weeks telemetry (1-min samples).
+* Report ≤3h delayed from live data.
+* Actionable report: only **suboptimal links**, sorted to top.
+* Group/filter by region.
+* Report load time <5s.
+* Avoid creating/updating new visualizations monthly.
+
+**Options:**  
+A. Pre-build charts/tables for every criteria combination.  
+B. <mark>Generalized charts + filters for dynamic selection</mark>  
+C. Export to spreadsheets, multiple tabs.  
+D. Custom App Engine + Google Charts API.  
+
+**Correct Answer:** B
+
+**Explanation:**
+
+* **Filters** allow flexible exploration (date range, region, type) without redesign.
+* **Dynamic dashboards** scale better than manually building many static charts.
+* **C/D** = heavy maintenance or deprecated APIs.
+* **B** minimizes effort while ensuring dashboards always reflect latest 6 weeks.
+
+---
+
+#### Q82: MJTelco — BigQuery cost optimization with streaming
+
+**Question:**
+MJTelco wants:
+
+* A **single table** `tracking_table`.
+* Streaming ingestion.
+* **Fine-grained daily analysis**.
+* Control costs of queries (100M records/day).
+
+**Options:**  
+A. Single table + DATE column.  
+B. <mark>Partitioned table + TIMESTAMP column</mark>  
+C. Sharded tables per day   (`tracking_table_YYYYMMDD`).
+D. Single table + TIMESTAMP only.  
+
+**Correct Answer:** B
+
+**Explanation:**
+
+* **Partitioned tables** = efficient querying (scan only partitions).
+* Supports **streaming ingestion** into partitions.
+* **A/D**: No partitioning → high query costs.
+* **C**: Sharding works but is harder to manage vs partitioning.
+
+---
+
+#### Q83: Flowlogistic — Real-time inventory tracking (Kafka replacement)
+
+**Question:**
+Flowlogistic needs to replace **Kafka** for real-time tracking:
+
+* Ingest from **global sources**.
+* Process/query in **real time**.
+* Store data reliably.
+
+**Options:**  
+A. <mark>Cloud Pub/Sub + Cloud Dataflow + Cloud Storage</mark>  
+B. Pub/Sub + Dataflow + Local SSD.  
+C. Pub/Sub + Cloud SQL + Cloud Storage.  
+D. Cloud Load Balancing + Dataflow + Cloud Storage.  
+E. Dataflow + Cloud SQL + Cloud Storage.  
+
+**Correct Answer:** A
+
+**Explanation:**
+
+* **Pub/Sub** = scalable ingestion (global).
+* **Dataflow** = streaming/batch processing with real-time query transforms.
+* **Cloud Storage** = durable + cost-effective storage.
+* **SQL/SSD/Load Balancing** = not scalable for this scenario.
+
+---
+
+#### Q84: BigQuery ETL migration — verify identical outputs
+
+**Question:**
+After migrating ETL jobs to BigQuery, you need to verify new vs old outputs.
+
+* Tables have **no primary key**.
+* Must confirm outputs are **identical**.
+
+**Options:**  
+A. Random sample with RAND().  
+B. Random sample with HASH().  
+C. <mark>Dataproc + BQ Hadoop connector → sort + hash non-timestamp columns</mark>  
+D. Stratified random samples with OVER().  
+
+**Correct Answer:** C
+
+**Explanation:**
+
+* **C** ensures **full-table deterministic comparison** (hash of sorted rows).
+* **A/B/D** only validate samples, risk missing mismatches.
+* For correctness, must check **all rows**.
+
+#### Q85: BigQuery slot quota — enterprise BI teams
+
+**Question:**  
+You are a head of BI at a large enterprise with multiple business units.  
+- Using **on-demand pricing** for BigQuery  
+- Quota: 2K concurrent on-demand slots per project  
+- Users sometimes cannot get slots to run queries  
+- Want to solve without adding new projects  
+
+**Options:**  
+A. Convert batch BQ queries into interactive queries  
+B. Create an additional project to bypass 2K slot quota  
+C. <mark>Switch to flat-rate pricing and establish a hierarchical priority model</mark>  
+D. Increase concurrent slots quota per project in Cloud Console  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- Flat-rate reservations → purchase dedicated slots, no 2K/project cap.  
+- Hierarchical priorities = allocate slots fairly across business units.  
+- A does not fix quota.  
+- B adds projects (explicitly disallowed).  
+- D: 2K is a hard limit, cannot increase.  
+
+#### Q86: Kafka → Google Cloud mirroring
+
+**Question:**  
+On-prem Kafka cluster with web logs. Need replication to Google Cloud (for BQ + GCS).  
+- Preferred: **mirroring** (avoid Kafka Connect plugins).  
+
+**Options:**  
+A. <mark>Deploy Kafka on GCE → mirror from on-prem → read with Dataproc/Dataflow → GCS</mark>  
+B. Kafka on GCE + Pub/Sub Kafka connector (Sink)  
+C. Pub/Sub Kafka connector on-prem (Source) + Dataflow → GCS  
+D. Pub/Sub Kafka connector on-prem (Sink) + Dataflow → GCS  
+
+**Correct Answer:** A  
+
+**Explanation:**  
+- Mirroring = Kafka-native geo-replication, avoids connectors.  
+- B/C/D require Kafka Connect plugins (not allowed).  
+- A fits requirement best, though Google-native designs often prefer D.  
+
+#### Q87: Dataproc shuffle optimization (cost-sensitive)
+
+**Question:**  
+Migrated Hadoop job → Dataproc + GCS.  
+- Spark workload with heavy shuffles  
+- Parquet files: 200–400 MB each  
+- Organization is **cost-sensitive**, using preemptibles (2 non-preemptibles only)  
+- Performance degraded after migration  
+
+**Options:**  
+A. Increase Parquet file size ≥ 1 GB  
+B. Switch to TFRecords (~200 MB each)  
+C. Switch HDD → SSD, copy GCS → HDFS for shuffle → back to GCS  
+D. <mark>Switch HDD → SSD, override preemptible VM boot disk size</mark>  
+
+**Correct Answer:** D  
+
+**Explanation:**  
+- Shuffle-intensive Spark workloads benefit from faster/larger local disks.  
+- Preemptibles default to small HDD boot disks; overriding with SSD improves shuffle speed.  
+- A: larger Parquet files help, but less impactful vs shuffle bottleneck.  
+- B: TFRecords irrelevant.  
+- C: more ops + cost overhead.  
+
+---
+
+#### Q88: Dataflow pipeline — error handling & reprocessing
+
+**Question:**  
+Dataflow job fails due to bad input rows. Need reliability + ability to reprocess failing data.  
+
+**Options:**  
+A. Filter errors, skip in future; extract from logs  
+B. Try/catch in DoFn, log errors only  
+C. Try/catch in DoFn, write bad rows directly to Pub/Sub  
+D. <mark>Try/catch in DoFn, sideOutput → PCollection → later Pub/Sub/BigQuery</mark>  
+
+**Correct Answer:** D  
+
+**Explanation:**  
+- Side outputs = Beam best practice for “dead letter” data.  
+- Keeps pipeline clean (I/O via sinks, not inside DoFn).  
+- A/B = data loss, no reprocess path.  
+- C = direct Pub/Sub writes inside DoFn = inefficient & brittle.  
+
+#### Q89: Housing price model — location feature engineering
+
+**Question:**  
+You are training a neural net to predict housing prices. Dataset includes **latitude** and **longitude**.  
+Real estate experts confirm **location** is very influential. Need to engineer a feature that reflects this spatial dependency.  
+
+**Options:**  
+A. Provide latitude and longitude as input vectors  
+B. Create a numeric column from a feature cross of latitude and longitude  
+C. <mark>Create a feature cross of latitude and longitude, bucketize at minute level, use L1 regularization</mark>  
+D. Create a feature cross of latitude and longitude, bucketize at minute level, use L2 regularization  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- L1 regularization encourages sparsity → keeps influential features, shrinks irrelevant ones.  
+- C: feature cross + bucketization captures **local neighborhood effect** (1 minute ≈ 1.8 km).  
+- A: raw lat/long not effective for neural net.  
+- B: numeric cross less expressive.  
+- D: L2 distributes weights more evenly, less effective for sparse geography.  
+
+---
+
+#### Q90: MariaDB monitoring on GCE VMs
+
+**Question:**  
+Deploying **MariaDB** on GCE VMs. Need metrics (network connections, disk I/O, replication status) with **minimal development effort**, using **Stackdriver dashboards/alerts**.  
+
+**Options:**  
+A. Install OpenCensus Agent + custom exporter to Stackdriver  
+B. Place MariaDB instances in Instance Group with Health Check  
+C. Install Stackdriver Logging Agent + fluentd in_tail plugin for MariaDB logs  
+D. <mark>Install Stackdriver Agent and configure the MySQL plugin</mark>  
+
+**Correct Answer:** D  
+
+**Explanation:**  
+- D: Stackdriver (Ops Agent) has a **MySQL plugin** that works with MariaDB → ready-made metrics (I/O, replication, connections).  
+- A: requires **custom development** (not minimal).  
+- B: health check = uptime only, no metrics.  
+- C: logging only, not metrics.  
+
+
+
