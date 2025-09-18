@@ -1315,3 +1315,449 @@ B, E
 - **A**: global dataset breaks isolation.  
 - **C/D**: possible, but harder to maintain vs dataset-level controls.  
 
+---
+
+#### Q41: MJTelco — Bigtable schema for historical telemetry
+
+**Question:**  
+MJTelco needs a schema in **Google Bigtable** for 2 years of telemetry records (every 15 min, unique device_id + datapoint).  
+Most common query: *“all the data for a given device for a given day.”*  
+
+Options:  
+<mark>A. Rowkey: date#device_id; Column data: data_point</mark>  
+B. Rowkey: date; Column data: device_id, data_point  
+C. Rowkey: device_id; Column data: date, data_point  
+D. Rowkey: data_point; Column data: device_id, date  
+E. Rowkey: date#data_point; Column data: device_id  
+
+**Correct Answer:**  
+A  
+
+**Explanation:**  
+- **Rowkey = date#device_id** supports prefix scans like `2023-12-20#device123`, directly matching query pattern.  
+- Avoids scanning full table for each query.  
+- Column families store datapoints efficiently.  
+- **C** is tempting (device_id#date), but the exam expects A since the *query* starts with date + device.  
+- Best practice IRL: consider **device_id#date** to avoid hotspotting, but within given options, **A** is correct.  
+
+---
+
+#### Q42: Hadoop batch jobs falling behind with more data
+
+**Question:**  
+Batch MapReduce jobs on Hadoop are lagging as data volume grows. How to increase responsiveness **without adding cost**?  
+
+Options:  
+A. Rewrite in Pig  
+<mark>B. Rewrite in Apache Spark</mark>  
+C. Increase Hadoop cluster size  
+D. Decrease cluster size + use Hive  
+
+**Correct Answer:**  
+B  
+
+**Explanation:**  
+- **Spark** executes in-memory, avoids MapReduce disk I/O overhead → much faster.  
+- **A/D** still depend on MapReduce.  
+- **C** solves performance but increases cost (more hardware).  
+- Spark = modern, scalable solution with better responsiveness.  
+
+---
+
+#### Q43: BigQuery Users table — FullName field
+
+**Question:**  
+Users table has `FirstName`, `LastName`. App wants `FullName` = `FirstName + ' ' + LastName`. Cheapest way?  
+
+Options:  
+<mark>A. Create a BigQuery view concatenating FirstName + LastName</mark>  
+B. Add new column FullName + UPDATE all rows  
+C. Dataflow pipeline to build new table  
+D. Export → process in Dataproc → reload  
+
+**Correct Answer:**  
+A  
+
+**Explanation:**  
+- **View** = logical layer, no extra storage. Always up-to-date when queried.  
+- **B** = more storage + maintenance for new inserts.  
+- **C/D** = overkill, extra infra.  
+- Cost-effective, minimal change = **View**.  
+
+---
+
+#### Q44: Cloud Datastore — avoid index explosion
+
+**Question:**  
+Entity *Movie*: fields = `actors` (multi), `tags` (multi), `date_released` (single).  
+Queries like “all movies with actor=X ordered by date_released.”  
+How to avoid **combinatorial index explosion**?  
+
+Options:  
+<mark>A. Manually configure composite indexes in index.yaml</mark>  
+B. (invalid syntax)  
+C. Exclude `actors, tags` from index  
+D. Exclude `date_released` from index  
+
+**Correct Answer:**  
+A  
+
+**Explanation:**  
+- By default, Datastore builds indexes for every property combo → explosion if multiple arrays.  
+- **Custom composite index** (actor/date, tag/date) avoids explosion.  
+- **C/D** exclude needed fields → queries fail.  
+
+---
+
+#### Q45: Dataflow job once per day
+
+**Question:**  
+Manufacturing plant batches logs once daily at 2AM. Need to process exactly once/day, as cheaply as possible.  
+
+Options:  
+A. Use Dataproc instead  
+B. Manually start Dataflow job  
+<mark>C. Use App Engine Cron Service (or Cloud Scheduler) to trigger Dataflow</mark>  
+D. Run job as streaming  
+
+**Correct Answer:**  
+C  
+
+**Explanation:**  
+- **Cron/Scheduler** = automate Dataflow trigger daily, reliable, no ops overhead.  
+- **A**: Dataproc cluster = more infra, cost.  
+- **B**: manual = error-prone, labor cost.  
+- **D**: streaming job = expensive for once/day logs.  
+
+---
+
+#### Q46: BigQuery + external price data (updated every 30m)
+
+**Question:**  
+You need to join customer data in BQ with **price data** (100 goods, updated every 30 minutes). Must be cheap & up-to-date.  
+
+Options:  
+A. Load into partitioned table every 30 min  
+<mark>B. Store in Cloud Storage, expose via federated external table</mark>  
+C. Use Cloud Datastore + Dataflow  
+D. Use GCS + Dataflow to push into BQ  
+
+**Correct Answer:**  
+B  
+
+**Explanation:**  
+- **External table (GCS)**: avoids constant reloading, always reflects updates, cheap.  
+- **A**: partition granularity = 1h minimum, not 30m. Repeated loads add cost.  
+- **C/D**: too complex for small ref data.  
+- **Best practice**: external tables for small, frequently refreshed reference datasets.  
+
+#### Q47: Database schema for ML-based food ordering service
+
+**Question:**  
+You are designing the schema for a food ordering service (user likes/dislikes, account info, order history).  
+The DB must store **all transactional data** and support schema optimization. Which product?  
+
+Options:  
+A. BigQuery  
+<mark>B. Cloud SQL</mark>  
+C. Cloud Bigtable  
+D. Cloud Datastore  
+
+**Correct Answer:**  
+B  
+
+**Explanation:**  
+- **Cloud SQL** = managed relational DB (ACID, schema design, queries). Perfect for transactional workloads.  
+- **BigQuery (A)** = analytical warehouse, not for OLTP.  
+- **Bigtable (C)** = wide-column, best for time-series/IoT, not relational.  
+- **Datastore (D)** = schema-less NoSQL, not good for strict schema optimization.  
+
+---
+
+#### Q48: CSV data mismatch in BigQuery  
+
+**Question:**  
+You load CSVs into BigQuery. Import succeeds, but data doesn’t match byte-to-byte with the source. Why?  
+
+Options:  
+A. CSV not flagged correctly  
+B. Invalid rows skipped  
+<mark>C. Wrong file encoding (not UTF-8)</mark>  
+D. Missing ETL  
+
+**Correct Answer:**  
+C  
+
+**Explanation:**  
+- **BigQuery defaults to UTF-8**. If CSV uses ISO-8859-1 or other encoding → BigQuery auto-converts.  
+- Import succeeds, but data differs byte-by-byte.  
+- **A/B/D** don’t fit since load completed without errors.  
+
+---
+
+#### Q49: Ingesting 20k small CSV files/hour with 200ms latency  
+
+**Question:**  
+You must ingest 20,000 CSV files/hour (<4 KB each) via GCP. Current SFTP barely keeps up. Next quarter volume doubles.  
+Which two actions help?  
+
+Options:  
+A. Compress each file  
+B. Increase ISP bandwidth  
+<mark>C. Use `gsutil -m` to upload in parallel to GCS</mark>  
+<mark>D. Batch 1,000 files into TAR before upload</mark>  
+E. Use Storage Transfer Service from on-prem  
+
+**Correct Answer:**  
+C, D  
+
+**Explanation:**  
+- **C**: Parallel uploads reduce impact of 200ms latency on each file.  
+- **D**: Fewer, larger files improve throughput.  
+- **A**: compression useless (files are already tiny).  
+- **B**: bandwidth not bottleneck (latency is).  
+- **E**: STS requires higher throughput (≥300 Mbps).  
+
+---
+
+#### Q50: NoSQL DB for IoT telemetry (100 TB/year, 100 attributes/record)  
+
+**Question:**  
+IoT telemetry, 100 TB/year, high availability + low latency, no ACID required. Which 3 DBs?  
+
+Options:  
+A. Redis  
+<mark>B. HBase</mark>  
+C. MySQL  
+<mark>D. MongoDB</mark>  
+<mark>E. Cassandra</mark>  
+F. HDFS + Hive  
+
+**Correct Answer:**  
+B, D, E  
+
+**Explanation:**  
+- **HBase (B)**: column-oriented, scalable, low latency.  
+- **MongoDB (D)**: flexible schema, handles high-volume telemetry.  
+- **Cassandra (E)**: distributed, high availability, low latency.  
+- **Redis (A)**: in-memory, not for 100TB/year persistence.  
+- **MySQL (C)**: relational, not NoSQL.  
+- **Hive (F)**: OLAP, not low-latency NoSQL.  
+
+Here you go — tidy cards for **Q51–Q54** with quick justifications:
+
+
+#### Q51: Fix overfitting in a spam classifier (pick 3)
+
+**Question:**
+You’re overfitting the training data. Which three actions help?
+
+Options: <mark>A. Get more training examples</mark>
+B. Reduce the number of training examples <mark>C. Use a smaller set of features</mark>
+D. Use a larger set of features <mark>E. Increase the regularization parameters</mark>
+F. Decrease the regularization parameters
+
+**Correct Answer:**
+A, C, E
+
+**Explanation:**
+
+* **More data (A)** improves generalization.
+* **Fewer features (C)** reduces model complexity/noise.
+* **Stronger regularization (E)** penalizes overly complex fits.
+* B and F worsen overfitting; D often increases variance.
+
+---
+
+#### Q52: Securely automate GCS → Dataproc → BigQuery jobs
+
+**Question:**
+Nightly Spark (Dataproc) job reads **non-public** files from GCS and writes to BigQuery. How to run securely?
+
+Options:
+A. Lock bucket to only yourself
+B. Give **Project Owner** to a service account <mark>C. Use a service account with just GCS read + BigQuery write</mark>
+D. Use a user account with **Project Viewer** on the cluster
+
+**Correct Answer:**
+C
+
+**Explanation:**
+Use **least privilege**: a **service account** with permissions only to **read the bucket** and **write to BigQuery**. Job submission can be triggered by another identity but the **workload SA** should have minimal access. B violates least-privilege; A/D don’t enable the pipeline.
+
+---
+
+#### Q53: Slow BigQuery GROUP BY
+
+**Question:**
+`SELECT country, state, city FROM [project:dataset.table] GROUP BY country` runs very slowly. Query plan shows heavy skew in the Read stage. What’s the most likely cause?
+
+Options:
+A. Too many concurrent queries
+B. Too many partitions
+C. Many NULLs in state or city <mark>D. Most rows share the same country (data skew)</mark>
+
+**Correct Answer:**
+D
+
+**Explanation:**
+Grouping on a highly skewed key (**country**) forces most rows to the same reducer/slot → **shuffle hotspot** and slow stage. (Yes, the SELECT is odd, but the exam’s intent is **data skew** on the GROUP BY key.)
+
+---
+
+#### Q54: Realtime “who bid first” for a global auction
+
+**Question:**
+Multiple app servers create near-simultaneous bids. Collate events centrally in **real time** to decide who bid first.
+
+Options:
+A. Shared file + Hadoop batch
+B. Pub/Sub → push → custom endpoint → Cloud SQL
+C. Per-server MySQL + periodic merge <mark>D. Pub/Sub (per bid) → Dataflow pull subscription → decide winner</mark>
+
+**Correct Answer:**
+D
+
+**Explanation:**
+**Pub/Sub + Dataflow (streaming)** scales globally and lets you use **event timestamps/watermarks** to compute “first bid” in real time. A/C are batch or brittle; B adds a custom endpoint and Cloud SQL bottlenecks for high-throughput streaming.
+
+
+#### Q55: ODBC connection to BigQuery (Legacy SQL view issue)
+
+**Question:**  
+Your org has a **time-partitioned table** `events_partitioned`.  
+To save cost, a **view** `events` was created (last 14 days only), but it’s written in **Legacy SQL**.  
+Next month, apps will connect via **ODBC**. What must you do? (Choose 2)
+
+Options:  
+A. Create a new view over `events` using Standard SQL  
+B. Create a new partitioned table using a Standard SQL query  
+<mark>C. Create a new view over `events_partitioned` using Standard SQL</mark>  
+<mark>D. Create a service account for the ODBC connection</mark>  
+E. Create a Cloud IAM role for the ODBC connection  
+
+**Correct Answer:**  
+C, D  
+
+**Explanation:**  
+- **C** → ODBC drivers **only support Standard SQL**, not Legacy SQL. You must rewrite the view over the partitioned table.  
+- **D** → ODBC connection requires **authentication via a Service Account** with proper IAM roles.  
+- **A** wrong → still points to Legacy SQL view.  
+- **B** wrong → no need for new table, just update the view.  
+- **E** → custom IAM role not needed; service account already covers it.  
+
+---
+
+#### Q56: Query Firebase sharded tables in BigQuery (Legacy SQL)
+
+**Question:**  
+Firebase → BigQuery creates daily sharded tables: `app_events_YYYYMMDD`.  
+You want to query last 30 days in **Legacy SQL**. What should you use?  
+
+Options:  
+<mark>A. TABLE_DATE_RANGE()</mark>  
+B. `_PARTITIONTIME` pseudo column  
+C. WHERE date BETWEEN …  
+D. SELECT IF(date >= … AND date <= …)  
+
+**Correct Answer:**  
+A  
+
+**Explanation:**  
+- In **Legacy SQL**, `TABLE_DATE_RANGE([dataset.table_], start_date, end_date)` queries across date-sharded tables.  
+- **B** `_PARTITIONTIME` works only in **Standard SQL partitioned tables**, not sharded legacy tables.  
+- **C/D** are row filters, won’t union multiple sharded tables.  
+
+#### Q57: Dataflow streaming + windowing job fails
+
+**Question:**  
+Your Pub/Sub → Dataflow pipeline applies windowing to group events for a campaign.  
+During testing, the job fails for **all streaming inserts**. What is the most likely cause?  
+
+Options:  
+A. No timestamp assigned  
+B. No triggers for late data  
+C. No global windowing function applied  
+<mark>D. No non-global windowing function applied</mark>  
+
+**Correct Answer:**  
+D  
+
+**Explanation:**  
+- In **Apache Beam/Dataflow**, unbounded PCollections default to a **global window**, which waits forever for completion.  
+- If you use `GroupByKey` or aggregations without a **non-global window** (tumbling/sliding/session), the job **fails at pipeline construction**.  
+- A (timestamps) or B (triggers) affect correctness, not this specific failure.  
+
+
+---
+
+#### Q58: Add missing sensor calibration to Hadoop ETL
+
+**Question:**  
+ETL = series of MapReduce jobs; processing takes days. A sensor calibration step was omitted.  
+How should you change the ETL to systematically ensure calibration?  
+
+Options:  
+A. Modify every transform MR job to apply calibration first  
+<mark>B. Add a new MapReduce job to calibrate raw data, chain all others after</mark>  
+C. Add calibration metadata to final output, let users handle it  
+D. Predict calibration factors via algorithm at the end  
+
+**Correct Answer:**  
+B  
+
+**Explanation:**  
+- Calibration is a **data quality step** that belongs at raw ingest.  
+- Adding a **dedicated MR job** ensures **every downstream step** works on calibrated data.  
+- A = repetitive, complex to maintain.  
+- C = pushes responsibility to users (bad practice).  
+- D = guesswork, not systematic.  
+
+
+---
+
+#### Q59: Single database for transactions + BI tool
+
+**Question:**  
+Retailer’s App Engine app adds **shopping transactions** (OLTP) + wants BI analysis (OLAP).  
+They want **one database** for both. Which should they choose?  
+
+Options:  
+A. BigQuery  
+<mark>B. Cloud SQL</mark>  
+C. Cloud Bigtable  
+D. Cloud Datastore  
+
+**Correct Answer:**  
+B  
+
+**Explanation:**  
+- **Cloud SQL** = fully managed RDBMS, supports **ACID transactions** + SQL for BI tools.  
+- **BigQuery** = great for analytics, but not for **row-level transactional updates**.  
+- **Bigtable** = wide-column NoSQL, not ACID, not BI-friendly.  
+- **Datastore/Firestore** = document store, lacks SQL + joins for BI.  
+
+
+---
+
+#### Q60: Sharded log tables exceed 1000-table limit
+
+**Question:**  
+3 years of daily logs, sharded as `LOGS_YYYYMMDD`.  
+Queries over long ranges exceed **1000-table wildcard limit** and fail. How to fix?  
+
+Options:  
+A. Convert all daily logs into multiple date-partitioned tables  
+<mark>B. Convert all sharded tables into one partitioned table</mark>  
+C. Enable query caching  
+D. Create monthly views and query those  
+
+**Correct Answer:**  
+B  
+
+**Explanation:**  
+- **Partitioned tables** solve the 1000-table wildcard limit.  
+- BigQuery manages partitions internally → **better performance + pruning**.  
+- A still leaves many tables.  
+- C only caches results (24h), doesn’t reduce tables.  
+- D = workarounds with views, still metadata overhead.  
