@@ -1358,6 +1358,15 @@ E
 - C = casts every query = costly.  
 - A/B heavy ops.  
 
+```sql
+CREATE TABLE NEW_CLICK_STREAM AS
+SELECT
+  user_id,
+  CAST(DT AS TIMESTAMP) AS event_ts,
+  ...
+FROM CLICK_STREAM;
+```
+
 
 #### Q25: Alert on BigQuery insert job
 
