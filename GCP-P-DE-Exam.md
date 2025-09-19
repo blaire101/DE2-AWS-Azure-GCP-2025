@@ -1329,6 +1329,14 @@ B
 - A/D are batch.  
 - C is slow/batch-oriented.  
 
+```mermaid
+flowchart LR
+    A["IoT Devices (10,000+)"] --> B["Pub/Sub (Ingestion)"]
+    B --> C["Dataflow (Stream Processing)"]
+    C --> D["BigQuery (Analytics)"]
+    D --> E["Dashboard / BI"]
+```
+
 ---
 
 #### Q24: STRING epoch → TIMESTAMP
