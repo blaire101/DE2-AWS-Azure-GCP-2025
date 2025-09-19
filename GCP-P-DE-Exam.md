@@ -1,5 +1,10 @@
 # Google Cloud Professional Data Engineer — Q&A (Q1–Q319)
 
+<div align="center">
+  <img src="docs/gcp_storage_compare.png" alt="Diagram" width="900">
+</div>
+
+
 ## 1. Machine Learning & TensorFlow
 - [Q1: TensorFlow Overfitting Prevention](#q1-tensorflow-overfitting-prevention)
 - [Q2: Retraining Recommendation Model](#q2-retraining-recommendation-model)
