@@ -6,6 +6,8 @@
 
 > Datastore ≈ Firestore (Datastore mode) = Document-oriented / Non-relational database
 
+[GCP-Q1](#q1-orchestrating-sequential--concurrent-dataproc-jobs)
+
 ## 1. Machine Learning & TensorFlow
 - [Q1: TensorFlow Overfitting Prevention](#q1-tensorflow-overfitting-prevention)
 - [Q2: Retraining Recommendation Model](#q2-retraining-recommendation-model)
