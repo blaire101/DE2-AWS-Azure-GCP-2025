@@ -1,7 +1,7 @@
 # Google Cloud Professional Data Engineer — Q&A (Q1–Q319)
 
 <div align="center">
-  <img src="docs/gcp_storage_compare.png" alt="Diagram" width="900">
+  <img src="docs/gcp_storage_compare.png" alt="Diagram" width="750">
 </div>
 
 
