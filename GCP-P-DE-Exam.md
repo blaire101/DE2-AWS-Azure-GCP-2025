@@ -1301,7 +1301,7 @@ C
 - **B**: manual = error-prone, labor cost.  
 - **D**: streaming job = expensive for once/day logs.  
 
-```mermaid
+```
 gcloud scheduler jobs create pubsub daily-dataflow-job \
   --schedule "0 2 * * *" \
   --topic dataflow-job-trigger \
