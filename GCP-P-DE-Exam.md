@@ -6036,252 +6036,294 @@ D. Airflow REST API; Cloud Function; Serverless VPC Access to web server URL.
 
 #### Q257: Cheapest storage + retrieval for random-access objects, transparent to users
 
-**Options:**  
-A. <mark>Enable **Autoclass** on the bucket.</mark> ✅  
-B. Lifecycle to **Coldline** after 30 days.  
-C. Lifecycle when **not live** → Coldline.  
-D. Two buckets (Standard → Coldline after 30 days).
+**Question:**  
+You are planning to use Cloud Storage as part of your data lake solution. The bucket will contain objects ingested from external systems. Each object will be ingested once, and the access patterns are random. You want to minimize cost and ensure cost optimization is transparent to users.  
 
-**Correct Answer:** A
+**Options:**  
+A. <mark>Create a Cloud Storage bucket with **Autoclass** enabled.</mark> ✅  
+B. Lifecycle rule: Standard → Coldline after 30 days  
+C. Lifecycle rule: Standard → Coldline when not live  
+D. Two buckets (Standard → Coldline after 30 days)
+
+**Correct Answer:** A  
 
 **Explanation:**  
-- ✅ **A**: **Autoclass** dynamically optimizes storage class with **no app changes** and minimal cost for **store & retrieve** patterns.  
-- ❌ **B/C/D**: Manual tiering isn’t usage-aware, adds retrieval costs/ops overhead; not transparent.
+- ✅ **A**: **Autoclass** automatically optimizes storage class (Standard, Nearline, Coldline, Archive) based on access patterns, fully transparent to users.  
+- ❌ **B/C/D**: Lifecycle/manual tiering adds retrieval cost and ops overhead; not usage-aware or transparent.  
 
 ---
 
-#### Q258: GUI-based pipeline to GCS as **object sink** with **your own keys**
+#### Q258: GUI-based pipeline to GCS as object sink with CMEK
+
+**Question:**  
+You have Parquet and CSV sources to store in Cloud Storage. You need an **object sink** with **your own encryption keys**, using a GUI-based solution.  
 
 **Options:**  
-A. Storage Transfer Service.  
-B. <mark>**Cloud Data Fusion** to Cloud Storage (**GUI**, supports **CMEK**).</mark> ✅  
-C. Dataflow.  
-D. BigQuery Data Transfer Service to BigQuery.
+A. Storage Transfer Service  
+B. <mark>**Cloud Data Fusion** to GCS (GUI, supports CMEK)</mark> ✅  
+C. Dataflow  
+D. BigQuery Data Transfer Service  
 
-**Correct Answer:** B
+**Correct Answer:** B  
 
 **Explanation:**  
-- ✅ **B**: **Data Fusion** is **GUI/no-code**, supports **CMEK** on targets, and handles Parquet/CSV sinks to **GCS**.  
-- ❌ **A**: STS GUI exists but **doesn’t support CMEK encryption on your behalf**.  
+- ✅ **B**: **Cloud Data Fusion** is a fully managed, GUI-based ETL tool, supports **CMEK**, and writes directly to **GCS**.  
+- ❌ **A**: STS GUI exists but doesn’t support CMEK encryption on your behalf.  
 - ❌ **C**: Dataflow is code-first, not GUI.  
-- ❌ **D**: Moves into **BigQuery**, not GCS.
+- ❌ **D**: BQ DTS loads into BigQuery, not GCS.  
 
 ---
 
-#### Q259: Non-technical users clean data via GUI, then analyze in a spreadsheet
+#### Q259: Non-technical users clean data via GUI, analyze in spreadsheet
+
+**Question:**  
+Business users want GUI transformations, then analyze results directly in a spreadsheet.  
 
 **Options:**  
-A. <mark>**Dataprep** (GUI) → **BigQuery**; analyze with **Connected Sheets**.</mark> ✅  
-B. Dataprep → BigQuery; analyze with Looker Studio.  
-C. Dataflow → BigQuery; Connected Sheets.  
-D. Dataflow → BigQuery; Looker Studio.
+A. <mark>**Dataprep** → **BigQuery** → **Connected Sheets**</mark> ✅  
+B. Dataprep → BigQuery → Looker Studio  
+C. Dataflow → BigQuery → Connected Sheets  
+D. Dataflow → BigQuery → Looker Studio  
 
-**Correct Answer:** A
+**Correct Answer:** A  
 
 **Explanation:**  
-- ✅ **A**: **Dataprep** provides GUI transformations; **Connected Sheets** lets users analyze **directly in Sheets**.  
-- ❌ **B/D**: Looker Studio ≠ spreadsheet analysis.  
-- ❌ **C**: Dataflow isn’t the GUI-friendly tool for business users.
+- ✅ **A**: **Dataprep** gives GUI for cleaning; **Connected Sheets** lets non-technical users query BQ data in **Google Sheets**.  
+- ❌ **B/D**: Looker Studio ≠ spreadsheet.  
+- ❌ **C**: Dataflow isn’t GUI-friendly.  
 
 ---
 
 #### Q260: Reserve slots for SLA jobs; ad-hoc billed by data scanned
 
-**Options:**  
-A. One reservation for both; 300 baseline; autoscale to 700.  
-B. <mark>Two reservations: SLA → **Enterprise Edition** (baseline **300**, **autoscale +500**); ad-hoc → **on-demand**.</mark> ✅  
-C. Two Enterprise reservations; ad-hoc baseline 0, ignore idle slots False.  
-D. Two Enterprise reservations; SLA baseline 800; ad-hoc autoscale to 200.
+**Question:**  
+One project = SLA jobs (baseline 300 slots, spikes +500). Another = ad-hoc queries billed by data scanned.  
 
-**Correct Answer:** B
+**Options:**  
+A. One Enterprise reservation (300 baseline, autoscale 700)  
+B. <mark>Two reservations: SLA → **Enterprise Edition** (300 baseline + autoscale 500); ad-hoc → **on-demand**</mark> ✅  
+C. Two Enterprise reservations; ad-hoc baseline 0, ignore idle slots False  
+D. Two Enterprise reservations; SLA baseline 800; ad-hoc autoscale 200  
+
+**Correct Answer:** B  
 
 **Explanation:**  
-- ✅ **B**: SLA jobs get guaranteed **300 baseline + up to 500 autoscale**; ad-hoc uses **on-demand** (billed by data scanned).  
-- ❌ **A/C/D**: Don’t satisfy ad-hoc **on-demand** requirement or waste slots/cost.
+- ✅ **B**: SLA jobs get guaranteed **300 baseline + autoscale 500**; ad-hoc queries use **on-demand billing**.  
+- ❌ **A/C/D**: Wasteful slot allocation or incorrect billing model.  
 
 ---
 
-#### Q261: Move Teradata historical data to BigQuery with minimal code & limited local disk
+#### Q261: Move Teradata historical data to BigQuery (minimal code, limited disk)
+
+**Question:**  
+You want to migrate Teradata historical data to BigQuery. Minimal programming, local disk is limited.  
 
 **Options:**  
-A. <mark>Use **BigQuery Data Transfer Service** with **JDBC FastExport**.</mark> ✅  
-B. TPT export script + `bq` load.  
-C. DTS with TPT `tbuild`.  
-D. Script to GCS + DTS from GCS.
+A. <mark>Use **BigQuery DTS** with **JDBC FastExport**</mark> ✅  
+B. TPT export + `bq` load  
+C. DTS with TPT `tbuild`  
+D. Script export → GCS → DTS  
 
-**Correct Answer:** A
+**Correct Answer:** A  
 
 **Explanation:**  
-- ✅ **A**: **DTS + JDBC FastExport** streams out with **minimal programming** and **limited local storage** usage.  
-- ❌ **B/D**: More scripting and staging management.  
-- ❌ **C**: Not the recommended path when **local storage is constrained**.
+- ✅ **A**: **DTS + JDBC FastExport** streams data directly, requires little coding, and avoids local disk limitations.  
+- ❌ **B/D**: More scripting + staging overhead.  
+- ❌ **C**: Not best when local disk constrained.  
 
 ---
 
-#### Q262: Encrypt BigQuery with keys generated & stored **only on-prem HSM**, using Google-managed solutions
+#### Q262: Encrypt BigQuery with keys stored only on-prem HSM
+
+**Question:**  
+You need BigQuery CMEK, but key material must stay only on **on-prem HSM**; must use Google-managed solutions.  
 
 **Options:**  
-A. Import on-prem key into Cloud KMS.  
-B. <mark>Use **Cloud EKM** with on-prem **HSM** (key stays on-prem); use **CMEK/EKM** for BigQuery.</mark> ✅  
-C. Import on-prem key into **Cloud HSM**.  
-D. App-level encryption before ingest.
+A. Import key into Cloud KMS  
+B. <mark>Use **Cloud EKM** with on-prem HSM; BigQuery uses CMEK/EKM</mark> ✅  
+C. Import into Cloud HSM  
+D. App-level encryption  
 
-**Correct Answer:** B
-
-**Explanation:**  
-- ✅ **B**: **Cloud EKM** lets BigQuery use **external keys** while key material **never leaves on-prem HSM**—meeting the **on-prem-only** requirement.  
-- ❌ **A/C**: Importing into **Cloud KMS/Cloud HSM** moves keys to Google Cloud.  
-- ❌ **D**: Custom app-side crypto contradicts “rely on **Google managed solutions**.”
-
-#### Q263: Find bottleneck in a fused **Dataflow streaming** pipeline
-
-**Options:**  
-A. <mark>Insert **Reshuffle** after each major step; inspect stages in the **Dataflow console**.</mark> ✅  
-B. Add intermediate **sinks** and compare write throughput.  
-C. Add **debug logs** in every **ParDo** and analyze logs.  
-D. Check **IAM** on sinks.
-
-**Correct Answer:** A
+**Correct Answer:** B  
 
 **Explanation:**  
-- ✅ **A**: **Reshuffle** breaks **fusion**, restores **parallelism**, and exposes per-stage metrics so you can see where it’s slow.  
-- ❌ **B/C**: Extra sinks/logs add overhead and don’t undo fusion.  
-- ❌ **D**: Permissions don’t explain CPU-bound pipeline slowness.
+- ✅ **B**: **Cloud EKM** lets BigQuery use **external keys** while material stays on-prem HSM.  
+- ❌ **A/C**: Importing moves key to Google Cloud.  
+- ❌ **D**: App encryption isn’t “Google-managed.”  
 
 ---
 
-#### Q264: Make CDC MERGE costs predictable with **BigQuery reservations**
+#### Q263: Identify bottleneck in streaming Dataflow job (fusion issue)
+
+**Question:**  
+Streaming Dataflow pipeline auto-optimized (fused into one step), causing delay. Need to find bottleneck.  
 
 **Options:**  
-A. Reservation for the **dataset**.  
-B. Reservation for the **job**.  
-C. Reservation for the **service account**.  
-D. <mark>Reservation for the **project**.</mark> ✅
+A. <mark>Insert **Reshuffle** after steps, monitor Dataflow console</mark> ✅  
+B. Add sinks after steps, check throughput  
+C. Add debug logs in ParDo  
+D. Check SA permissions  
 
-**Correct Answer:** D
+**Correct Answer:** A  
 
 **Explanation:**  
-- ✅ **D**: **Assignments** apply at **org/folder/project** level; binding the **project** puts CDC on **slots** for predictable spend.  
-- ❌ **A/B**: Not supported granularity (no dataset/job-level assignment).  
-- ❌ **C**: Reservations aren’t assigned to **service accounts**.
+- ✅ **A**: **Reshuffle** breaks fusion, reveals performance bottlenecks in console.  
+- ❌ **B**: Adds overhead, less precise.  
+- ❌ **C/D**: Not effective for pinpointing pipeline-level bottlenecks.  
 
 ---
 
-#### Q265: Recover last-7-days corruption in **regional BigQuery** with lowest RPO & cost
+#### Q264: CDC process in BigQuery, move from on-demand to reservations
+
+**Question:**  
+CDC loads 1GB every 10min into temp table, merges into 10TB target. Very scan-intensive. Need predictable cost via reservation.  
 
 **Options:**  
-A. <mark>Use **BigQuery time travel** to query/restore a **point-in-time** within 7 days.</mark> ✅  
-B. Export to a new table excluding bad rows.  
-C. Daily **table snapshots**.  
-D. Migrate to **multi-region**.
+A. Reservation for dataset  
+B. Reservation for job  
+C. Reservation for service account  
+D. <mark>Reservation for **project**</mark> ✅  
 
-**Correct Answer:** A
+**Correct Answer:** D  
 
 **Explanation:**  
-- ✅ **A**: Built-in **7-day** **time travel** gives near-instant **point-in-time** recovery with **no extra ops/cost**.  
-- ❌ **B/C/D**: More ops, higher RPO/cost, or unrelated to corruption recovery.
+- ✅ **D**: Reservations apply at **project/folder/org** level, not dataset/job. Ensures CDC queries use committed slots.  
+- ❌ **A/B/C**: Not supported assignment levels.  
 
 ---
 
-#### Q266: Window sensor noise: average when activity > **30 min**, end if **15 min** idle
+#### Q265: Recover BigQuery table from corruption (last 7 days)
+
+**Question:**  
+Regional BigQuery dataset; corruption within past 7 days. Need lowest RPO, cost-effective.  
 
 **Options:**  
-A. <mark>**Session windows** with a **15-minute gap**.</mark> ✅  
-B. Session windows with a **30-minute gap**.  
-C. **Hopping** windows 15-min size / 30-min period.  
-D. **Tumbling** 15-min + **withAllowedLateness** 15-min.
+A. <mark>Use **BigQuery Time Travel**</mark> ✅  
+B. Export table without corrupted rows  
+C. Daily snapshots  
+D. Multi-region dataset  
 
-**Correct Answer:** A
+**Correct Answer:** A  
 
 **Explanation:**  
-- ✅ **A**: **Session windows** grow while events arrive and **close after 15 min** inactivity, naturally covering **>30 min** runs.  
-- ❌ **B**: Gap too large; windows won’t close promptly.  
-- ❌ **C/D**: Fixed windows don’t end based on **inactivity**.
+- ✅ **A**: **Time Travel** = point-in-time recovery within 7 days, no extra cost, built-in.  
+- ❌ **B/C/D**: Higher cost or don’t meet lowest RPO.  
 
 ---
 
-#### Q267: Model **header–line** retail transactions for faster analytics in **BigQuery**
+#### Q266: Streaming window for noise sensors (30+ min, end if 15 min idle)
+
+**Question:**  
+Sensors emit if noise >70dBA. Need average when data >30min, window ends if idle 15min.  
 
 **Options:**  
-A. <mark>One table: header as rows; **line items** as **nested & repeated** fields.</mark> ✅  
-B. Flat table duplicating **header** per line.  
-C. Store both as **JSON**.  
-D. Keep two tables; start **WHERE** with line table.
+A. <mark>**Session windows** with 15-min gap</mark> ✅  
+B. Session windows 30-min gap  
+C. Hopping 15-min window, 30-min period  
+D. Tumbling 15-min with lateness  
 
-**Correct Answer:** A
-
-**Explanation:**  
-- ✅ **A**: **Nested/repeated** fields co-locate 1-to-many data, minimizing **joins** and **scanned bytes** for immutable pairs.  
-- ❌ **B**: Duplication increases storage/scan.  
-- ❌ **C**: JSON hurts schema-aware performance.  
-- ❌ **D**: Query predicate order doesn’t fix join cost.
-
-#### Q268: Zero-loss upgrade of **Dataflow streaming** (Pub/Sub → BigQuery), +≤10 min latency
-
-**Options:**  
-A. Update old job in place.  
-B. Snapshot old job; stop; start new from snapshot.  
-C. <mark>**Drain** the old pipeline, then start the new pipeline.</mark> ✅  
-D. Cancel old job; start new.
-
-**Correct Answer:** C
+**Correct Answer:** A  
 
 **Explanation:**  
-- ✅ **C**: **Draining** lets the running job **flush in-flight data** and **commit windows** before shutdown, avoiding **data loss** and keeping extra **latency** bounded.  
-- ❌ **A**: In-place code swaps risk divergence or incompatibilities.  
-- ❌ **B**: **Snapshots** are for stateful restores; unnecessary and can extend downtime.  
-- ❌ **D**: **Cancel** drops buffered data → **loss/inconsistency**.
+- ✅ **A**: **Session windows** dynamically extend if data flows, end if 15min idle. Matches both >30min and idle-end needs.  
+- ❌ **B/C/D**: Fixed/hopping windows don’t meet requirements.  
 
 ---
 
-#### Q269: Make data assets **discoverable** (BigQuery, Pub/Sub, PostgreSQL on GCE) with minimal effort
+#### Q267: Optimize schema for sales header + line tables (immutable, frequent join)
+
+**Question:**  
+Tables: `sales_transaction_header` and `sales_transaction_line`, immutable + frequently joined. Optimize BQ schema.  
 
 **Options:**  
-A. Auto-catalog **BigQuery**; custom API for **Pub/Sub** and **PostgreSQL**.  
-B. <mark>Auto-catalog **BigQuery** and **Pub/Sub**; use **Data Catalog API** to register **PostgreSQL** tables.</mark> ✅  
-C. Auto-catalog BigQuery/Pub/Sub; use **custom connectors** for PostgreSQL.  
-D. Custom connectors for everything.
+A. <mark>Use **nested & repeated fields** (lines inside header)</mark> ✅  
+B. Duplicate header per line row  
+C. Store both as JSON  
+D. Keep separate, join with WHERE  
 
-**Correct Answer:** B
+**Correct Answer:** A  
 
 **Explanation:**  
-- ✅ **B**: **Data Catalog** auto-ingests **BigQuery** & **Pub/Sub**; for **PostgreSQL** (on GCE), use the **API** to register entries—**least configuration**.  
-- ❌ **A**: Pub/Sub is auto-discovered—no manual API needed.  
-- ❌ **C/D**: **Connectors** add setup/ops; not “minimum effort.”
+- ✅ **A**: Nested + repeated = efficient, reduces join overhead. Best for immutable, tightly coupled data.  
+- ❌ **B/C/D**: Duplication, unstructured, or poor performance.  
 
 ---
 
-#### Q270: 2-hour **SQL aggregate** → append into BigQuery, **retry** on errors, email after **3 consecutive failures**
+#### Q268: Deploy new streaming Dataflow pipeline without data loss
+
+**Question:**  
+New version reads Pub/Sub → BQ. Old version uses 5-min windows. Need zero data loss, no >10min latency.  
 
 **Options:**  
-A. Composer `BigQueryUpsertTableOperator` with retries & email.  
-B. Composer `BigQueryInsertJobOperator` with retries & email.  
-C. **Scheduled Query** every 2 h + email notifications.  
-D. <mark>**Scheduled Query** every 2 h + notify **Pub/Sub**; use **Cloud Functions** to email after **3** consecutive failures.</mark> ✅
+A. Update code in-place  
+B. Snapshot → stop → restart  
+C. <mark>**Drain old pipeline**, then start new one</mark> ✅  
+D. Cancel old, start new  
 
-**Correct Answer:** D
+**Correct Answer:** C  
 
 **Explanation:**  
-- ✅ **D**: **Scheduled Queries** handle the **every-2 h** run and **retries**; **Pub/Sub** notifications let a **Function** track **consecutive failures** and send one email **after the 3rd**.  
-- ❌ **A/B**: Composer email triggers fire per **task** failure, not “**3 consecutive runs**”; schedule isn’t specified.  
-- ❌ **C**: Lacks the “**after three** failures” logic.
+- ✅ **C**: **Drain** flushes buffered data, commits windows, no loss, minimal latency.  
+- ❌ **A/B/D**: Risk of divergence, downtime, or dropped data.  
 
 ---
 
-#### Q271: After pipeline release, some BigQuery **daily partitions doubled** while Pub/Sub volume unchanged
+#### Q269: Improve data discoverability across BQ, Pub/Sub, PostgreSQL
+
+**Question:**  
+Data in BigQuery, Pub/Sub, and PostgreSQL on GCE. Need data discovery, minimal setup.  
 
 **Options:**  
-A. Find duplicates; schedule daily **de-dup**; share script.  
-B. Check pipeline code & multiple sinks; logs; if clean, **time-travel** restore.  
-C. <mark>Check for **duplicates** in affected tables → use **Audit Logs** to find job IDs → use **Cloud Monitoring** to map **job starts** to **pipeline versions** → if **multiple versions** ingest the same table, stop all but the **latest**.</mark> ✅  
-D. Roll back release; **time-travel** restore; restart and **seek** subscription.
+A. Data Catalog auto BQ; API for Pub/Sub + PG  
+B. <mark>Data Catalog auto BQ + Pub/Sub; API for PostgreSQL</mark> ✅  
+C. Data Catalog auto BQ + Pub/Sub; custom connectors for PG  
+D. Custom connectors for all  
 
-**Correct Answer:** C
+**Correct Answer:** B  
 
 **Explanation:**  
-- ✅ **C**: Symptoms suggest **duplicate ingestion** from **concurrent versions**. This path **investigates** and **fixes the cause** (stop extra writers).  
-- ❌ **A**: Treats symptom (dedup) but **not root cause**.  
-- ❌ **B/D**: Restores data but risks **recurrence**; higher ops blast radius.
+- ✅ **B**: **Data Catalog auto-discovers BQ + Pub/Sub**; PG on GCE requires **API entries**.  
+- ❌ **A/C/D**: Wrong automation/manual balance.  
+
+---
+
+#### Q270: SQL pipeline every 2h, notify after 3 failures
+
+**Question:**  
+Aggregate SQL every 2h → append results to BQ. Retry on errors. Notify via email after 3 consecutive failures.  
+
+**Options:**  
+A. BigQueryUpsertTableOperator in Composer  
+B. BigQueryInsertJobOperator in Composer (retry=3, email_on_failure=true)  
+C. BQ scheduled query + email  
+D. <mark>BQ scheduled query + Pub/Sub notif → Cloud Function → email after 3 fails</mark> ✅  
+
+**Correct Answer:** D  
+
+**Explanation:**  
+- ✅ **D**: BQ scheduled queries don’t retry, but **Pub/Sub + CF** can count **3 consecutive failures** before emailing.  
+- ❌ **A/B**: Composer retries = per run, not 3 DAG runs.  
+- ❌ **C**: Single failure → email; can’t aggregate 3 consecutive.  
+
+---
+
+#### Q271: BigQuery daily partition suddenly doubled after pipeline release
+
+**Question:**  
+Data lake on BQ. After new pipeline deployed, daily stored data up 50%, Pub/Sub volume unchanged. Some partitions doubled.  
+
+**Options:**  
+A. Dedup rows + daily dedup script  
+B. Check code errors, multiple writes, logs; restore via time travel  
+C. <mark>Check duplicates, Audit Logs, Monitoring; stop older pipeline versions</mark> ✅  
+D. Rollback deployment, restore BQ via time travel, replay Pub/Sub  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C**: Combines **dedup detection**, **BQ audit logs**, and **monitoring** to find/stop multiple pipelines writing. Fixes root cause.  
+- ❌ **A/B/D**: Symptom-only fixes, don’t prevent recurrence.  
+
 
 #### Q272: Data Catalog GDPR tags + restrict data to HR
 
