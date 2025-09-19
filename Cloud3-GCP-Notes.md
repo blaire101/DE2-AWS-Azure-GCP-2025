@@ -160,14 +160,6 @@ flowchart TD
 - <mark>Cloud SQL</mark> = Managed MySQL/Postgres/SQL Server
 - AlloyDB = Advanced PostgreSQL-compatible  
 
-| Option | Description | Supported Engines / Use Cases |
-|--------|-------------|--------------------------------|
-| **Cloud SQL** | <mark>Managed relational database service</mark>, equivalent to AWS RDS. Provides automated backups, patching, high availability, and scaling. | <mark>MySQL</mark>, PostgreSQL, SQL Server |
-| **Cloud Spanner** | <mark>Globally distributed relational database</mark>. Combines traditional SQL features with horizontal scalability of NoSQL. Strong consistency and high availability across regions. | Large-scale applications, mission-critical systems, cross-region transactions |
-| **Firestore / Datastore** | NoSQL (document) | Flexible schema, but no SQL joins/transactions across large sets. |
-| **Self-managed DB on Compute Engine (with Persistent Disk)** | Deploy and manage your own database on GCE VMs, similar to running Oracle on AWS EC2. Provides full control over configuration and tuning. | Oracle, other custom RDBMS, niche engines not covered by Cloud SQL/Spanner |
-
-
 ```mermaid
 flowchart TB
     CloudSQL[Cloud SQL<br>（Managed traditional RDBMS）]:::relational
@@ -199,6 +191,13 @@ flowchart TB
     classDef nosql fill:#fde2d0,stroke:#cc5200,stroke-width:2px;
     classDef special fill:#e6d0fd,stroke:#7e3ff2,stroke-width:2px;
 ```
+
+| Option | Description | Supported Engines / Use Cases |
+|--------|-------------|--------------------------------|
+| **Cloud SQL** | <mark>Managed relational database service</mark>, equivalent to AWS RDS. Provides automated backups, patching, high availability, and scaling. | <mark>MySQL</mark>, PostgreSQL, SQL Server |
+| **Cloud Spanner** | <mark>Globally distributed relational database</mark>. Combines traditional SQL features with horizontal scalability of NoSQL. Strong consistency and high availability across regions. | Large-scale applications, mission-critical systems, cross-region transactions |
+| **Firestore / Datastore** | NoSQL (document) | Flexible schema, but no SQL joins/transactions across large sets. |
+| **Self-managed DB on Compute Engine (with Persistent Disk)** | Deploy and manage your own database on GCE VMs, similar to running Oracle on AWS EC2. Provides full control over configuration and tuning. | Oracle, other custom RDBMS, niche engines not covered by Cloud SQL/Spanner |
 
 ## 10. BigQuery Data Warehouse
 
