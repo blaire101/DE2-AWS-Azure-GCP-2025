@@ -1315,6 +1315,14 @@ D
 **Question:**  
 Need real-time ingestion, processing, and analysis.
 
+```mermaid
+flowchart LR
+    A["IoT Devices (10,000+)"] --> B["Pub/Sub (Ingestion)"]
+    B --> C["Dataflow (Stream Processing)"]
+    C --> D["BigQuery (Analytics)"]
+    D --> E["Dashboard / BI"]
+```
+
 Options:  
 A. Datastore → export → BQ.  
 <mark>B. Pub/Sub → Dataflow (stream) → BigQuery.</mark>  
@@ -1328,14 +1336,6 @@ B
 - Canonical streaming stack: Pub/Sub (ingest), Dataflow (process), BQ (analyze).  
 - A/D are batch.  
 - C is slow/batch-oriented.  
-
-```mermaid
-flowchart LR
-    A["IoT Devices (10,000+)"] --> B["Pub/Sub (Ingestion)"]
-    B --> C["Dataflow (Stream Processing)"]
-    C --> D["BigQuery (Analytics)"]
-    D --> E["Dashboard / BI"]
-```
 
 ---
 
