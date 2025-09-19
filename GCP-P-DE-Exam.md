@@ -750,29 +750,320 @@ D. Cloud Datastore
 | Scalability | <mark>**No ops required**</mark>                | Manual scaling windows needed         |
 | POS Fit     | <mark>**✓ Best fit**</mark>                     | Possible (but need scaling/ops work) |
 
---- 未分类 -- 分类参考最上面 --
+--- 
 
-#### Q6: Weather app handling DB failure
+#### Q1: Orchestrating sequential & concurrent Dataproc jobs
 
 **Question:**  
-Your weather app queries a database every 15 minutes to get the current temperature. The frontend is powered by Google App Engine and serves millions of users. How should you design the frontend to respond to a database failure?
+Several Spark jobs on Dataproc; some sequential, some concurrent; need automation.
 
-Options:  
-A. Issue a command to restart the database servers.  
-<mark>B. Retry the query with exponential backoff, up to a cap of 15 minutes.</mark>  
-C. Retry the query every second until it comes back online to minimize staleness of data.  
-D. Reduce the query frequency to once every hour until the database comes back online.  
+**Options:**  
+A. Cloud Dataproc Workflow Template  
+B. Init action to execute jobs  
+C. <mark>**Cloud Composer DAG (Airflow)**</mark> ✅  
+D. Bash script (create cluster, run, teardown)
 
-**Correct Answer:**  
-B. Retry the query with <mark>exponential backoff</mark>, up to a cap of 15 minutes.  
+**Correct Answer:** C  
 
 **Explanation:**  
-- Exponential backoff prevents overwhelming the DB with retries.  
-- Starts with short delays (1s, 2s, 4s …) and increases gradually.  
-- A cap (15m) avoids infinite retry storms.  
-- Restarting DB (A) is infra task, not frontend.  
-- Retrying every second (C) overloads server.  
-- Reducing to 1h (D) makes data too stale.  
+- ✅ **C**: **Composer (Airflow)** supports DAG orchestration, parallel tasks, retries, SLAs.  
+- ❌ **A**: Workflow Templates limited for complex sequences + concurrency.  
+- ❌ **B**: Init actions run only once at cluster start.  
+- ❌ **D**: Bash scripts brittle, no orchestration features.  
+
+---
+
+#### Q2: Ensure transactional integrity in BigQuery multi-table updates
+
+**Question:**  
+Need to update multiple BigQuery tables in one transaction with rollback if any fail.
+
+**Options:**  
+A. Partitioned tables  
+B. Legacy SQL scripts  
+C. <mark>**BigQuery multi-statement transactions**</mark> ✅  
+D. Scheduled queries  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C**: Multi-statement transactions (`BEGIN…COMMIT`) ensure **atomic updates** across tables.  
+- ❌ **A**: Partitioning improves query efficiency, not transactions.  
+- ❌ **B**: Legacy SQL lacks transactional support.  
+- ❌ **D**: Scheduling doesn’t guarantee atomicity.  
+
+---
+
+#### Q3: Streaming pipeline with at-least-once processing
+
+**Question:**  
+Need streaming ingestion into BigQuery with **at-least-once** delivery guarantee.
+
+**Options:**  
+A. Pub/Sub → Dataflow → BQ with retries  
+B. <mark>**Pub/Sub exactly-once enabled + Dataflow streaming inserts**</mark> ✅  
+C. Cloud Functions writing to BQ  
+D. Scheduled DTS  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B**: Pub/Sub + Dataflow streaming ensures **at-least-once delivery**, can achieve exactly-once with deduplication.  
+- ❌ **A**: Manual retries increase duplicates.  
+- ❌ **C**: Functions can drop events under load.  
+- ❌ **D**: DTS is batch, not streaming.  
+
+---
+
+#### Q4: Minimize shuffle in Spark SQL joins
+
+**Question:**  
+Large Spark job has severe shuffle overhead in joins.
+
+**Options:**  
+A. Use broadcast join for small tables ✅  
+B. Increase shuffle partitions  
+C. Cache input tables  
+D. Run on bigger cluster  
+
+**Correct Answer:** A  
+
+**Explanation:**  
+- ✅ **A**: Broadcast join avoids shuffle by sending small table to all nodes.  
+- ❌ **B**: More partitions ≠ less shuffle.  
+- ❌ **C**: Cache helps reuse, not shuffle.  
+- ❌ **D**: Bigger cluster only masks inefficiency.  
+
+---
+
+#### Q5: Cost optimization for BigQuery queries on historical data
+
+**Question:**  
+Petabytes of log data in BigQuery; queries usually on last 7 days.
+
+**Options:**  
+A. Cluster by user_id  
+B. <mark>**Partition by ingestion date, filter on partition**</mark> ✅  
+C. Export to GCS and query  
+D. Create materialized views on all data  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B**: Partition pruning ensures scanning only last 7 days → huge cost savings.  
+- ❌ **A**: Clustering helps within partitions but not across time.  
+- ❌ **C**: Exporting adds cost + latency.  
+- ❌ **D**: Materialized views over PBs = expensive.  
+
+---
+
+#### Q6: Auto-scaling Spark job on GCP
+
+**Question:**  
+Need Spark job that scales automatically with workload.
+
+**Options:**  
+A. Static Dataproc cluster  
+B. <mark>**Dataproc autoscaling policy**</mark> ✅  
+C. Compute Engine autoscaler  
+D. GKE horizontal pod autoscaler  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B**: Dataproc supports **autoscaling policies** for Spark/YARN workloads.  
+- ❌ **A**: Static cluster = wasted cost.  
+- ❌ **C**: VM autoscaler not Spark-aware.  
+- ❌ **D**: GKE autoscaler fits containers, not native Spark.  
+
+---
+
+#### Q7: Secure PII in BigQuery for analysts
+
+**Question:**  
+Analysts need access to join on emails, but emails are sensitive PII.
+
+**Options:**  
+A. Mask emails fully  
+B. <mark>**Format-preserving encryption (deterministic)**</mark> ✅  
+C. Remove emails  
+D. Hash with random salt  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B**: Deterministic FPE allows joins while protecting privacy.  
+- ❌ **A**: Masking destroys joinability.  
+- ❌ **C**: Removing prevents analytics.  
+- ❌ **D**: Random salt breaks determinism.  
+
+---
+
+#### Q8: CI/CD for BigQuery SQL models
+
+**Question:**  
+Need version control + automated deployment for SQL-based models in BigQuery.
+
+**Options:**  
+A. Cloud Functions  
+B. <mark>**Dataform**</mark> ✅  
+C. Composer DAG  
+D. Dataflow  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B**: Dataform manages **SQL workflows, testing, Git integration, deployments**.  
+- ❌ **A**: Functions not suited for SQL pipeline mgmt.  
+- ❌ **C**: Composer can orchestrate but not version SQL models.  
+- ❌ **D**: Dataflow is code (Java/Python), not SQL.  
+
+---
+
+#### Q9: Handle skew in Spark groupBy
+
+**Question:**  
+Spark job skewed on single key during `groupBy`.
+
+**Options:**  
+A. Repartition by key  
+B. Increase executor memory  
+C. <mark>**Salting the skewed key**</mark> ✅  
+D. Cache before groupBy  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C**: **Salting** distributes skewed keys across partitions.  
+- ❌ **A**: Doesn’t fix skew.  
+- ❌ **B**: Just allocates more memory, not scalable.  
+- ❌ **D**: Cache doesn’t address skew.  
+
+---
+
+#### Q10: Reduce BigQuery storage cost for infrequently used tables
+
+**Question:**  
+Some datasets queried rarely, but must be retained.
+
+**Options:**  
+A. <mark>**Move to long-term storage (BQ auto after 90d)**</mark> ✅  
+B. Export to GCS and delete  
+C. Compress with clustering  
+D. Delete partitions older than 90 days  
+
+**Correct Answer:** A  
+
+**Explanation:**  
+- ✅ **A**: BigQuery automatically applies **long-term storage pricing** after 90d of no updates.  
+- ❌ **B**: Export loses queryability.  
+- ❌ **C**: Clustering doesn’t reduce storage cost.  
+- ❌ **D**: Deletes data, not allowed.  
+
+---
+
+#### Q11: Automate daily ETL pipeline with dependencies
+
+**Question:**  
+Daily pipeline: load raw → transform → aggregate → publish.
+
+**Options:**  
+A. Cron jobs  
+B. <mark>**Cloud Composer DAG**</mark> ✅  
+C. Dataflow streaming job  
+D. Cloud Functions with Pub/Sub  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B**: Composer DAG manages task dependencies, retries, scheduling.  
+- ❌ **A**: Cron lacks dependency mgmt.  
+- ❌ **C**: Streaming doesn’t fit daily batch.  
+- ❌ **D**: Functions work for event-driven, not multi-step batch.  
+
+---
+
+#### Q12: Encrypt all new Cloud Storage objects with CMEK
+
+**Question:**  
+Need to ensure all new GCS uploads use **customer-managed keys**.
+
+**Options:**  
+A. Manually encrypt before upload  
+B. <mark>**Set bucket default CMEK**</mark> ✅  
+C. Encrypt with Cloud KMS after upload  
+D. Use signed URLs with CMEK  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B**: Bucket-level **default CMEK** ensures every new object is encrypted with customer key.  
+- ❌ **A**: Manual process = error-prone.  
+- ❌ **C**: Re-encrypting after upload risky.  
+- ❌ **D**: Signed URLs unrelated.  
+
+---
+
+#### Q13: Optimize repeated queries in BigQuery dashboards
+
+**Question:**  
+Dashboards run same aggregations repeatedly, high cost.
+
+**Options:**  
+A. Cached queries  
+B. <mark>**Materialized views**</mark> ✅  
+C. Authorized views  
+D. Export to GCS and pre-aggregate  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B**: Materialized views precompute and auto-refresh, perfect for BI dashboards.  
+- ❌ **A**: Cache invalidates easily, not reliable.  
+- ❌ **C**: Authorized views control access, not performance.  
+- ❌ **D**: Exporting breaks live dashboards.  
+
+---
+
+#### Q14: Reduce latency for global Cloud SQL app
+
+**Question:**  
+Global users experience high latency querying Cloud SQL in single region.
+
+**Options:**  
+A. <mark>**Read replicas in multiple regions**</mark> ✅  
+B. Multi-region bucket  
+C. Scale machine size  
+D. Shard database  
+
+**Correct Answer:** A  
+
+**Explanation:**  
+- ✅ **A**: Regional **read replicas** reduce read latency globally.  
+- ❌ **B**: Buckets not relevant.  
+- ❌ **C**: Bigger instance ≠ solve geography.  
+- ❌ **D**: Sharding complex, not needed.  
+
+---
+
+#### Q15: Enforce column-level security in BigQuery
+
+**Question:**  
+Analysts must see only specific columns in sensitive tables.
+
+**Options:**  
+A. Authorized views  
+B. <mark>**Policy tags in Data Catalog**</mark> ✅  
+C. Separate tables  
+D. Row-level security  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B**: **Policy tags** enforce column-level access control.  
+- ❌ **A**: Views can hide columns but not enforce governance.  
+- ❌ **C**: Copying tables is inefficient.  
+- ❌ **D**: Row-level ≠ column-level control.  
 
 ---
 
@@ -4667,4 +4958,2299 @@ D. <mark>Cloud Storage + multiple SAs mapped to IAM groups</mark> ✅
 - ❌ **B**: Human users shouldn’t get service accounts.  
 - ❌ **C**: Single shared SA = weak isolation.  
 
+---
 
+#### Q201: Migrate Redis to Memorystore
+
+**Question:**  
+Migrate on-prem Redis → Memorystore with minimal cost/effort.
+
+**Options:**  
+A. <mark>RDB backup → GCS → import</mark> ✅  
+B. Secondary instance on GCE, live cutover  
+C. Dataflow job to copy  
+D. Shell script migrate  
+
+**Correct Answer:** A  
+
+**Explanation:**  
+- ✅ **A**: Google-recommended approach — export Redis RDB snapshot, upload to GCS, then import into Memorystore. Fast and low effort.  
+- ❌ **B**: Requires running/manage GCE instance, adds ops overhead.  
+- ❌ **C**: Dataflow too heavy for one-time migration.  
+- ❌ **D**: Scripted migration error-prone and not supported.  
+
+
+#### Q202: On-prem JSON files → BigQuery, no public internet
+
+**Question:**  
+100 GB/day JSON, no public internet; must query in BigQuery.
+
+**Options:**  
+A. Cloud Scheduler → GCS → BQ DTS  
+B. Transfer Appliance daily  
+C. <mark>Transfer Service for on-prem data → GCS → BQ DTS</mark> ✅  
+D. BQ DTS dataset copy  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C**: Transfer Service agent securely copies on-prem → GCS, then DTS loads to BQ. Works without public internet.  
+- ❌ **A**: Scheduler cannot directly transfer on-prem data.  
+- ❌ **B**: Appliance is for bulk one-time, not daily ingestion.  
+- ❌ **D**: DTS dataset copy only works inside BigQuery.  
+
+
+#### Q203: Speed up TensorFlow training
+
+**Question:**  
+Training takes 2 days on CPU; need faster & cost-effective, some ops require CPU.
+
+**Options:**  
+A. n2-highmem-32  
+B. e2-standard-32  
+C. <mark>GPU VM</mark> ✅  
+D. TPU VM  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C**: GPU accelerates TensorFlow significantly, while CPU ops still run. Cost-effective and widely supported.  
+- ❌ **A/B**: Bigger CPU only; limited performance gain.  
+- ❌ **D**: TPU better for pure deep learning but not for mixed CPU ops; also more costly.  
+
+
+#### Q204: Stream vendor data to BigQuery with invalid values
+
+**Question:**  
+Need near real-time ingestion, sanitize vendor data before BigQuery ML.
+
+**Options:**  
+A. BQ streaming inserts dataset  
+B. BQ streaming inserts where model is  
+C. Pub/Sub → Cloud Function → BQ  
+D. <mark>Pub/Sub → Dataflow sanitize → BQ</mark> ✅  
+
+**Correct Answer:** D  
+
+**Explanation:**  
+- ✅ **D**: Dataflow scales, cleans data (validate/remove bad values) before loading to BQ.  
+- ❌ **A/B**: Direct streaming inserts do not handle invalid data.  
+- ❌ **C**: Cloud Functions not suitable for continuous, large-scale streaming ETL.  
+
+
+#### Q205: CI/CD for GKE with GPUs, SSDs, 8 Gbps
+
+**Question:**  
+Need infra provisioning + container deployment pipeline.
+
+**Options:**  
+A. GCE startup scripts  
+B. <mark>Cloud Build + Terraform</mark> ✅  
+C. GKE autoscale + gcloud  
+D. Dataflow + Scheduler  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B**: Terraform handles infra (GPU, SSD, networking), Cloud Build manages CI/CD for containers. Efficient & automated.  
+- ❌ **A**: Startup scripts are manual and fragile.  
+- ❌ **C**: Autoscale only manages pods, not infra provisioning.  
+- ❌ **D**: Wrong services — Dataflow/Scheduler unrelated.  
+
+#### Q206: Ingest 100 GB/day IoT data, low latency, 1-hour delay OK
+
+**Question:**  
+IoT → Cloud Storage → BigQuery, must handle schema changes, allow ML.
+
+**Options:**  
+A. Cloud SQL + Dataflow  
+B. Pub/Sub → Dataflow → BQ  
+C. <mark>Cloud Storage → Dataflow → BigQuery</mark> ✅  
+D. IoT Core → Pub/Sub → BQ streaming  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C**: Dataflow pipeline can batch from Cloud Storage, handle schema drift, transform, and load into BigQuery.  
+- ❌ **A**: Cloud SQL not designed for large-scale ingestion.  
+- ❌ **B**: Pub/Sub good for streaming, but data already lands in GCS.  
+- ❌ **D**: Streaming unnecessary; 1-hour delay is acceptable.  
+
+
+#### Q207: Hybrid cloud data analysis
+
+**Question:**  
+Data split between GCP and on-prem; need secure queries across both.
+
+**Options:**  
+A. BQ federated query with Cloud SQL  
+B. Transfer Appliance daily  
+C. <mark>BigQuery Omni</mark> ✅  
+D. Dataflow copy all to BQ  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C**: BigQuery Omni queries data across GCP, AWS, Azure without moving it. Fits hybrid scenario.  
+- ❌ **A**: Only works with Cloud SQL, not full hybrid.  
+- ❌ **B**: Appliance is for one-time/bulk moves, not ongoing queries.  
+- ❌ **D**: Copying all data breaks requirement to keep it in place.  
+
+
+#### Q208: 2 PB migration to GCS, 10 Mbps bandwidth
+
+**Question:**  
+Need to migrate PB-scale data in months, network too slow.
+
+**Options:**  
+A. gsutil rsync throttled  
+B. <mark>Transfer Appliance</mark> ✅  
+C. Storage Transfer Service on-prem agent  
+D. VPN + gsutil  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B**: Transfer Appliance is built for PB-scale migrations when bandwidth is insufficient.  
+- ❌ **A/C/D**: At 10 Mbps, migration would take years, not feasible.  
+
+
+#### Q209: Dataflow pipeline latency high, job underutilized
+
+**Question:**  
+Need to improve throughput without over-provisioning.
+
+**Options:**  
+A. Add more workers  
+B. <mark>Tune Dataflow autoscaling & parallelism</mark> ✅  
+C. Rewrite in Spark on GCE  
+D. Split into multiple jobs  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B**: Dataflow supports autoscaling, fusion-breaking, and worker parallelism to optimize utilization.  
+- ❌ **A**: Blindly adding workers wastes cost if pipeline not tuned.  
+- ❌ **C**: Rewriting adds complexity, not needed.  
+- ❌ **D**: Splitting jobs increases maintenance overhead.  
+
+
+#### Q210: Retain BigQuery audit logs 12 months, org-wide
+
+**Question:**  
+Must meet compliance; logs must be centralized and access controlled.
+
+**Options:**  
+A. Per-project log export → BQ  
+B. Project-level sink to GCS  
+C. <mark>Org-level aggregated sink → centralized project</mark> ✅  
+D. Stackdriver default retention  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C**: Aggregated sink at org/folder level ensures **all projects** covered, stored in central audit project with IAM controls.  
+- ❌ **A/B**: Only per-project, hard to enforce compliance.  
+- ❌ **D**: Default log retention (30 days) too short for 12 months.  
+
+#### Q211: Near real-time fraud detection on transactions
+
+**Question:**  
+Bank requires <5s fraud detection, scalable and low-latency pipeline.
+
+**Options:**  
+A. Batch Dataflow job every minute  
+B. <mark>Pub/Sub → Dataflow streaming → BigQuery + ML</mark> ✅  
+C. Cloud Functions → BigQuery → ML  
+D. Dataproc Spark streaming job  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B**: Pub/Sub + Dataflow streaming provides sub-second ingestion and scalable real-time fraud detection.  
+- ❌ **A**: Batch = too slow for fraud detection.  
+- ❌ **C**: Cloud Functions not designed for high-throughput streaming pipelines.  
+- ❌ **D**: Dataproc adds ops overhead, not serverless.  
+
+
+#### Q212: Machine learning predictions at scale
+
+**Question:**  
+Need scalable ML predictions from BigQuery models for millions of rows.
+
+**Options:**  
+A. Export data to AI Platform, call model API per row  
+B. Python client loop through rows  
+C. <mark>BigQuery ML ML.PREDICT on batch data</mark> ✅  
+D. Cloud Functions row-by-row predictions  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C**: BigQuery ML supports **in-database predictions** over millions of rows efficiently.  
+- ❌ **A/B/D**: Row-by-row prediction is too slow and costly.  
+
+
+#### Q213: Real-time anomaly detection on IoT sensor data
+
+**Question:**  
+Billions of sensor events/hour; detect anomalies in seconds.
+
+**Options:**  
+A. Batch Dataflow job + BQ ML  
+B. Cloud Functions + BigQuery  
+C. <mark>Pub/Sub → Dataflow streaming + ML model</mark> ✅  
+D. Dataproc Hive batch jobs  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C**: Pub/Sub handles ingestion; Dataflow streaming applies anomaly detection model in real time.  
+- ❌ **A/B/D**: Batch or Cloud Functions too slow, not scalable.  
+
+
+#### Q214: Optimize BigQuery cost for analysts
+
+**Question:**  
+Analysts running exploratory queries, costs spiking.
+
+**Options:**  
+A. Educate analysts on SQL best practices  
+B. <mark>Use BigQuery slots/reservations + cost controls</mark> ✅  
+C. Denormalize all data  
+D. Shard tables manually  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B**: Reservations + flat-rate slots + cost controls = predictable spend while supporting exploration.  
+- ❌ **A**: Helps, but not sufficient to enforce cost control.  
+- ❌ **C/D**: Structural changes don’t solve unpredictable query costs.  
+
+
+#### Q215: Secure cross-project data sharing
+
+**Question:**  
+Team A must share BQ dataset with Team B securely, no raw table copies.
+
+**Options:**  
+A. Export CSV to GCS, let Team B import  
+B. <mark>Grant dataset-level IAM access to Team B</mark> ✅  
+C. Copy tables to Team B’s project  
+D. Authorized views in same project only  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B**: IAM dataset-level permissions let Team B query data securely, no duplication.  
+- ❌ **A/C**: Export/copy creates duplicates, hard to govern.  
+- ❌ **D**: Views limit flexibility; dataset IAM is simpler.  
+
+#### Q216: Backup GKE cluster state
+
+**Question:**  
+Need backup/restore of GKE cluster configs (not workload data).
+
+**Options:**  
+A. Export etcd database manually  
+B. <mark>Use Config Sync / Anthos Config Management</mark> ✅  
+C. Take VM snapshots of nodes  
+D. Backup GCS bucket  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B**: Config Sync/ACM stores cluster configs as code; supports versioning & restore.  
+- ❌ **A**: Manual etcd export not supported.  
+- ❌ **C**: Node snapshots don’t capture cluster state.  
+- ❌ **D**: GCS backup irrelevant to cluster config.  
+
+
+#### Q217: Control cost for BigQuery ad-hoc queries
+
+**Question:**  
+Analysts run exploratory queries; need hard limits on spending.
+
+**Options:**  
+A. <mark>Use custom quotas + reservations</mark> ✅  
+B. Educate analysts on query optimization  
+C. Denormalize schemas  
+D. Use partitioned tables  
+
+**Correct Answer:** A  
+
+**Explanation:**  
+- ✅ **A**: Reservations & custom quotas enforce predictable query costs.  
+- ❌ **B/C/D**: Improve performance but don’t enforce cost ceilings.  
+
+
+#### Q218: Encrypt data in Cloud Storage with external keys
+
+**Question:**  
+Compliance requires encryption with customer-managed keys, outside GCP.
+
+**Options:**  
+A. Google-managed default keys  
+B. <mark>Cloud EKM with external key manager</mark> ✅  
+C. CSEK in .boto file  
+D. Rotate CMEK monthly  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B**: Cloud EKM integrates external KMS (on-prem/HSM) with GCP → full compliance.  
+- ❌ **A**: Default keys = Google-managed, not compliant.  
+- ❌ **C**: CSEK is legacy, not recommended.  
+- ❌ **D**: CMEK rotation still inside GCP.  
+
+
+#### Q219: Stream events with schema evolution to BigQuery
+
+**Question:**  
+IoT pipeline, schemas change; need real-time streaming into BigQuery.
+
+**Options:**  
+A. Pub/Sub → Functions → BQ  
+B. <mark>Pub/Sub → Dataflow (schema aware) → BQ</mark> ✅  
+C. Write directly to BQ streaming API  
+D. Dataproc batch jobs  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B**: Dataflow handles schema evolution & real-time ETL before BQ.  
+- ❌ **A**: Cloud Functions don’t scale for heavy streaming.  
+- ❌ **C**: Direct streaming API fails on schema drift.  
+- ❌ **D**: Batch not real time.  
+
+
+#### Q220: Long-term analytics on GCS archived data
+
+**Question:**  
+Petabytes archived in GCS; analysts need SQL access occasionally.
+
+**Options:**  
+A. Load into BigQuery daily  
+B. <mark>Use BigQuery external tables on GCS</mark> ✅  
+C. Copy to Cloud SQL  
+D. Copy to HDFS cluster  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B**: External tables let analysts query GCS data directly with SQL, cost-effective for occasional use.  
+- ❌ **A**: Loading daily = costly, unnecessary.  
+- ❌ **C**: Cloud SQL not designed for PB-scale.  
+- ❌ **D**: HDFS cluster adds ops overhead.  
+
+
+#### Q221: Control access to BigQuery columns with PII
+
+**Question:**  
+Dataset has sensitive columns (e.g., SSN). Need fine-grained access.
+
+**Options:**  
+A. Table-level IAM only  
+B. <mark>Use BigQuery column-level security</mark> ✅  
+C. Authorized views in same dataset  
+D. Copy sensitive columns to another dataset  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B**: Column-level security allows granting access only to specific columns.  
+- ❌ **A**: Too coarse, users either see all or nothing.  
+- ❌ **C**: Views work but add maintenance overhead.  
+- ❌ **D**: Copying data creates duplication risks.  
+
+
+#### Q222: Scale analytics for 100 TB log data
+
+**Question:**  
+Logs in GCS; need scalable SQL analytics.
+
+**Options:**  
+A. Cloud SQL + sharding  
+B. Dataproc + Hive  
+C. <mark>BigQuery external or native tables</mark> ✅  
+D. Cloud Spanner  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C**: BigQuery handles PB-scale log analytics with SQL and partitioning.  
+- ❌ **A**: Cloud SQL can’t scale to 100 TB.  
+- ❌ **B**: Dataproc adds ops overhead.  
+- ❌ **D**: Spanner is OLTP, not analytics.  
+
+
+#### Q223: Archive 10 years of healthcare data securely
+
+**Question:**  
+Must store 10 years, HIPAA compliant, cost optimized.
+
+**Options:**  
+A. <mark>Cloud Storage Archive + CMEK</mark> ✅  
+B. BigQuery partitioned tables  
+C. Cloud SQL with HA replicas  
+D. Persistent Disks snapshots  
+
+**Correct Answer:** A  
+
+**Explanation:**  
+- ✅ **A**: Archive tier is lowest cost long-term; CMEK ensures compliance.  
+- ❌ **B**: BQ not ideal for 10-year cold storage.  
+- ❌ **C/D**: SQL or disks are expensive for archives.  
+
+
+#### Q224: Minimize BigQuery cost for dashboards
+
+**Question:**  
+Dashboards query same data daily; need cost savings.
+
+**Options:**  
+A. <mark>Use materialized views</mark> ✅  
+B. Always re-run full queries  
+C. Export to CSV daily  
+D. Copy tables to new dataset  
+
+**Correct Answer:** A  
+
+**Explanation:**  
+- ✅ **A**: Materialized views cache results; refresh incremental = cost savings.  
+- ❌ **B**: Expensive.  
+- ❌ **C/D**: Manual exports/copies add overhead.  
+
+
+#### Q225: Migrate Spark + Parquet Hadoop jobs to Google Cloud, minimize ETL changes
+
+**Question:**  
+On-prem Hadoop cluster stores **Parquet data**, processed daily by Spark. Migrating to Google Cloud; future pipelines will use BigQuery. Need managed services + minimal ETL refactor + low overhead.  
+
+**Options:**  
+A. <mark>Migrate data to Cloud Storage + metadata to Dataproc Metastore (DPMS). Refactor Spark pipelines to use GCS, run on Dataproc Serverless.</mark> ✅  
+B. Migrate data to Cloud Storage, register bucket as Dataplex asset. Refactor Spark pipelines to use GCS, run on Dataproc Serverless.  
+C. Migrate data to BigQuery. Refactor Spark pipelines to read/write from BigQuery, run on Dataproc Serverless.  
+D. Migrate data to BigLake. Refactor Spark pipelines to use GCS, run on Dataproc on Compute Engine.  
+
+**Correct Answer:** A  
+
+**Explanation:**  
+- ✅ **A is correct**: Cloud Storage replaces HDFS for Parquet, DPMS manages Hive metadata, and Dataproc Serverless runs Spark with minimal code changes.  
+- ❌ **B**: Dataplex adds governance but doesn’t replace Hive metastore metadata.  
+- ❌ **C**: Refactoring Spark to use BigQuery storage API = heavy rewrite.  
+- ❌ **D**: BigLake + Dataproc on GCE adds infra overhead, not minimal ops.  
+
+#### Q226: Restrict Pub/Sub topic in Project A from being accessed by other projects
+
+**Question:**  
+Project A has a Pub/Sub topic with confidential data. Only resources in **Project A** should access it. Need to ensure Project B and any future projects cannot access the topic.  
+
+**Options:**  
+A. Add firewall rules in Project A so only traffic from its VPC is permitted.  
+B. <mark>Configure VPC Service Controls with a perimeter around Project A</mark> ✅  
+C. Use IAM conditions so only users/service accounts in Project A can access.  
+D. Configure VPC Service Controls with a perimeter around Project A’s VPC.  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B is correct**: VPC Service Controls create a **security perimeter** around Project A, preventing data exfiltration to other projects now and in the future.  
+- ❌ **A**: Firewall rules control **network traffic**, not Pub/Sub access.  
+- ❌ **C**: IAM alone is not future-proof; new projects could still request access.  
+- ❌ **D**: Perimeter must be around the **project**, not just the VPC.  
+
+#### Q227: Share BigQuery dataset securely across projects
+
+**Question:**  
+Need to let analysts in **Project B** query a dataset in **Project A**, but they should not have access to other tables in Project A.  
+
+**Options:**  
+A. Give Project B users `roles/bigquery.dataViewer` at Project A level.  
+B. <mark>Grant Project B users access only at the dataset level</mark> ✅  
+C. Export tables from Project A to Cloud Storage, then import into Project B.  
+D. Copy data to BigLake for cross-project access.  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B is correct**: Use **dataset-level IAM** in BigQuery to restrict access only to required datasets.  
+- ❌ **A**: Project-level role gives too much access.  
+- ❌ **C**: Adds overhead and duplicates data.  
+- ❌ **D**: BigLake not needed for simple dataset sharing.  
+
+#### Q228: Enforce encryption with customer-managed keys (CMEK)
+
+**Question:**  
+Org policy requires **all BigQuery tables** to be encrypted with **CMEK**.  
+
+**Options:**  
+A. Manually set CMEK per table after creation.  
+B. <mark>Use org policy `constraints/bigquery.requireCmekKey`</mark> ✅  
+C. Enable CMEK at project level for existing tables.  
+D. Rely on Google-managed default encryption.  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B is correct**: Org policy enforces **CMEK usage** automatically for all new tables.  
+- ❌ **A**: Manual enforcement is error-prone.  
+- ❌ **C**: No project-wide retroactive setting exists.  
+- ❌ **D**: Default keys don’t meet CMEK compliance.  
+
+#### Q229: Minimize latency for Pub/Sub → BigQuery streaming
+
+**Question:**  
+Requirement: stream events from **Pub/Sub** to **BigQuery** with **lowest latency**.  
+
+**Options:**  
+A. Use Dataflow batch job.  
+B. Use Cloud Functions to write to BigQuery.  
+C. <mark>Use Pub/Sub direct BigQuery subscription (BigQuery Storage Write API)</mark> ✅  
+D. Export data to Cloud Storage then load into BigQuery.  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C is correct**: **Pub/Sub → BigQuery subscription** (via Storage Write API) provides **sub-second latency** with no pipeline overhead.  
+- ❌ **A**: Batch adds minutes of delay.  
+- ❌ **B**: Functions scale poorly for high throughput.  
+- ❌ **D**: Cloud Storage loads are not real-time.  
+
+#### Q230: Secure Dataflow pipeline with sensitive PII
+
+**Question:**  
+Need to process **PII** in Dataflow with compliance.  
+
+**Options:**  
+A. Run pipeline in public Dataflow workers.  
+B. <mark>Enable Dataflow **FlexRS** with VPC-SC + CMEK</mark> ✅  
+C. Encrypt PII fields in SQL after pipeline finishes.  
+D. Use default encryption without VPC controls.  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B is correct**: Combine **VPC Service Controls** (network boundary) + **CMEK** (encryption) + **FlexRS** (secure, cost-effective workers).  
+- ❌ **A**: Public workers expose risk.  
+- ❌ **C**: Post-encryption too late.  
+- ❌ **D**: Default encryption doesn’t meet strict compliance.  
+
+#### Q231: Enforce VPC-SC for sensitive BigQuery data
+
+**Question:**  
+Security team requires preventing **data exfiltration** from BigQuery datasets in Project A.  
+
+**Options:**  
+A. Use IAM deny policies to block external access.  
+B. <mark>Configure VPC Service Controls perimeter around Project A</mark> ✅  
+C. Rely on BigQuery audit logs to detect leaks.  
+D. Enable CMEK only.  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B is correct**: **VPC Service Controls (VPC-SC)** create a **perimeter** around BigQuery, blocking access from outside projects or networks.  
+- ❌ **A**: IAM deny policies don’t protect against exfiltration.  
+- ❌ **C**: Logging is detection, not prevention.  
+- ❌ **D**: CMEK encrypts data, doesn’t stop exfiltration.  
+
+#### Q232: Optimize cost for historical log storage
+
+**Question:**  
+Company has **2 years of logs** in Cloud Storage. Requirement: retain for compliance but minimize cost.  
+
+**Options:**  
+A. Store all logs in Standard storage.  
+B. Delete logs older than 6 months.  
+C. <mark>Use Object Lifecycle Policy to move older logs to Archive Storage</mark> ✅  
+D. Export logs to BigQuery for long-term retention.  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C is correct**: Lifecycle rules automatically move logs to **Archive Storage**, lowest-cost option for long-term retention.  
+- ❌ **A**: Standard storage is too expensive.  
+- ❌ **B**: Violates compliance.  
+- ❌ **D**: BigQuery is for analytics, not cost-effective storage.  
+
+#### Q233: Ensure consistency of ML preprocessing
+
+**Question:**  
+Using **BigQuery ML** to train model. Must avoid **training-serving skew** between train and prediction.  
+
+**Options:**  
+A. Preprocess with Dataflow before training and prediction.  
+B. <mark>Use BigQuery ML TRANSFORM clause in CREATE MODEL</mark> ✅  
+C. Apply preprocessing manually in SQL before predictions.  
+D. Use external Python preprocessing code for training only.  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B is correct**: **TRANSFORM clause** ensures **consistent preprocessing** applied at both training and serving automatically.  
+- ❌ **A**: Dataflow adds complexity.  
+- ❌ **C**: Manual preprocessing risks inconsistency.  
+- ❌ **D**: External preprocessing = skew.  
+
+#### Q234: Process IoT time-series data at scale
+
+**Question:**  
+Need to store **IoT sensor metrics per second** from millions of devices, with efficient **time-series queries**.  
+
+**Options:**  
+A. Wide table in BigQuery with many columns.  
+B. Store in Cloud SQL with per-device table.  
+C. <mark>Use Bigtable narrow schema with row key = deviceID + timestamp</mark> ✅  
+D. Use Cloud Storage JSON files.  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C is correct**: **Bigtable** supports **time-series** with **tall, narrow schema**; row key design enables fast range scans.  
+- ❌ **A**: Wide table leads to schema inflexibility.  
+- ❌ **B**: Cloud SQL cannot scale for millions of devices.  
+- ❌ **D**: JSON in GCS not query-efficient.  
+
+#### Q235: Replay Pub/Sub messages after faulty deployment
+
+**Question:**  
+New subscriber code may **ack messages erroneously**. Need recovery without losing messages.  
+
+**Options:**  
+A. Test locally with Pub/Sub emulator.  
+B. <mark>Create Pub/Sub snapshot before deployment, use Seek to replay</mark> ✅  
+C. Enable dead-letter topic for failed messages.  
+D. Use Cloud Build timestamp to re-seek.  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B is correct**: **Snapshot + Seek** resets acknowledgment state, allowing messages since snapshot to be replayed.  
+- ❌ **A**: Emulator doesn’t protect production.  
+- ❌ **C**: Dead-letter only works for unacked failures, not mistaken acks.  
+- ❌ **D**: Timestamp seek requires ack retention, not guaranteed.  
+
+#### Q236: Dataflow pipeline latency troubleshooting
+
+**Question:**  
+Dataflow job processing Pub/Sub messages is running **slower than expected**. Need to optimize latency.  
+
+**Options:**  
+A. Increase worker disk size.  
+B. <mark>Enable Dataflow Streaming Engine</mark> ✅  
+C. Use BigQuery as temporary storage.  
+D. Retry failed messages manually.  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B is correct**: **Streaming Engine** offloads shuffle/storage from workers, reducing **latency** and improving scalability.  
+- ❌ **A**: Disk size is not the bottleneck.  
+- ❌ **C**: BigQuery is for analytics, not low-latency buffering.  
+- ❌ **D**: Manual retries don’t address pipeline slowness.  
+
+#### Q237: Secure PII in BigQuery analytics
+
+**Question:**  
+Compliance requires **redacting PII** while allowing analysts to query anonymized data.  
+
+**Options:**  
+A. Encrypt all columns with AEAD and manage keys manually.  
+B. Use BigQuery authorized views to hide PII.  
+C. <mark>Use Cloud DLP de-identification (tokenization) before loading</mark> ✅  
+D. Store PII separately in Cloud SQL.  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C is correct**: **DLP de-identification** replaces PII with tokens but preserves usability for analytics.  
+- ❌ **A**: AEAD requires key mgmt and doesn’t scale well.  
+- ❌ **B**: Views hide columns but data still in plaintext.  
+- ❌ **D**: Cloud SQL separation doesn’t provide anonymization.  
+
+#### Q238: Choose storage for large media archive
+
+**Question:**  
+Need to store **petabytes of video files** for long-term retention, accessed only a few times per year.  
+
+**Options:**  
+A. Keep in Cloud Storage Standard.  
+B. Use Persistent Disks.  
+C. <mark>Use Cloud Storage Archive class</mark> ✅  
+D. Store in BigQuery external tables.  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C is correct**: **Archive Storage** is lowest-cost, designed for **rarely accessed** data with compliance retention.  
+- ❌ **A**: Standard is too costly.  
+- ❌ **B**: Disks not scalable for petabytes.  
+- ❌ **D**: BigQuery external tables are for analytics, not media archives.  
+
+#### Q239: Handle Dataflow join on large datasets
+
+**Question:**  
+Pipeline uses **SideInput** for a large dataset join, causing slow performance.  
+
+**Options:**  
+A. Split input into smaller SideInputs.  
+B. <mark>Replace SideInput with CoGroupByKey</mark> ✅  
+C. Use Cloud Functions for join logic.  
+D. Retry job with more workers.  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B is correct**: **CoGroupByKey** efficiently joins large datasets by shuffling across workers; SideInput is only for small lookups.  
+- ❌ **A**: Still limited by memory.  
+- ❌ **C**: Functions not suited for joins.  
+- ❌ **D**: Scaling workers doesn’t fix SideInput design issue.  
+
+#### Q240: Optimize BigQuery partitioning strategy
+
+**Question:**  
+Dataset stores **purchase transactions**, queried mainly for **last 30 days**.  
+
+**Options:**  
+A. Cluster by store ID only.  
+B. <mark>Partition by transaction_date, cluster by state → city → store</mark> ✅  
+C. Shard tables by month.  
+D. Store transactions in Cloud SQL.  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B is correct**: **Partition on date** limits scan to recent 30 days; clustering on **state/city/store** optimizes query filters.  
+- ❌ **A**: Clustering alone doesn’t reduce scanned partitions.  
+- ❌ **C**: Sharding by month is legacy and harder to manage.  
+- ❌ **D**: Cloud SQL not built for analytics at scale.  
+
+#### Q241: Encrypt sensitive data before BigQuery
+
+**Question:**  
+Company requires **client-side encryption** so that Google Cloud staff cannot decrypt sensitive data.  
+
+**Options:**  
+A. Use CMEK with Cloud KMS.  
+B. <mark>Use Customer-Supplied Encryption Keys (CSEK) when uploading to GCS</mark> ✅  
+C. Use BigQuery AEAD functions.  
+D. Enable IAM deny policies on datasets.  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B is correct**: **CSEK** keeps encryption keys outside Google’s control, following **“Trust No One”** principle.  
+- ❌ **A**: CMEK still stores keys in Cloud KMS, under Google’s infrastructure.  
+- ❌ **C**: AEAD encrypts inside BigQuery, not before ingestion.  
+- ❌ **D**: IAM denies don’t encrypt data.  
+
+#### Q242: Monitor pipeline health across multiple projects
+
+**Question:**  
+Need to monitor **BigQuery, Dataflow, Dataproc pipelines** across projects and get alerts.  
+
+**Options:**  
+A. Custom scripts exporting metrics to GCS.  
+B. Run VM with Airflow + logging agents.  
+C. <mark>Export to Cloud Monitoring and set up Alerting Policies</mark> ✅  
+D. Export logs to BigQuery and query periodically.  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C is correct**: **Cloud Monitoring** provides **cross-project visibility**, metrics, and managed alerts.  
+- ❌ **A**: Manual scripts not scalable.  
+- ❌ **B**: Self-managed VM adds ops overhead.  
+- ❌ **D**: BigQuery good for analysis, not real-time alerts.  
+
+#### Q243: Secure GCS bucket access for analytics team
+
+**Question:**  
+Analytics team needs **read-only access** to a Cloud Storage bucket.  
+
+**Options:**  
+A. Grant `roles/storage.admin` on the bucket.  
+B. <mark>Grant `roles/storage.objectViewer` on the bucket</mark> ✅  
+C. Make bucket public and restrict via firewall.  
+D. Copy data into BigQuery and give BigQuery roles.  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B is correct**: `roles/storage.objectViewer` = **least privilege** read-only access.  
+- ❌ **A**: Admin grants unnecessary write/delete rights.  
+- ❌ **C**: Public bucket is a compliance risk.  
+- ❌ **D**: Moving data adds complexity and cost.  
+
+#### Q244: Handle spikes in Pub/Sub traffic
+
+**Question:**  
+During sales events, Pub/Sub traffic spikes sharply. Need reliable scaling.  
+
+**Options:**  
+A. Manually increase subscriber count before event.  
+B. <mark>Rely on Pub/Sub auto-scaling subscribers</mark> ✅  
+C. Throttle message publishing.  
+D. Pre-split topics per region.  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B is correct**: **Pub/Sub auto-scales** subscriber throughput to match spikes.  
+- ❌ **A**: Manual scaling is error-prone.  
+- ❌ **C**: Throttling risks message delay/loss.  
+- ❌ **D**: Splitting topics complicates architecture.  
+
+#### Q245: Detect anomalies in streaming transactions
+
+**Question:**  
+Bank wants to detect **fraudulent transactions in real-time**.  
+
+**Options:**  
+A. Batch load into BigQuery and run daily queries.  
+B. Store logs in GCS and run weekly ML job.  
+C. <mark>Use Dataflow streaming + ML model for real-time scoring</mark> ✅  
+D. Export to Pub/Sub Lite and analyze monthly.  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C is correct**: **Dataflow streaming + ML** allows **low-latency fraud detection** at scale.  
+- ❌ **A**: Batch is too slow for fraud prevention.  
+- ❌ **B**: Weekly detection is useless for real-time fraud.  
+- ❌ **D**: Pub/Sub Lite not suitable for real-time scoring.  
+
+#### Q246: Optimize BigQuery for frequent 7-day queries
+
+**Question:**  
+Analysts frequently query sales data for the **last 7 days**. Dataset grows to terabytes.  
+
+**Options:**  
+A. Shard tables by week.  
+B. <mark>Partition by transaction_date (daily)</mark> ✅  
+C. Cluster only by product ID.  
+D. Store in Cloud SQL for smaller queries.  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B is correct**: **Partitioning by date** limits scans to 7 partitions, reducing cost and latency.  
+- ❌ **A**: Sharding = legacy, harder to manage.  
+- ❌ **C**: Clustering helps filters, but without partitioning, full table scan occurs.  
+- ❌ **D**: Cloud SQL not built for TB-scale analytics.  
+
+
+#### Q247: Data mesh with Dataplex to remove central bottleneck
+
+**Question:**  
+Airlines, hotels, ride-hailing domains. Each has analytics & data science teams. Central platform is a bottleneck. Use **Dataplex** to implement a **data mesh**.  
+
+**Options:**  
+A. One lake per team, zones per domain, central platform manages.  
+B. One lake per team, zones per domain, each domain manages own zones.  
+C. <mark>One lake per domain, zones per team, attach BQ datasets, each domain manages own lake.</mark> ✅  
+D. One lake per domain, zones per team, central platform manages all.  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C is correct**: **Domain-centric** data mesh with **one lake per domain**; domains self-manage assets, eliminating central bottleneck.  
+- ❌ **A/D**: Central platform still manages → bottleneck remains.  
+- ❌ **B**: Lakes per team, not domain-centric, breaks alignment.  
+
+---
+
+#### Q248: Filter VMs < 8 vCPU in BigQuery reporting
+
+**Question:**  
+VM inventory table (nested schema). Need regular reports excluding rows with **vCPU < 8**, most cost-effective.  
+
+**Options:**  
+A. <mark>Create a **View** with filter + **UNNEST**.</mark> ✅  
+B. Create a materialized view with filter and CTE.  
+C. Create a view with filter and CTE only.  
+D. Use Dataflow to batch into another BQ table.  
+
+**Correct Answer:** A  
+
+**Explanation:**  
+- ✅ **A is correct**: A **view + UNNEST** flattens nested fields, applies filter, **zero storage cost** → ideal for reporting.  
+- ❌ **B**: Materialized view adds storage/refresh cost.  
+- ❌ **C**: Without UNNEST can’t filter nested vCPU.  
+- ❌ **D**: Extra ETL/storage overhead.  
+
+---
+
+#### Q249: Optimize Cloud Storage raw data cost
+
+**Question:**  
+~25GB/day ingested. Old data: deletable anytime, no defined pattern, must be instantly available, no retrieval fees.  
+
+**Options:**  
+A. <mark>Create bucket with **Autoclass**.</mark> ✅  
+B. Lifecycle to Nearline (30d), Coldline (90d), Archive (365d).  
+C. Lifecycle to Coldline (30d), Nearline (90d), Archive (365d).  
+D. Lifecycle to Nearline (30d), Coldline (45d), Archive (60d).  
+
+**Correct Answer:** A  
+
+**Explanation:**  
+- ✅ **A is correct**: **Autoclass** auto-moves objects, no retrieval fees, instant availability, no manual lifecycle needed.  
+- ❌ **B/C/D**: Lifecycle rules may hit retrieval fees, complexity higher.  
+
+---
+
+#### Q250: De-identify email field before BigQuery
+
+**Question:**  
+CSV data → Cloud Storage → BigQuery. Analysts must join on **email** but emails (PII) must be de-identified before BQ.  
+
+**Options:**  
+A. DLP masking.  
+B. <mark>DLP **format-preserving encryption (FPE/FFX)**, then load to BQ.</mark> ✅  
+C. BQ dynamic masking with email rule.  
+D. BQ default masking rule.  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B is correct**: **FPE (FFX)** keeps format + deterministic mapping, enabling joins while protecting PII.  
+- ❌ **A**: Masking not unique → breaks joins.  
+- ❌ **C/D**: Masking inside BQ, not before load.  
+
+---
+
+#### Q251: Legal hold docs in Cloud Storage
+
+**Question:**  
+Need to ensure legal documents in GCS bucket cannot be deleted or modified.  
+
+**Options:**  
+A. <mark>Set a **Retention Policy** and **Lock** it.</mark> ✅  
+B. Retention + set default Archive.  
+C. Enable Object Versioning + lifecycle rule.  
+D. Enable Versioning + copy to another region.  
+
+**Correct Answer:** A  
+
+**Explanation:**  
+- ✅ **A is correct**: **Retention Policy + Lock** makes bucket WORM-compliant → objects undeletable/unmodifiable until period ends.  
+- ❌ **B/C/D**: Do not enforce immutability, only add copies or classes.  
+
+---
+
+#### Q252: BigQuery sales data warehouse with history
+
+**Question:**  
+Customers, products, subscriptions updated monthly, must keep history. Need simple, easy, cost-effective model.  
+
+**Options:**  
+A. Normalized model, snapshots before updates.  
+B. Normalized model, store input files in GCS.  
+C. Denormalized model, snapshots for history.  
+D. <mark>Denormalized, **append-only** with nested/repeated fields, track history via **ingestion timestamp**.</mark> ✅  
+
+**Correct Answer:** D  
+
+**Explanation:**  
+- ✅ **D is correct**: Append-only + ingestion timestamp = simple queries, keeps **full history** without snapshots, cost-effective.  
+- ❌ **A/B**: Normalization/snapshots increase query complexity.  
+- ❌ **C**: Updates + snapshots add overhead.  
+
+
+#### Q253: Dataflow batch pipeline, no external IPs allowed
+
+**Question:**  
+Dataflow batch job → GCS → BigQuery. Org constraint: **no external IPs** on Compute Engine.  
+
+**Options:**  
+A. Workers with network tags, internal IP only.  
+B. Firewall rules for GCS & BQ, internal IP only.  
+C. VPC Service Controls perimeter, allow services, internal IP only.  
+D. <mark>Enable **Private Google Access** on subnet, internal IP only.</mark> ✅  
+
+**Correct Answer:** D  
+
+**Explanation:**  
+- ✅ **D is correct**: **Private Google Access** lets VMs without external IPs reach Google APIs (e.g., GCS, BQ).  
+- ❌ **A/B**: Tags/firewalls don’t solve API access.  
+- ❌ **C**: VPC-SC protects APIs, not VM connectivity.  
+---
+
+#### Q254: Dataflow streaming pipeline underutilizing workers
+
+**Question:**  
+Streaming pipeline with **autoscaling**, max 1000 workers. Using only 10, performance low. Autoscaler not scaling up.  
+
+**Options:**  
+A. Enable Vertical Autoscaling.  
+B. <mark>Add **Reshuffle** step to break fusion.</mark> ✅  
+C. Increase max workers.  
+D. Use Dataflow Prime Right Fitting.  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B is correct**: Fusion optimization blocks parallelism. **Reshuffle** forces redistribution → more workers used.  
+- ❌ **A/C**: Worker size/limit won’t help if pipeline is fused.  
+- ❌ **D**: Right Fitting optimizes sizing, not parallelism.  
+---
+
+#### Q255: Replicate Oracle DB (VM) → BigQuery, minimal infra mgmt
+
+**Question:**  
+Oracle DB in VM (VPC). Need continuous **CDC replication** of 50 tables to BigQuery. Want serverless/minimal ops.  
+
+**Options:**  
+A. Kafka + Connect CDC + Dataflow sink.  
+B. Pub/Sub sink + Debezium Oracle CDC connector.  
+C. Kafka + Oracle CDC + BigQuery Sink connector.  
+D. <mark>Use **Datastream** Oracle → BigQuery with private connectivity.</mark> ✅  
+
+**Correct Answer:** D  
+
+**Explanation:**  
+- ✅ **D is correct**: **Datastream** is serverless CDC, integrates Oracle → BigQuery, supports private VPC connectivity, minimal mgmt.  
+- ❌ **A/B/C**: Require managing Kafka/Debezium infra → higher ops overhead.  
+
+#### Q256: Trigger Airflow DAG on new GCS file (no internet in subnet)
+
+**Question:**  
+Reactive DAG runs on each new object in GCS; Composer 2 in a subnet with **no Internet access**.
+
+**Options:**  
+A. Private Google Access + GCS → Pub/Sub; **push** to web server URL.  
+B. Composer API via Cloud Function; Serverless VPC Access to web server URL.  
+C. <mark>Enable **Airflow REST API**; GCS **notifications → Cloud Function**; connect via **Private Service Connect (PSC)**.</mark> ✅  
+D. Airflow REST API; Cloud Function; Serverless VPC Access to web server URL.
+
+**Correct Answer:** C
+
+**Explanation:**  
+- ✅ **C**: With **private Composer** networking, expose the Airflow web server **privately** using **PSC**, and trigger via **Cloud Function** on **GCS notifications** calling the **Airflow REST API**.  
+- ❌ **A/D**: Direct calls to the web server URL aren’t reachable without a private endpoint; push subscriptions don’t call Airflow.  
+- ❌ **B**: Composer API / Serverless VPC Access doesn’t guarantee private reachability to the **Airflow web UI/API** in private IP mode.
+
+---
+
+#### Q257: Cheapest storage + retrieval for random-access objects, transparent to users
+
+**Options:**  
+A. <mark>Enable **Autoclass** on the bucket.</mark> ✅  
+B. Lifecycle to **Coldline** after 30 days.  
+C. Lifecycle when **not live** → Coldline.  
+D. Two buckets (Standard → Coldline after 30 days).
+
+**Correct Answer:** A
+
+**Explanation:**  
+- ✅ **A**: **Autoclass** dynamically optimizes storage class with **no app changes** and minimal cost for **store & retrieve** patterns.  
+- ❌ **B/C/D**: Manual tiering isn’t usage-aware, adds retrieval costs/ops overhead; not transparent.
+
+---
+
+#### Q258: GUI-based pipeline to GCS as **object sink** with **your own keys**
+
+**Options:**  
+A. Storage Transfer Service.  
+B. <mark>**Cloud Data Fusion** to Cloud Storage (**GUI**, supports **CMEK**).</mark> ✅  
+C. Dataflow.  
+D. BigQuery Data Transfer Service to BigQuery.
+
+**Correct Answer:** B
+
+**Explanation:**  
+- ✅ **B**: **Data Fusion** is **GUI/no-code**, supports **CMEK** on targets, and handles Parquet/CSV sinks to **GCS**.  
+- ❌ **A**: STS GUI exists but **doesn’t support CMEK encryption on your behalf**.  
+- ❌ **C**: Dataflow is code-first, not GUI.  
+- ❌ **D**: Moves into **BigQuery**, not GCS.
+
+---
+
+#### Q259: Non-technical users clean data via GUI, then analyze in a spreadsheet
+
+**Options:**  
+A. <mark>**Dataprep** (GUI) → **BigQuery**; analyze with **Connected Sheets**.</mark> ✅  
+B. Dataprep → BigQuery; analyze with Looker Studio.  
+C. Dataflow → BigQuery; Connected Sheets.  
+D. Dataflow → BigQuery; Looker Studio.
+
+**Correct Answer:** A
+
+**Explanation:**  
+- ✅ **A**: **Dataprep** provides GUI transformations; **Connected Sheets** lets users analyze **directly in Sheets**.  
+- ❌ **B/D**: Looker Studio ≠ spreadsheet analysis.  
+- ❌ **C**: Dataflow isn’t the GUI-friendly tool for business users.
+
+---
+
+#### Q260: Reserve slots for SLA jobs; ad-hoc billed by data scanned
+
+**Options:**  
+A. One reservation for both; 300 baseline; autoscale to 700.  
+B. <mark>Two reservations: SLA → **Enterprise Edition** (baseline **300**, **autoscale +500**); ad-hoc → **on-demand**.</mark> ✅  
+C. Two Enterprise reservations; ad-hoc baseline 0, ignore idle slots False.  
+D. Two Enterprise reservations; SLA baseline 800; ad-hoc autoscale to 200.
+
+**Correct Answer:** B
+
+**Explanation:**  
+- ✅ **B**: SLA jobs get guaranteed **300 baseline + up to 500 autoscale**; ad-hoc uses **on-demand** (billed by data scanned).  
+- ❌ **A/C/D**: Don’t satisfy ad-hoc **on-demand** requirement or waste slots/cost.
+
+---
+
+#### Q261: Move Teradata historical data to BigQuery with minimal code & limited local disk
+
+**Options:**  
+A. <mark>Use **BigQuery Data Transfer Service** with **JDBC FastExport**.</mark> ✅  
+B. TPT export script + `bq` load.  
+C. DTS with TPT `tbuild`.  
+D. Script to GCS + DTS from GCS.
+
+**Correct Answer:** A
+
+**Explanation:**  
+- ✅ **A**: **DTS + JDBC FastExport** streams out with **minimal programming** and **limited local storage** usage.  
+- ❌ **B/D**: More scripting and staging management.  
+- ❌ **C**: Not the recommended path when **local storage is constrained**.
+
+---
+
+#### Q262: Encrypt BigQuery with keys generated & stored **only on-prem HSM**, using Google-managed solutions
+
+**Options:**  
+A. Import on-prem key into Cloud KMS.  
+B. <mark>Use **Cloud EKM** with on-prem **HSM** (key stays on-prem); use **CMEK/EKM** for BigQuery.</mark> ✅  
+C. Import on-prem key into **Cloud HSM**.  
+D. App-level encryption before ingest.
+
+**Correct Answer:** B
+
+**Explanation:**  
+- ✅ **B**: **Cloud EKM** lets BigQuery use **external keys** while key material **never leaves on-prem HSM**—meeting the **on-prem-only** requirement.  
+- ❌ **A/C**: Importing into **Cloud KMS/Cloud HSM** moves keys to Google Cloud.  
+- ❌ **D**: Custom app-side crypto contradicts “rely on **Google managed solutions**.”
+
+#### Q263: Find bottleneck in a fused **Dataflow streaming** pipeline
+
+**Options:**  
+A. <mark>Insert **Reshuffle** after each major step; inspect stages in the **Dataflow console**.</mark> ✅  
+B. Add intermediate **sinks** and compare write throughput.  
+C. Add **debug logs** in every **ParDo** and analyze logs.  
+D. Check **IAM** on sinks.
+
+**Correct Answer:** A
+
+**Explanation:**  
+- ✅ **A**: **Reshuffle** breaks **fusion**, restores **parallelism**, and exposes per-stage metrics so you can see where it’s slow.  
+- ❌ **B/C**: Extra sinks/logs add overhead and don’t undo fusion.  
+- ❌ **D**: Permissions don’t explain CPU-bound pipeline slowness.
+
+---
+
+#### Q264: Make CDC MERGE costs predictable with **BigQuery reservations**
+
+**Options:**  
+A. Reservation for the **dataset**.  
+B. Reservation for the **job**.  
+C. Reservation for the **service account**.  
+D. <mark>Reservation for the **project**.</mark> ✅
+
+**Correct Answer:** D
+
+**Explanation:**  
+- ✅ **D**: **Assignments** apply at **org/folder/project** level; binding the **project** puts CDC on **slots** for predictable spend.  
+- ❌ **A/B**: Not supported granularity (no dataset/job-level assignment).  
+- ❌ **C**: Reservations aren’t assigned to **service accounts**.
+
+---
+
+#### Q265: Recover last-7-days corruption in **regional BigQuery** with lowest RPO & cost
+
+**Options:**  
+A. <mark>Use **BigQuery time travel** to query/restore a **point-in-time** within 7 days.</mark> ✅  
+B. Export to a new table excluding bad rows.  
+C. Daily **table snapshots**.  
+D. Migrate to **multi-region**.
+
+**Correct Answer:** A
+
+**Explanation:**  
+- ✅ **A**: Built-in **7-day** **time travel** gives near-instant **point-in-time** recovery with **no extra ops/cost**.  
+- ❌ **B/C/D**: More ops, higher RPO/cost, or unrelated to corruption recovery.
+
+---
+
+#### Q266: Window sensor noise: average when activity > **30 min**, end if **15 min** idle
+
+**Options:**  
+A. <mark>**Session windows** with a **15-minute gap**.</mark> ✅  
+B. Session windows with a **30-minute gap**.  
+C. **Hopping** windows 15-min size / 30-min period.  
+D. **Tumbling** 15-min + **withAllowedLateness** 15-min.
+
+**Correct Answer:** A
+
+**Explanation:**  
+- ✅ **A**: **Session windows** grow while events arrive and **close after 15 min** inactivity, naturally covering **>30 min** runs.  
+- ❌ **B**: Gap too large; windows won’t close promptly.  
+- ❌ **C/D**: Fixed windows don’t end based on **inactivity**.
+
+---
+
+#### Q267: Model **header–line** retail transactions for faster analytics in **BigQuery**
+
+**Options:**  
+A. <mark>One table: header as rows; **line items** as **nested & repeated** fields.</mark> ✅  
+B. Flat table duplicating **header** per line.  
+C. Store both as **JSON**.  
+D. Keep two tables; start **WHERE** with line table.
+
+**Correct Answer:** A
+
+**Explanation:**  
+- ✅ **A**: **Nested/repeated** fields co-locate 1-to-many data, minimizing **joins** and **scanned bytes** for immutable pairs.  
+- ❌ **B**: Duplication increases storage/scan.  
+- ❌ **C**: JSON hurts schema-aware performance.  
+- ❌ **D**: Query predicate order doesn’t fix join cost.
+
+#### Q268: Zero-loss upgrade of **Dataflow streaming** (Pub/Sub → BigQuery), +≤10 min latency
+
+**Options:**  
+A. Update old job in place.  
+B. Snapshot old job; stop; start new from snapshot.  
+C. <mark>**Drain** the old pipeline, then start the new pipeline.</mark> ✅  
+D. Cancel old job; start new.
+
+**Correct Answer:** C
+
+**Explanation:**  
+- ✅ **C**: **Draining** lets the running job **flush in-flight data** and **commit windows** before shutdown, avoiding **data loss** and keeping extra **latency** bounded.  
+- ❌ **A**: In-place code swaps risk divergence or incompatibilities.  
+- ❌ **B**: **Snapshots** are for stateful restores; unnecessary and can extend downtime.  
+- ❌ **D**: **Cancel** drops buffered data → **loss/inconsistency**.
+
+---
+
+#### Q269: Make data assets **discoverable** (BigQuery, Pub/Sub, PostgreSQL on GCE) with minimal effort
+
+**Options:**  
+A. Auto-catalog **BigQuery**; custom API for **Pub/Sub** and **PostgreSQL**.  
+B. <mark>Auto-catalog **BigQuery** and **Pub/Sub**; use **Data Catalog API** to register **PostgreSQL** tables.</mark> ✅  
+C. Auto-catalog BigQuery/Pub/Sub; use **custom connectors** for PostgreSQL.  
+D. Custom connectors for everything.
+
+**Correct Answer:** B
+
+**Explanation:**  
+- ✅ **B**: **Data Catalog** auto-ingests **BigQuery** & **Pub/Sub**; for **PostgreSQL** (on GCE), use the **API** to register entries—**least configuration**.  
+- ❌ **A**: Pub/Sub is auto-discovered—no manual API needed.  
+- ❌ **C/D**: **Connectors** add setup/ops; not “minimum effort.”
+
+---
+
+#### Q270: 2-hour **SQL aggregate** → append into BigQuery, **retry** on errors, email after **3 consecutive failures**
+
+**Options:**  
+A. Composer `BigQueryUpsertTableOperator` with retries & email.  
+B. Composer `BigQueryInsertJobOperator` with retries & email.  
+C. **Scheduled Query** every 2 h + email notifications.  
+D. <mark>**Scheduled Query** every 2 h + notify **Pub/Sub**; use **Cloud Functions** to email after **3** consecutive failures.</mark> ✅
+
+**Correct Answer:** D
+
+**Explanation:**  
+- ✅ **D**: **Scheduled Queries** handle the **every-2 h** run and **retries**; **Pub/Sub** notifications let a **Function** track **consecutive failures** and send one email **after the 3rd**.  
+- ❌ **A/B**: Composer email triggers fire per **task** failure, not “**3 consecutive runs**”; schedule isn’t specified.  
+- ❌ **C**: Lacks the “**after three** failures” logic.
+
+---
+
+#### Q271: After pipeline release, some BigQuery **daily partitions doubled** while Pub/Sub volume unchanged
+
+**Options:**  
+A. Find duplicates; schedule daily **de-dup**; share script.  
+B. Check pipeline code & multiple sinks; logs; if clean, **time-travel** restore.  
+C. <mark>Check for **duplicates** in affected tables → use **Audit Logs** to find job IDs → use **Cloud Monitoring** to map **job starts** to **pipeline versions** → if **multiple versions** ingest the same table, stop all but the **latest**.</mark> ✅  
+D. Roll back release; **time-travel** restore; restart and **seek** subscription.
+
+**Correct Answer:** C
+
+**Explanation:**  
+- ✅ **C**: Symptoms suggest **duplicate ingestion** from **concurrent versions**. This path **investigates** and **fixes the cause** (stop extra writers).  
+- ❌ **A**: Treats symptom (dedup) but **not root cause**.  
+- ❌ **B/D**: Restores data but risks **recurrence**; higher ops blast radius.
+
+#### Q272: Data Catalog GDPR tags + restrict data to HR
+
+**Question:**  
+You have a BigQuery dataset “customers” with all tables tagged using a Data Catalog tag template `gdpr` (field: `has_sensitive_data`).  
+All employees should be able to search for tables by tag values, but only the HR group can see table **data** if `has_sensitive_data=true`.  
+You already gave all employees `bigquery.metadataViewer` and `bigquery.connectionUser` on the dataset.  
+What should you do next, with minimal overhead?
+
+**Options:**  
+A. Private template; HR `bigquery.dataViewer` on sensitive tables.  
+B. Private template; all employees `datacatalog.tagTemplateViewer`; HR `bigquery.dataViewer`.  
+C. <mark>**Public** tag template; HR `bigquery.dataViewer` on sensitive tables.</mark> ✅  
+D. Public template; all employees `datacatalog.tagTemplateViewer`; HR `bigquery.dataViewer`.
+
+**Correct Answer:** C
+
+**Explanation:**  
+- ✅ **C**: **Public tag templates** allow all employees to search tags via simple search; only HR gets table access with `dataViewer`.  
+- ❌ **A**: Private tags block global search for employees.  
+- ❌ **B**: Adds unnecessary `tagTemplateViewer`; increases config overhead.  
+- ❌ **D**: Extra role assignment not needed for public templates.
+
+---
+
+#### Q273: CI/CD deploy DAGs to Composer on tag push
+
+**Question:**  
+You have two Cloud Composer environments: **dev** and **prod**. DAG code is stored in Git. You want CI/CD so that when a tag is pushed, DAGs are tested in dev and then deployed to prod automatically. What should you do?
+
+**Options:**  
+A. <mark>Use **Cloud Build** to copy DAGs to **dev** Composer bucket; if tests pass, copy to **prod** bucket.</mark> ✅  
+B. Build container; deploy to Composer’s GKE via `KubernetesPodOperator`.  
+C. Container to GKE for testing; then copy to prod bucket.  
+D. Copy to dev; if pass, containerize and deploy to GKE on prod.
+
+**Correct Answer:** A
+
+**Explanation:**  
+- ✅ **A**: Cloud Build copying to Composer buckets is the **standard, simple CI/CD approach** for DAGs.  
+- ❌ **B**: GKE containerization not needed for Composer DAGs.  
+- ❌ **C**: Unnecessarily mixes GKE with Composer workflow.  
+- ❌ **D**: Adds complexity by containerizing for prod.
+
+---
+
+#### Q274: Enforce centralized CMEK for BigQuery table fed from Pub/Sub
+
+**Question:**  
+You ingest Pub/Sub data into a BigQuery table encrypted with a **Google-managed key**. New policy requires **CMEK from centralized KMS** for BigQuery at rest. What should you do?
+
+**Options:**  
+A. Use Dataflow with CMEK into existing BQ table.  
+B. <mark>Create **new BigQuery table with CMEK** and **migrate** data.</mark> ✅  
+C. Create new Pub/Sub topic with CMEK, keep old BQ table.  
+D. Create new BQ table + Pub/Sub topic with CMEK, then migrate.
+
+**Correct Answer:** B
+
+**Explanation:**  
+- ✅ **B**: BigQuery CMEK encryption is **not retroactive**; must create a new CMEK table and migrate data.  
+- ❌ **A**: Dataflow can’t re-encrypt existing table data.  
+- ❌ **C**: Fixes Pub/Sub, but table remains GMEK-encrypted.  
+- ❌ **D**: Overkill—Pub/Sub CMEK not required in the question.
+
+---
+
+#### Q275: Cheapest SQL exploration of ORC (Hive-partitioned) data
+
+**Question:**  
+You migrated ORC files with Hive partitioning from HDFS to Cloud Storage. Data scientists want SQL-based exploration, similar to Hive, but cost-effectively. What should you do?
+
+**Options:**  
+A. Import to Bigtable.  
+B. Import to BigQuery native tables.  
+C. Copy to GCS; spin up Dataproc cluster.  
+D. <mark>Copy ORC to **GCS**; create **BigQuery external tables**.</mark> ✅
+
+**Correct Answer:** D
+
+**Explanation:**  
+- ✅ **D**: External BQ tables let you query **ORC directly in GCS** with SQL; no ingest cost.  
+- ❌ **A**: Bigtable doesn’t support SQL analytics.  
+- ❌ **B**: Loading into BQ = extra storage + ETL cost.  
+- ❌ **C**: Dataproc cluster adds unnecessary ops cost.
+
+---
+
+#### Q276: Dataflow batch—mitigate zonal failures
+
+**Question:**  
+You are designing a **batch Dataflow** pipeline. You want to minimize risk of **zonal failures** at job submission. What should you do?
+
+**Options:**  
+A. Submit duplicate jobs in two zones.  
+B. Use regional GCS staging bucket.  
+C. <mark>Submit with `--region` so Dataflow spans zones.</mark> ✅  
+D. Use Eventarc to resubmit on failure.
+
+**Correct Answer:** C
+
+**Explanation:**  
+- ✅ **C**: Region-level submission allows Dataflow to allocate across zones → resilient.  
+- ❌ **A**: Duplicate pipelines = wasteful and complex.  
+- ❌ **B**: Regional staging bucket ≠ job HA.  
+- ❌ **D**: Resubmit is reactive; downtime still occurs.
+
+---
+
+#### Q277: Real-time ride-hailing heatmap (30s window, emit every 2s)
+
+**Question:**  
+You need a real-time system for a ride-hailing app:  
+- Input: driver updates + booking events.  
+- Processing: aggregate **last 30s every 2s**.  
+- Output: low-latency dashboards.  
+
+**Options:**  
+A. Tumbling windows → Memorystore.  
+B. <mark>**Hopping windows (30s, period 2s)** → **Memorystore**.</mark> ✅  
+C. Session windows → BigQuery.  
+D. Hopping windows → BigQuery.
+
+**Correct Answer:** B
+
+**Explanation:**  
+- ✅ **B**: Hopping windows handle overlapping windows (30s sliding every 2s); Memorystore = **low latency** store.  
+- ❌ **A**: Tumbling windows can’t overlap → wrong aggregation.  
+- ❌ **C**: Session windows unsuitable for periodic demand patterns.  
+- ❌ **D**: BigQuery too slow for real-time dashboards.
+
+---
+
+#### Q278: Handle failed messages in Dataflow DoFn
+
+**Question:**  
+You have a streaming Dataflow job: Pub/Sub → DoFn → BigQuery. If a message fails in DoFn, you want it sent to a separate Pub/Sub topic for monitoring. What should you do?
+
+**Options:**  
+A. Retain acked msgs; monitor retained metric.  
+B. <mark>Catch exceptions in **DoFn**; send to **side output** → **new Pub/Sub topic**.</mark> ✅  
+C. Enable DLQ on Pub/Sub subscription.  
+D. Snapshot subscription; monitor snapshot metric.
+
+**Correct Answer:** B
+
+**Explanation:**  
+- ✅ **B**: Dataflow must handle **post-ack failures** internally → side output + Pub/Sub topic.  
+- ❌ **A**: Retained acked msgs not visible to pipeline.  
+- ❌ **C**: DLQ only works for unacked msgs, not DoFn failures.  
+- ❌ **D**: Snapshots don’t capture failed processing.
+
+---
+
+#### Q279: Shared dataset read-only + private analyst workspaces
+
+**Question:**  
+You want: one **shared dataset** (read-only), and private per-analyst datasets (write access only for owner). What should you do?
+
+**Options:**  
+A. Project-level Viewer; one shared edit dataset.  
+B. Project-level Viewer; project-level Editor per analyst.  
+C. <mark>Viewer on shared dataset; **private dataset per analyst** with Editor only for that analyst.</mark> ✅  
+D. Viewer on shared; one common edit dataset.
+
+**Correct Answer:** C
+
+**Explanation:**  
+- ✅ **C**: Viewer on shared = read-only access; private datasets give analysts isolated workspaces.  
+- ❌ **A**: Shared edit dataset → analysts overwrite each other’s work.  
+- ❌ **B**: Project-level Editor = too broad, violates least privilege.  
+- ❌ **D**: One edit dataset shared = no privacy.
+
+---
+
+#### Q280: Hopping windows dropping late data
+
+**Question:**  
+Your streaming pipeline uses **hopping windows**. Some events arrive **late**, but aren’t being marked late, causing wrong aggregations. How can you fix this?
+
+**Options:**  
+A. <mark>Configure **watermarks** and **allow lateness**.</mark> ✅  
+B. Switch to tumbling windows.  
+C. Switch to session windows.  
+D. Make hopping window larger.
+
+**Correct Answer:** A
+
+**Explanation:**  
+- ✅ **A**: Watermarks + allowed lateness ensure late arrivals are captured in correct windows.  
+- ❌ **B**: Tumbling windows don’t solve late event handling.  
+- ❌ **C**: Session windows unrelated to lateness issue.  
+- ❌ **D**: Larger window ≠ guarantee for late arrivals.
+
+
+#### Q281: Bigtable shows rows older than 30 days despite GC
+
+**Question:**  
+Order data in Bigtable has GC rule: **max age 30 days, 1 version**. Analysts still see rows older than 30 days. Need to **hide >30-day data** with minimal cost/overhead.
+
+**Options:**  
+A. Set GC max age to 29 days; keep 1 version.  
+B. <mark>Use a **timestamp range filter** in queries.</mark> ✅  
+C. Daily job to delete >30-day rows.  
+D. Max age 30 days; set versions to 2.
+
+**Correct Answer:** B
+
+**Explanation:**  
+- ✅ **B**: GC is **asynchronous** (can take up to a week); use **timestamp filters** to exclude stale cells at read time.  
+- ❌ **A/D**: Tweaking GC rules doesn’t guarantee immediate removal; extra versions can expose old data.  
+- ❌ **C**: Daily scan/delete is costly and adds ops overhead.
+
+---
+
+#### Q282: Exactly-once streaming into BigQuery at ~1.5 GB/s
+
+**Question:**  
+Source bus is **at-least-once**. Need **exactly-once** writes into BigQuery at ~**1.5 GB/s**.
+
+**Options:**  
+A. <mark>Use **BigQuery Storage Write API** to a **regional** table.</mark> ✅  
+B. Storage Write API to a multiregional table.  
+C. BigQuery **Streaming** API to a regional table.  
+D. BigQuery **Streaming** API to a multiregional table.
+
+**Correct Answer:** A
+
+**Explanation:**  
+- ✅ **A**: The **Storage Write API** supports **exactly-once** via stream offsets; use a **regional** table for those guarantees.  
+- ❌ **B**: Multiregion isn’t the target for exactly-once semantics in this scenario.  
+- ❌ **C/D**: Legacy **Streaming API** is at-least-once; no exactly-once guarantee.
+
+---
+
+#### Q283: Speed up queries on Hive-partitioned external table (GCS)
+
+**Question:**  
+External table over many ORC files (Hive partitions) on GCS is **slow**. Improve performance.
+
+**Options:**  
+A. Change GCS class from Coldline to Standard.  
+B. One external table per partition + wildcard queries.  
+C. <mark>**Upgrade to BigLake** and enable **metadata caching**.</mark> ✅  
+D. Move data to multi-region bucket.
+
+**Correct Answer:** C
+
+**Explanation:**  
+- ✅ **C**: **BigLake** + **metadata caching** reduces file listing/metadata overhead → faster planning & reads.  
+- ❌ **A/D**: Storage class/region change doesn’t fix metadata scan bottlenecks.  
+- ❌ **B**: Many tables + wildcard adds complexity and doesn’t solve listing cost.
+
+---
+
+#### Q284: Dual access pattern—ms lookups + daily analytics
+
+**Question:**  
+1000 sensors, 1 metric/sensor/sec, 1 TB now + 1 GB/day. Need **single-digit ms** point lookups and **daily complex analytics**.
+
+**Options:**  
+A. BigQuery with sensorID+timestamp primary key.  
+B. <mark>**Bigtable** with row key **sensorID#timestamp**; **daily export to BigQuery**.</mark> ✅  
+C. Bigtable with sensorID+metric as row key; export to BQ.  
+D. BigQuery with metric as key.
+
+**Correct Answer:** B
+
+**Explanation:**  
+- ✅ **B**: **Bigtable** excels at **ms** key lookups for time-series; export to **BigQuery** for heavy SQL analytics.  
+- ❌ **A/D**: BigQuery not optimized for ms single-row reads.  
+- ❌ **C**: Row key should be **time-ordered** per sensor; using metric breaks access pattern.
+
+---
+
+#### Q285: Cheap, immutable 3-year backup; rare SQL access
+
+**Question:**  
+100 GB BigQuery table; access 1–2×/year; must be **immutable for 3 years**; minimize storage cost.
+
+**Options:**  
+A. Table clone; query clone.  
+B. Table snapshot; restore when needed.  
+C. Export to GCS **Archive**, enable versioning; external table.  
+D. <mark>Export to GCS **Archive**, **locked retention policy (3y)**; external table.</mark> ✅
+
+**Correct Answer:** D
+
+**Explanation:**  
+- ✅ **D**: **Archive** class + **bucket lock** enforces immutability & lowest cost; **external table** enables ad-hoc SQL.  
+- ❌ **A/B**: BigQuery storage costs persist; not immutable for compliance.  
+- ❌ **C**: Versioning ≠ legal hold; can still be deleted.
+
+---
+
+#### Q286: Migrate thousands of Spark jobs fast, minimal code
+
+**Question:**  
+Move on-prem Spark to Google Cloud; **managed service**, **tight timeline**, **minimal code changes**.
+
+**Options:**  
+A. Convert to BigQuery SQL.  
+B. Rewrite in Beam for Dataflow.  
+C. Compute Engine VMs + disks.  
+D. <mark>Move data to **GCS**; run Spark on **Dataproc**.</mark> ✅
+
+**Correct Answer:** D
+
+**Explanation:**  
+- ✅ **D**: **Dataproc** runs Spark with **near-zero code changes**; use **GCS** as HDFS replacement.  
+- ❌ **A/B**: Major rewrites.  
+- ❌ **C**: You’d manage the cluster yourself (high ops burden).
+
+---
+
+#### Q287: Make marketing’s BQ spend **consistent** monthly
+
+**Question:**  
+Shared datasets/views; marketing wants **predictable monthly** analytics spend.
+
+**Options:**  
+A. Enterprise reservation 250 baseline + autoscale 500.  
+B. Custom quotas on bytes scanned.  
+C. <mark>Reservation **baseline 500 slots**, **no autoscaling**.</mark> ✅  
+D. Standard pay-as-you-go baseline 0; autoscale 500.
+
+**Correct Answer:** C
+
+**Explanation:**  
+- ✅ **C**: **Fixed slots** (no autoscale) → **fixed capacity cost** = predictable spend.  
+- ❌ **A/D**: **Autoscaling** re-introduces variable costs.  
+- ❌ **B**: Quotas cap usage but don’t give predictable cost; can block work.
+
+---
+
+#### Q288: Decentralized healthcare data—discover, lineage, quality
+
+**Question:**  
+Need quick, cost-optimized solution for **discovery, lineage, data quality** across stores.
+
+**Options:**  
+A. Convert to BigLake.  
+B. Build custom tool on GKE.  
+C. BigQuery for lineage + Dataprep for quality.  
+D. <mark>Use **Dataplex** for **management, lineage, data quality**.</mark> ✅
+
+**Correct Answer:** D
+
+**Explanation:**  
+- ✅ **D**: **Dataplex** unifies **governance + discovery + lineage + quality** across lakes/warehouses.  
+- ❌ **A**: BigLake is a storage federation feature, not end-to-end governance.  
+- ❌ **B**: Custom build = time/cost heavy.  
+- ❌ **C**: Partial coverage; no central governance.
+
+---
+
+#### Q289: No-code recurring normalization for BQ reports
+
+**Question:**  
+Weekly exec reports have inconsistent phone formats/country codes. Need **recurring, no-code** normalization.
+
+**Options:**  
+A. <mark>**Cloud Data Fusion + Wrangler**, schedule recurring job.</mark> ✅  
+B. Dataflow SQL recurring pipeline.  
+C. Spark on Dataproc Serverless.  
+D. BigQuery SQL scheduled queries.
+
+**Correct Answer:** A
+
+**Explanation:**  
+- ✅ **A**: **Wrangler** is **no-code** transformation with schedulable pipelines.  
+- ❌ **B/C/D**: Require writing SQL/Scala/Python—**not** no-code.
+
+---
+
+#### Q290: Push subscription—gradual retries + DLQ after 10 tries
+
+**Question:**  
+Push subscriber may be down; need retries that **don’t overload** app and **store failed msgs** after **10 attempts**.
+
+**Options:**  
+A. Increase ack deadline to 10 min.  
+B. Immediate redelivery + DLQ different topic (10).  
+C. Exponential backoff + DLQ to **same** topic (10).  
+D. <mark>**Exponential backoff** retry + **DLQ to different topic**, **max attempts = 10**.</mark> ✅
+
+**Correct Answer:** D
+
+**Explanation:**  
+- ✅ **D**: **Exponential backoff** prevents thundering herd; **DLQ** to a **separate topic** isolates failures; stop at **10** tries.  
+- ❌ **A**: Just extends lock; no backoff/DLQ.  
+- ❌ **B**: Immediate redelivery can overload the app.  
+- ❌ **C**: DLQ must be **different** topic (avoid poisoning source).
+
+---
+
+#### Q291: Share BigQuery sales dataset—self-serve, low-ops, low-cost
+
+**Question:**  
+Need a **self-service**, low-maintenance way to share sales data across BUs.
+
+**Options:**  
+A. <mark>Create an **Analytics Hub** private exchange; publish dataset.</mark> ✅  
+B. Authorized views across projects.  
+C. Create/share views with users.  
+D. Schedule DTS copies to other projects.
+
+**Correct Answer:** A
+
+**Explanation:**  
+- ✅ **A**: **Analytics Hub** provides governed, **self-serve** sharing with minimal ops.  
+- ❌ **B/C**: Manual ACL/view sprawl; higher maintenance.  
+- ❌ **D**: Copies increase storage cost and drift; not self-serve.
+
+#### Q292: Marketing campaigns with Cloud SQL + GA data, minimize DB load
+
+**Question:**  
+Terabytes of behavioral data stream daily into **BigQuery**. Customer info is in **Cloud SQL MySQL** and CRM in **Cloud SQL PostgreSQL**. Marketing wants to combine all data for campaigns, running **100–300 queries/day**, while minimizing **load on Cloud SQL**.
+
+**Options:**  
+A. BQ federated queries on both Cloud SQL DBs + GA data.  
+B. Dataproc Serverless Spark job to query Cloud SQL + BQ.  
+C. <mark>**Datastream** to replicate Cloud SQL → BigQuery, then join with GA data.</mark> ✅  
+D. Dataproc cluster with Trino to connect to Cloud SQL + BQ.
+
+**Correct Answer:** C
+
+**Explanation:**  
+- ✅ **C**: **Datastream** provides real-time **CDC replication** into BigQuery. Queries run on BQ only, avoiding Cloud SQL load and scaling to hundreds of daily queries.  
+- ❌ **A**: Federated queries hit Cloud SQL directly → risk overload.  
+- ❌ **B/D**: Spark/Trino still query Cloud SQL live, adding overhead and latency.
+
+---
+
+#### Q293: Enable data mesh across departments (GCS + BigQuery)
+
+**Question:**  
+Need to modernize data in **Cloud Storage + BigQuery** with a **data mesh** approach for sales, product design, and marketing.
+
+**Options:**  
+A. One central project; buckets + datasets + IAM groups.  
+B. Multiple projects; departments publish to **Analytics Hub**.  
+C. Central GCS bucket + BQ dataset with dept prefixes.  
+D. <mark>Multiple projects; map GCS + BQ into **Dataplex lakes/zones**; each dept owns and shares its data.</mark> ✅  
+
+**Correct Answer:** D
+
+**Explanation:**  
+- ✅ **D**: **Dataplex** supports **data mesh**: decentralized ownership, governance, lineage, and discovery across GCS + BQ.  
+- ❌ **A/C**: Centralized → not true mesh.  
+- ❌ **B**: Analytics Hub works for BQ datasets only, not GCS.
+
+---
+
+#### Q294: Allow new subscribers to read last 30 days of Pub/Sub data
+
+**Question:**  
+New subscribers can’t read old messages. For a sale, new subs must read the **last 30 days**.
+
+**Options:**  
+A. Create new topic and republish 30 days each time.  
+B. <mark>Set **topic retention policy** to 30 days.</mark> ✅  
+C. Set subscription retention to 30 days.  
+D. Ask source to re-push data.  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B**: **Topic retention** (max 31 days) ensures all messages are kept for new subscribers.  
+- ❌ **C**: Subscription retention max = 7 days.  
+- ❌ **A/D**: Manual republishing/re-push not scalable.
+
+---
+
+#### Q295: Dataflow on Shared VPC needs network permissions
+
+**Question:**  
+Pipelines must run on a **Shared VPC** subnet.
+
+**Options:**  
+A. Grant `compute.networkUser` to **Dataflow service agent**.  
+B. <mark>Grant `compute.networkUser` to the **pipeline service account**.</mark> ✅  
+C. Grant `dataflow.admin` to service agent.  
+D. Grant `dataflow.admin` to pipeline service account.  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B**: The **pipeline’s service account** launches worker VMs; it must have `compute.networkUser` on the subnet.  
+- ❌ **A**: Service agent manages internals, not workers.  
+- ❌ **C/D**: `dataflow.admin` is too broad; doesn’t cover network use.
+
+---
+
+#### Q296: Stream from on-prem Kafka → BigQuery with minimal latency
+
+**Question:**  
+On-prem Kafka cluster, connected via **Interconnect**. Need **high-throughput, low-latency** streaming to BigQuery.
+
+**Options:**  
+A. Kafka Connect → Pub/Sub → Dataflow template → BQ.  
+B. Proxy host in VPC → Dataflow → BQ.  
+C. <mark>Dataflow pipeline directly reads Kafka → BQ.</mark> ✅  
+D. Kafka Connect → Pub/Sub → custom Dataflow → BQ.  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C**: Direct **Dataflow KafkaIO → BigQuery** avoids extra hops (Pub/Sub), giving **lowest latency**.  
+- ❌ **A/D**: Adding Pub/Sub adds delay.  
+- ❌ **B**: Proxy adds complexity, not needed with Interconnect.
+
+---
+
+#### Q297: Column-level security on Spark + SQL over GCS data
+
+**Question:**  
+HDFS lake migrated to **Cloud Storage**. Need Spark + SQL access, enforce **column-level security**, cost-effective, data mesh ready.
+
+**Options:**  
+A. Dataproc + Hive + Ranger.  
+B. <mark>Define **BigLake** table; apply **policy tags** via Data Catalog; process via Spark-BQ connector or SQL.</mark> ✅  
+C. Load into BigQuery tables; apply policy tags; Spark-BQ connector.  
+D. IAM on files + external BQ table + Dataproc.  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B**: **BigLake** unifies GCS + BQ, supports **column-level policy tags**; integrates with Spark.  
+- ❌ **A**: Long-lived cluster → costly.  
+- ❌ **C**: Loading into BQ adds storage cost; BigLake avoids duplication.  
+- ❌ **D**: IAM only at file/table level, not column.
+
+---
+
+#### Q298: Re-encrypt GCS data after CMEK key exposure
+
+**Question:**  
+A CMEK key in **Cloud KMS** was exposed. Need to re-encrypt all CMEK-protected GCS objects and enforce future protection.
+
+**Options:**  
+A. Rotate key version; keep bucket.  
+B. New key; set default CMEK on existing bucket.  
+C. New key; new bucket; copy specifying key.  
+D. <mark>New key; new bucket (default CMEK); copy objects without specifying key.</mark> ✅  
+
+**Correct Answer:** D  
+
+**Explanation:**  
+- ✅ **D**: New bucket with **default CMEK** ensures all copies (and future writes) are encrypted automatically. Old compromised key can be deleted safely.  
+- ❌ **A**: Rotation doesn’t re-encrypt existing data.  
+- ❌ **B**: Updating default CMEK on existing bucket doesn’t re-encrypt old objects.  
+- ❌ **C**: Manually specifying key may miss future writes; default enforcement is safer.
+
+#### Q299: DR for Spark on Dataproc with RPO = 15 mins
+
+**Question:**  
+Spark jobs run on **Dataproc in us-central1**, data in **Cloud Storage (US regions)**. Need **DR plan** with **≤15 min RPO** and **low latency** in normal ops.
+
+**Options:**  
+A. Two regional buckets + STS hourly copy + redeploy clusters in us-south1.  
+B. US multi-region bucket + redeploy cluster in us-central2.  
+C. Dual-region bucket (central1 + south1) + turbo replication; always read from us-south1.  
+D. <mark>Dual-region bucket (central1 + south1) + **turbo replication**; read local in central1, failover to south1 if needed.</mark> ✅  
+
+**Correct Answer:** D  
+
+**Explanation:**  
+- ✅ **D**: **Dual-region + turbo replication** guarantees near-real-time replication (<15 min RPO). Dataproc normally reads from **same-region** copy (low latency), and can fail over seamlessly to the backup region if a regional outage occurs.  
+- ❌ **A**: Hourly STS copy → RPO ~60 min, not ≤15 min.  
+- ❌ **B**: Multi-region ensures durability but doesn’t meet **latency** and **RPO** requirements.  
+- ❌ **C**: Always reading cross-region (central1 → south1) adds **latency** unnecessarily.  
+
+---
+
+#### Q300: Modernize PostgreSQL for hybrid workloads
+
+**Question:**  
+On-prem **PostgreSQL** database for **transactional workloads**. Need **single DB** for both **transactional + analytics**, minimize migration effort and complexity.
+
+**Options:**  
+A. Cloud Spanner.  
+B. <mark>**AlloyDB for PostgreSQL**.</mark> ✅  
+C. BigQuery.  
+D. Cloud SQL for PostgreSQL.  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B**: **AlloyDB** is **PostgreSQL-compatible**, optimized for **HTAP (Hybrid Transactional + Analytical Processing)**. It supports **transactional + analytical queries** in one system, minimizing migration changes while enabling modern analytics.  
+- ❌ **A**: Spanner is **not PostgreSQL-compatible**; requires app rewrite.  
+- ❌ **C**: BigQuery is **analytics-only**, not for transactional workloads.  
+- ❌ **D**: Cloud SQL is good for OLTP, but **not built for analytics** at scale in the same DB.  
+
+---
+
+#### Q301: ELT SQL pipelines with SQL-as-code
+
+**Question:**  
+Need **ELT pipelines** on BigQuery. Developers are SQL-proficient, want **SQL-as-code** with **version control + scheduling**.
+
+**Options:**  
+A. <mark>**Dataform** for SQL pipelines.</mark> ✅  
+B. Dataflow jobs for transforms.  
+C. Data Fusion ETL pipelines.  
+D. Composer DAGs with BQ operators.  
+
+**Correct Answer:** A  
+
+**Explanation:**  
+- ✅ **A**: **Dataform** is purpose-built for **SQL pipelines in BigQuery**, supports **ELT, version control, scheduling, testing**. Best fit for SQL developers.  
+- ❌ **B**: Dataflow requires **Java/Python**, not SQL-first.  
+- ❌ **C**: Data Fusion = ETL, not ELT SQL.  
+- ❌ **D**: Composer adds orchestration but not SQL-as-code pipeline mgmt.  
+
+---
+
+#### Q302: Sensor metrics data model (low cost, weekly analytics)
+
+**Question:**  
+5,000 sensors, 1 metric every 30s → store in BigQuery. **Weekly analytics**, minimize **cost**.
+
+**Options:**  
+A. Nested REPEATED metrics in sensors table, UPDATE every 30s.  
+B. Nested REPEATED metrics in sensors table, INSERT every 30s.  
+C. <mark>Separate **metrics table**, partitioned by timestamp, INSERT every 30s; join with sensors table.</mark> ✅  
+D. Separate metrics table + UPDATE every 30s.  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C**: Best practice = **partitioned metrics table** (time-series), **INSERT-only** (BQ is append-optimized), join to **sensors metadata** when needed.  
+- ❌ **A/B**: Nested REPEATED fields + frequent UPDATEs/INSERTs into same row are costly and inefficient in BQ.  
+- ❌ **D**: UPDATE-heavy design = poor fit for BQ.  
+
+---
+
+#### Q303: Dataplex curated zone not discovering JSON/CSV
+
+**Question:**  
+JSON + CSV uploaded to **curated zone** in Dataplex. Files not discovered.
+
+**Options:**  
+A. <mark>Move JSON/CSV to **raw zone**.</mark> ✅  
+B. Enable auto-discovery in curated zone.  
+C. Load JSON/CSV to BigQuery via `bq` CLI.  
+D. Grant object-level IAM on files.  
+
+**Correct Answer:** A  
+
+**Explanation:**  
+- ✅ **A**: **Curated zones** in Dataplex accept only **columnar formats (Parquet, Avro, ORC)**. CSV/JSON → must go to **raw zone**.  
+- ❌ **B**: Auto-discovery won’t fix invalid formats.  
+- ❌ **C/D**: Not about discovery; wrong scope.  
+
+---
+
+#### Q304: Aggregations over last year, PB-scale table
+
+**Question:**  
+Sales table (partitioned), petabytes of data. Queries = **AVG, MAX, SUM** over **last year only**. Need low-cost, fresh results.
+
+**Options:**  
+A. <mark>Create a **materialized view** with filter on last year partitions.</mark> ✅  
+B. Materialized view + set partition expiration = 1 year.  
+C. Normal view with WHERE filter.  
+D. New aggregate table refreshed hourly.  
+
+**Correct Answer:** A  
+
+**Explanation:**  
+- ✅ **A**: **Materialized views** precompute aggregations, auto-refresh, always return near-real-time results for last year.  
+- ❌ **B**: Partition expiration deletes older data → violates “retain history.”  
+- ❌ **C**: Normal view recomputes each time → costly/slow.  
+- ❌ **D**: Scheduled table adds **maintenance + delay**.  
+
+---
+
+#### Q305: Query GCS + AWS S3 via BigQuery, no direct bucket access
+
+**Question:**  
+Multi-cloud storage: **GCS + AWS S3**. Need to query both via **BigQuery** with **no direct bucket access**.
+
+**Options:**  
+A. <mark>Set up **BigQuery Omni** + **BigLake tables**.</mark> ✅  
+B. Omni + external tables.  
+C. STS copy to GCS + BigLake tables.  
+D. STS copy to GCS + external tables.  
+
+**Correct Answer:** A  
+
+**Explanation:**  
+- ✅ **A**: **Omni** connects BQ to S3 directly. **BigLake tables** unify S3 + GCS with access governance, no direct bucket ACLs.  
+- ❌ **B**: External tables don’t support S3 without BigLake.  
+- ❌ **C/D**: STS copies data → breaks freshness + adds cost.  
+
+---
+
+#### Q306: Preprocess PII in restricted GCS bucket → BigQuery
+
+**Question:**  
+Must preprocess **customer PII** in restricted bucket. Need **privacy compliance** but allow **consumer analytics**.
+
+**Options:**  
+A. <mark>**Dataflow + Cloud DLP** to mask sensitive data; write to BQ.</mark> ✅  
+B. CMEK encrypt in GCS; federated query.  
+C. Dataflow + DLP to detect/remove PII.  
+D. Dataflow + KMS encrypt sensitive fields; share key.  
+
+**Correct Answer:** A  
+
+**Explanation:**  
+- ✅ **A**: **Masking** balances **privacy + data utility** → analysts can still use patterns without exposing PII.  
+- ❌ **B**: Encryption ≠ PII preprocessing.  
+- ❌ **C**: Removing fields destroys needed data.  
+- ❌ **D**: Encryption requires key sharing → higher risk/complexity.  
+
+---
+
+#### Q307: Secure Cloud SQL with dynamic app IPs
+
+**Question:**  
+Apps with **dynamic public IPs** need secure access to **Cloud SQL (public IP)**.
+
+**Options:**  
+A. Allow 0.0.0.0/0, control with IAM.  
+B. Keep updating Authorized Networks.  
+C. <mark>Leave Authorized Network empty; use **Cloud SQL Auth Proxy**.</mark> ✅  
+D. Allow 0.0.0.0/0 + Auth Proxy.  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C**: **Auth Proxy** handles IAM + SSL tunnels, no need to manage IPs. Strongest security for **dynamic IPs**.  
+- ❌ **A/D**: Opening 0.0.0.0/0 = insecure.  
+- ❌ **B**: Manual IP updates = unscalable.  
+
+---
+
+#### Q308: STS migration fails with HTTP 403 after long run
+
+**Question:**  
+Migrating HTTPS-signed URLs → GCS with **STS**. Job fails after long run with **403s**.
+
+**Options:**  
+A. Mount GCS with FUSE + shell script.  
+B. Renew TLS cert.  
+C. <mark>Generate new **signed URLs (longer validity)**; split TSV; rerun STS jobs in parallel.</mark> ✅  
+D. Switch checksums to SHA256.  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C**: 403s caused by **expired signed URLs**. Solution = regenerate with longer expiry + parallelize jobs.  
+- ❌ **A/B/D**: Not relevant to signed URL expiry.  
+
+---
+
+#### Q309: Store only last 30 days of weather data
+
+**Question:**  
+Weather data → BigQuery. Only **last 30 days** needed for ML. Minimize cost.
+
+**Options:**  
+A. Ingestion timestamp + scheduled DELETE.  
+B. <mark>Partition table by **weather date**; set **partition expiration = 30 days**.</mark> ✅  
+C. Partition by ingestion time; expiration = 30 days.  
+D. Datetime column + scheduled DELETE.  
+
+**Correct Answer:** B  
+
+**Explanation:**  
+- ✅ **B**: Partitioning by **business date** ensures only 30 days of data remain; queries also efficient.  
+- ❌ **A/D**: DELETE queries add cost + ops.  
+- ❌ **C**: Ingestion time ≠ business date → misaligned retention.  
+
+---
+
+#### Q310: Fast repeated queries on PB-scale table
+
+**Question:**  
+PB-scale BQ table. Need frequent **filtered aggregations** for users. Must be **fast + fresh**.
+
+**Options:**  
+A. Scheduled query with table refresh.  
+B. Cached query.  
+C. Limit columns.  
+D. <mark>Create a **materialized view**.</mark> ✅  
+
+**Correct Answer:** D  
+
+**Explanation:**  
+- ✅ **D**: **Materialized views** precompute and auto-refresh, perfect for repeated aggregates on large tables.  
+- ❌ **A**: Scheduled query = stale, not live.  
+- ❌ **B**: Cache only helps for repeated exact queries.  
+- ❌ **C**: Limiting columns ≠ major performance gain.  
+
+---
+
+#### Q311: Prevent duplicate Pub/Sub message processing
+
+**Question:**  
+Pub/Sub **pull subscription** for sales orders. Must **avoid duplicate processing**, no extra complexity.
+
+**Options:**  
+A. Dedup in Dataflow.  
+B. Transactional DB tracking.  
+C. <mark>Enable **Pub/Sub exactly-once delivery**.</mark> ✅  
+D. Add push subscription.  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C**: Pub/Sub now supports **exactly-once** with pull subs, ensuring messages processed only once.  
+- ❌ **A/B/D**: Adds **complexity**; not needed.  
+
+---
+
+#### Q312: Cross-team secure, self-service dataset sharing
+
+**Question:**  
+Migrate DW → BigQuery. Need **cross-team collaboration**, secure, fresh, self-service.
+
+**Options:**  
+A. <mark>Use **Analytics Hub**.</mark> ✅  
+B. Authorized datasets.  
+C. Create datasets in each project.  
+D. DTS copies to central project.  
+
+**Correct Answer:** A  
+
+**Explanation:**  
+- ✅ **A**: **Analytics Hub** = built-in platform for publishing/discovering/subscribing datasets with no data copy.  
+- ❌ **B/C/D**: Manual setup = higher ops, cost, stale data.  
+
+---
+
+#### Q313: Migrate Spark 3 batch job → Cloud, minimal effort
+
+**Question:**  
+Spark 3 job → read from GCS, write to BQ. Needs similar **executor configs** (8 vCPU, 16 GB). Minimize mgmt effort.
+
+**Options:**  
+A. GKE.  
+B. Compute Engine VM.  
+C. Dataproc cluster.  
+D. <mark>Dataproc **Serverless** job.</mark> ✅  
+
+**Correct Answer:** D  
+
+**Explanation:**  
+- ✅ **D**: **Dataproc Serverless** supports Spark 3, configurable vCPU/mem, minimal install/ops overhead.  
+- ❌ **A/B/C**: Require more provisioning/management.  
+
+---
+
+#### Q314: Secure networking for Dataflow job
+
+**Question:**  
+Dataflow job uses **custom containers**, reads GCS, writes BQ. Need **secure + cost-effective networking**.
+
+**Options:**  
+A. <mark>Disable external IPs; enable **Private Google Access**.</mark> ✅  
+B. Keep external IPs + firewalls.  
+C. Disable IPs + PSC endpoint.  
+D. Enable Cloud NAT.  
+
+**Correct Answer:** A  
+
+**Explanation:**  
+- ✅ **A**: **Private Google Access** lets worker VMs without external IPs talk securely to GCP APIs (GCS/BQ). Saves IP cost + improves security.  
+- ❌ **B/D**: Still require external/NAT, adds cost & exposure.  
+- ❌ **C**: PSC possible but overkill; not needed here.  
+
+---
+
+#### Q315: Workflows + custom Python logic for JSON
+
+**Question:**  
+Workflow calls API (JSON), needs **complex Python logic**, then loads data to BQ. Optimize for **simplicity + speed**.
+
+**Options:**  
+A. Cloud Composer.  
+B. Dataproc.  
+C. <mark>Cloud Function with Python logic.</mark> ✅  
+D. Workflows subworkflow.  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C**: **Cloud Function** = serverless, fast, Python-ready, integrates easily into Workflow step.  
+- ❌ **A/B/D**: Composer/Dataproc heavy; subworkflow lacks Python stdlib.  
+
+---
+
+#### Q316: BI queries on 50TB fact table too slow/expensive
+
+**Question:**  
+On-demand BQ env. Hundreds of BI queries/day on 50TB fact table, aggregations by **day/month**. Too slow/costly.
+
+**Options:**  
+A. Authorized views.  
+B. BI Engine.  
+C. <mark>**Materialized views** with day/month aggregation.</mark> ✅  
+D. Scheduled query → aggregate tables.  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C**: **Materialized views** precompute + auto-refresh aggregates → huge performance + cost improvement.  
+- ❌ **A/B/D**: Views/BI Engine don’t solve heavy aggregation cost at scale.  
+
+---
+
+#### Q317: GUI-based pipeline with custom keys → GCS sink
+
+**Question:**  
+Centralize unstructured data (Parquet, CSV) → GCS, with **CMEK**, GUI solution.
+
+**Options:**  
+A. BigQuery DTS.  
+B. STS.  
+C. Dataflow.  
+D. <mark>**Cloud Data Fusion** (GUI + CMEK).</mark> ✅  
+
+**Correct Answer:** D  
+
+**Explanation:**  
+- ✅ **D**: **Cloud Data Fusion** supports **GUI pipelines + CMEK** for GCS sinks.  
+- ❌ **A/B/C**: DTS/STC/Dataflow not GUI-first; CMEK limited.  
+
+---
+
+#### Q318: Protect BigQuery table from regional failure (RPO < 24h)
+
+**Question:**  
+Regional BQ dataset, updated multiple times/day. Need **RPO < 24h** backup against regional failure, cost-effective.
+
+**Options:**  
+A. <mark>Daily export to **dual/multi-region GCS**.</mark> ✅  
+B. Daily copy dataset to backup region.  
+C. Daily snapshot.  
+D. Modify ETL to dual-load.  
+
+**Correct Answer:** A  
+
+**Explanation:**  
+- ✅ **A**: Export to **dual/multi-region GCS** is cheap + resilient. RPO <24h met.  
+- ❌ **B**: Dataset copy costs more, less flexible.  
+- ❌ **C**: Snapshots stay **in-region** → no DR.  
+- ❌ **D**: Dual-loading increases cost/complexity.  
+
+---
+
+#### Q319: Preprocess customer data, protect sensitive fields, retain all data
+
+**Question:**  
+Restricted GCS bucket with customer data. Must **protect sensitive fields**, but **retain all data** for future.
+
+**Options:**  
+A. DLP + Dataflow → remove sensitive fields.  
+B. CMEK encrypt in GCS + federated queries.  
+C. <mark>Dataflow + DLP → **mask sensitive fields**, load to BQ.</mark> ✅  
+D. Dataflow + KMS encrypt sensitive fields + share key.  
+
+**Correct Answer:** C  
+
+**Explanation:**  
+- ✅ **C**: **Masking** protects sensitive fields but **retains values** (usable for analytics + future cases).  
+- ❌ **A**: Removing fields = data loss.  
+- ❌ **B**: Encryption ≠ preprocessing.  
+- ❌ **D**: KMS encryption complicates sharing + ops.  
