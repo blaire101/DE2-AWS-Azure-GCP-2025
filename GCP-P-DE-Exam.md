@@ -1422,7 +1422,7 @@ Thousands of features; want faster training while preserving accuracy.
 
 Options:  
 A. Drop features correlated with label.  
-<mark>B. Combine highly correlated features.</mark>  
+**<mark>B. Combine highly correlated features. (e.g., PCA)</mark>**  
 C. Average features in groups of 3.  
 D. Drop features with 50% nulls.  
 
@@ -1447,6 +1447,11 @@ A. Provide TableReference.
 <mark>B. Use `.fromQuery` selecting only needed columns.</mark>  ✅ `projection pushdown`  
 C. Use TableSchema.  
 D. Return TableRow.  
+
+```bash
+BigQueryIO.readTableRows()
+  .fromQuery("SELECT user_id, event_type FROM dataset.logs");
+```
 
 **Correct Answer:**  
 B  
@@ -1512,13 +1517,32 @@ D. Create a new pipeline with a new Pub/Sub subscription and cancel the old one.
 **Correct Answer:**  
 A  
 
+```mermaid
+flowchart LR
+    subgraph OldPipeline["🟢 Old Dataflow Pipeline"]
+        A[Pub/Sub<br>Subscription] --> B[Dataflow Job v1<br>Running]
+        B --> C[BigQuery / Storage / Sink]
+    end
+
+    subgraph Upgrade["⚙️ Upgrade Process"]
+        B -. drain .-> D[Drain Mode<br>Finish in-flight data]
+    end
+
+    subgraph NewPipeline["🟡 New Dataflow Pipeline"]
+        A --> E[Dataflow Job v2<br>New Deployment]
+        E --> C
+    end
+
+    style OldPipeline fill:#e6ffe6,stroke:#1a8a1a,stroke-width:2px
+    style NewPipeline fill:#fff3e6,stroke:#ff6600,stroke-width:2px
+    style Upgrade fill:#f0f0ff,stroke:#3333cc,stroke-width:2px
+```
+
 **Explanation:**  
 - <mark>**Drain** allows current pipeline to **finish processing in-flight data** before shutdown → no loss.</mark>    
 - **B** only works for compatible transform changes (rename/mapping), not for incompatible jobs.  
 - **C/D** risk losing unacked or duplicate messages when switching subscriptions.  
 - Safe approach: **drain old pipeline → deploy new one**.  
-
----
 
 #### Q32: Improve Bigtable load performance (10TB initial load)  
 
@@ -1533,6 +1557,14 @@ D. Use sequential numeric IDs as row keys.
 
 **Correct Answer:**  
 A  
+
+**Good keys (hashed prefix → balanced load):**
+
+```
+Good key:  hash01#202509190001
+Good key:  hash07#202509190002
+Good key:  hash12#202509190003   (randomized distribution → balanced across nodes)
+```
 
 **Explanation:**  
 - **Bigtable best practice**: avoid **hotspotting** by distributing keys evenly.  
@@ -1552,6 +1584,21 @@ A. Check dashboard app rendering.
 <mark>B. Run a fixed dataset through Dataflow pipeline and analyze output.</mark>  
 C. Use Stackdriver Monitoring on Pub/Sub.  
 D. Switch Dataflow to pull mode.  
+
+```mermaid
+flowchart LR
+    A[Pub/Sub<br>All messages published] --> B[Dataflow Pipeline<br>Transformations & Parsing]
+    B --> C[CFO Dashboard<br>Reports and Visuals]
+
+    A -->|Confirmed OK| AOK[Pub/Sub<br>Healthy]
+    B -->|❓ Suspect| BCHK[Re-run with fixed dataset<br>Check transform logic]
+
+    style A fill:#e6ffe6,stroke:#1a8a1a,stroke-width:2px
+    style AOK fill:#d4fdd4,stroke:#2e8b57,stroke-width:2px
+    style B fill:#fff3e6,stroke:#ff6600,stroke-width:2px
+    style BCHK fill:#ffe5e5,stroke:#cc0000,stroke-width:2px
+    style C fill:#e6f0ff,stroke:#3366cc,stroke-width:2px
+```
 
 **Correct Answer:**  
 B  
@@ -1641,6 +1688,23 @@ C
 
 **Question:**  
 Devices send package-tracking messages to one Pub/Sub topic. Need to ensure package data is analyzable over time.  
+
+```mermaid
+sequenceDiagram
+    participant Device as 📦 Device<br>(Publisher)
+    participant PubSub as ☁️ Pub/Sub
+    participant BQ as 🗄️ BigQuery
+    participant Analyst as 📊 Analyst
+
+    Note over Device: Event occurs<br>(true package timestamp)
+    Device->>PubSub: Publish message<br>with EventTime + PackageID
+    Note right of PubSub: Adds publishTime<br>(system timestamp)
+    PubSub->>BQ: Deliver message<br>(with publishTime)
+    Note right of BQ: Inserts row with<br>NOW() = ingestion time
+    BQ->>Analyst: Query results<br>(may differ if using NOW() or publishTime)
+
+    Note over Analyst: Only EventTime + PackageID<br>ensure accurate tracking
+```
 
 Options:  
 A. Timestamp added by subscriber.  
