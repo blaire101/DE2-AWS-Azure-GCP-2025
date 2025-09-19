@@ -171,7 +171,7 @@ flowchart TD
 ```mermaid
 flowchart TB
     CloudSQL[Cloud SQL<br>（Managed traditional RDBMS）]:::relational
-    AlloyDB[AlloyDB<br>（cloud-native,Relation <br> AlloyDB is built on PostgreSQL）]:::relational
+    AlloyDB[AlloyDB<br>（cloud-native,Relation <br> built on PostgreSQL）]:::relational
     Firestore[Firestore<br>（Like MongoDB）]:::nosql
     Bigtable[Bigtable<br>（Like Hbase）]:::nosql
     Spanner[Cloud Spanner<br>（Distributed RDBMS）]:::special
