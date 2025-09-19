@@ -1349,7 +1349,7 @@ B
 - **Cloud SQL** = managed relational DB (ACID, schema design, queries). Perfect for transactional workloads.  
 - **BigQuery (A)** = analytical warehouse, not for OLTP.  
 - **Bigtable (C)** = wide-column, best for time-series/IoT, not relational.  
-- **Datastore (D)** = schema-less NoSQL, not good for strict schema optimization.  
+- **Datastore (D)** = schema-less NoSQL, **not good for strict schema optimization.**  
 
 ---
 
