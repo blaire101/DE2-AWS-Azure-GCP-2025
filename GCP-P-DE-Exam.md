@@ -1119,6 +1119,14 @@ D. Row-level security
 - ❌ **C**: Copying tables is inefficient.  
 - ❌ **D**: Row-level ≠ column-level control.  
 
+
+```
+-- Add a PII policy tag to the column in the Data Catalog
+
+ALTER TABLE my_dataset.customers
+ALTER COLUMN email
+SET POLICY TAGS ('projects/my-proj/locations/us/taxonomies/1234/policyTags/5678');
+```
 ---
 
 #### Q16: First step to secure BigQuery warehouse
@@ -1140,6 +1148,18 @@ A. Use <mark>Cloud Audit Logs</mark> to review data access.
 - IAM policy only shows *permissions*, not actual usage.  
 - Monitoring slots shows performance, not security.  
 - Billing API only shows costs, not access.  
+
+```bash
+-- Query BigQuery Data Access audit logs
+SELECT
+  protopayload_auditlog.authenticationInfo.principalEmail AS user,
+  protopayload_auditlog.servicedata_v1_bigquery.jobCompletedEvent.job.jobStatistics.totalProcessedBytes AS bytes_scanned,
+  timestamp
+FROM `my-project.logs_dataset.cloudaudit_googleapis_com_data_access`
+WHERE protopayload_auditlog.servicedata_v1_bigquery.jobCompletedEvent.job.jobConfiguration.query.query IS NOT NULL
+ORDER BY timestamp DESC
+LIMIT 100;
+```
 
 ---
 
@@ -1164,6 +1184,13 @@ D. Cloud Dataproc with <mark>GCS connector</mark>.
 - Persistent HDFS disks (B) still tied to cluster lifecycle.  
 - Raw Compute Engine clusters (C, E) require manual ops.  
 - Dataflow (A) can’t directly re-use existing Hadoop jobs.  
+
+```bash
+gcloud dataproc clusters create my-cluster \
+  --region=us-central1 \
+  --bucket=my-hadoop-data \
+  --single-node
+```
 
 ---
 
@@ -1210,6 +1237,13 @@ A
 - Avoids massive PD footprint per node.  
 - **B** cuts compute cost, not storage.  
 - **C/D** still rely on PD; more ops overhead.  
+
+```bash
+gcloud dataproc clusters create my-dataproc \
+  --region=us-central1 \
+  --bucket=my-hadoop-data \
+  --single-node
+```
 
 ---
 
@@ -1263,7 +1297,7 @@ Options:
 A. Local Jupyter.  
 B. Cloud Shell.  
 C. Host only viz tool.  
-<mark>D. Cloud Datalab on GCE VM.</mark>  
+<mark>D. Cloud Datalab on GCE VM. </mark>  (GCE VM = Google Compute Engine Virtual Machine) - 👉 A "cloud computer/server" rented in a GCP data center
 
 **Correct Answer:**  
 D  
