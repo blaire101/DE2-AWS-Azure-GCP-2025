@@ -773,8 +773,6 @@ D. Bash script (create cluster, run, teardown)
 - ❌ **B**: Init actions run only once at cluster start.  
 - ❌ **D**: Bash scripts brittle, no orchestration features.  
 
----
-
 #### Q2: Ensure transactional integrity in BigQuery multi-table updates
 
 **Question:**  
@@ -794,7 +792,18 @@ D. Scheduled queries
 - ❌ **B**: Legacy SQL lacks transactional support.  
 - ❌ **D**: Scheduling doesn’t guarantee atomicity.  
 
----
+```sql
+BEGIN TRANSACTION;
+
+UPDATE dataset.table1
+SET status = 'processed'
+WHERE id = 123;
+
+INSERT INTO dataset.table2 (id, value)
+VALUES (123, 'done');
+
+COMMIT TRANSACTION;
+```
 
 #### Q3: Streaming pipeline with at-least-once processing
 
@@ -915,7 +924,7 @@ D. Dataflow
 **Correct Answer:** B  
 
 **Explanation:**  
-- ✅ **B**: Dataform manages **SQL workflows, testing, Git integration, deployments**.  
+- ✅ **B**: Dataform manages **<mark>SQL workflows, testing, Git integration, deployments</mark>**.  
 - ❌ **A**: Functions not suited for SQL pipeline mgmt.  
 - ❌ **C**: Composer can orchestrate but not version SQL models.  
 - ❌ **D**: Dataflow is code (Java/Python), not SQL.  
@@ -962,6 +971,20 @@ D. Delete partitions older than 90 days
 - ❌ **C**: Clustering doesn’t reduce storage cost.  
 - ❌ **D**: Deletes data, not allowed.  
 
+```sql
+# long-term storage pricing
+SELECT
+  table_schema,
+  table_name,
+  creation_time,
+  last_modified_time,
+  storage_last_modified_time
+FROM `region-us`.INFORMATION_SCHEMA.TABLE_STORAGE
+WHERE total_logical_bytes > 0;
+
+```
+
+
 ---
 
 #### Q11: Automate daily ETL pipeline with dependencies
@@ -992,7 +1015,7 @@ Need to ensure all new GCS uploads use **customer-managed keys**.
 
 **Options:**  
 A. Manually encrypt before upload  
-B. <mark>**Set bucket default CMEK**</mark> ✅  
+B. <mark>**Set bucket default CMEK (Customer-Managed Encryption Key)**</mark> ✅  
 C. Encrypt with Cloud KMS after upload  
 D. Use signed URLs with CMEK  
 
@@ -1003,6 +1026,16 @@ D. Use signed URLs with CMEK
 - ❌ **A**: Manual process = error-prone.  
 - ❌ **C**: Re-encrypting after upload risky.  
 - ❌ **D**: Signed URLs unrelated.  
+
+```bash
+# Create a bucket (in Singapore region, with default CMEK)
+gsutil mb -l asia-southeast1 \
+  -k projects/my-proj/locations/global/keyRings/kr/cryptoKeys/my-key \
+  gs://my-secure-bucket
+
+# Upload a file to the bucket
+gsutil cp local.csv gs://my-secure-bucket/data/local.csv
+```
 
 ---
 
@@ -1027,6 +1060,18 @@ D. Export to GCS and pre-aggregate
 
 ---
 
+```sql
+-- Create a materialized view for daily active users
+CREATE MATERIALIZED VIEW my_dataset.mv_daily_active_users
+AS
+SELECT
+  user_id,
+  COUNT(*) AS activity_count
+FROM my_dataset.events
+WHERE event_date = CURRENT_DATE()
+GROUP BY user_id;
+```
+
 #### Q14: Reduce latency for global Cloud SQL app
 
 **Question:**  
@@ -1045,6 +1090,13 @@ D. Shard database
 - ❌ **B**: Buckets not relevant.  
 - ❌ **C**: Bigger instance ≠ solve geography.  
 - ❌ **D**: Sharding complex, not needed.  
+
+
+```bash
+gcloud sql instances create-replica my-replica-europe \
+  --master-instance-name=my-sql-primary \
+  --region=europe-west1
+```
 
 ---
 
