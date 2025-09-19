@@ -1743,7 +1743,13 @@ D
 - **B** = fixed workers, not dynamic.  
 - **C** = storage size, not compute scaling.  
 
----
+```bash
+gcloud dataflow jobs run my-job \
+  --gcs-location gs://my-template/template.json \
+  --region=us-central1 \
+  --max-workers=100 \
+  --autoscaling-algorithm=THROUGHPUT_BASED
+```
 
 #### Q39: MJTelco — visualization of telemetry  
 
@@ -1795,6 +1801,28 @@ B, E
 **Question:**  
 MJTelco needs a schema in **Google Bigtable** for 2 years of telemetry records (every 15 min, unique device_id + datapoint).  
 Most common query: *“all the data for a given device for a given day.”*  
+
+```mermaid
+flowchart TB
+    subgraph US["🇺🇸 US Region"]
+        T1[BigQuery Dataset: us_sales]
+        G1[Employee Group: US_Team]
+    end
+
+    subgraph EU["🇪🇺 EU Region"]
+        T2[BigQuery Dataset: eu_sales]
+        G2[Employee Group: EU_Team]
+    end
+
+    subgraph APAC["🌏 APAC Region"]
+        T3[BigQuery Dataset: apac_sales]
+        G3[Employee Group: APAC_Team]
+    end
+
+    G1 -->|Dataset-level IAM| T1
+    G2 -->|Dataset-level IAM| T2
+    G3 -->|Dataset-level IAM| T3
+```
 
 Options:  
 <mark>A. Rowkey: date#device_id; Column data: data_point</mark>  
@@ -1848,6 +1876,15 @@ B. Add new column FullName + UPDATE all rows
 C. Dataflow pipeline to build new table  
 D. Export → process in Dataproc → reload  
 
+```mermaid
+CREATE VIEW dataset.user_view AS
+SELECT
+  FirstName,
+  LastName,
+  CONCAT(FirstName, ' ', LastName) AS FullName
+FROM dataset.users;
+```
+
 **Correct Answer:**  
 A  
 
@@ -1880,6 +1917,20 @@ A
 - **Custom composite index** (actor/date, tag/date) avoids explosion.  
 - **C/D** exclude needed fields → queries fail.  
 
+```yaml
+indexes:
+- kind: Movie
+  properties:
+  - name: actors
+  - name: date_released
+    direction: desc
+- kind: Movie
+  properties:
+  - name: tags
+  - name: date_released
+    direction: desc
+```
+
 ---
 
 #### Q45: Dataflow job once per day
@@ -1901,6 +1952,13 @@ C
 - **A**: Dataproc cluster = more infra, cost.  
 - **B**: manual = error-prone, labor cost.  
 - **D**: streaming job = expensive for once/day logs.  
+
+```mermaid
+gcloud scheduler jobs create pubsub daily-dataflow-job \
+  --schedule "0 2 * * *" \
+  --topic dataflow-job-trigger \
+  --message-body '{}'
+```
 
 ---
 
