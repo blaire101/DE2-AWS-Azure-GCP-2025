@@ -1423,8 +1423,6 @@ B, D, E
 - **MySQL (C)**: relational, not NoSQL.  
 - **Hive (F)**: OLAP, not low-latency NoSQL.  
 
-Here you go — tidy cards for **Q51–Q54** with quick justifications:
-
 
 #### Q51: Fix overfitting in a spam classifier (choose 3)
 
