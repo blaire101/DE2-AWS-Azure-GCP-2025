@@ -1348,7 +1348,7 @@ Options:
 A. Drop/reload with TIMESTAMP.  
 B. Add TIMESTAMP col, backfill.  
 C. View casting DT → TIMESTAMP.  
-<mark>E. CTAS into NEW_CLICK_STREAM with casted TS.</mark>  
+<mark>E. CTAS into NEW_CLICK_STREAM with casted TIMESTAMP.</mark>  
 
 **Correct Answer:**  
 E  
@@ -1382,11 +1382,18 @@ C. Sink logs to Pub/Sub (no fine filter).
 **Correct Answer:**  
 D  
 
+```bash
+protoPayload.methodName="jobservice.insert"
+resource.type="bigquery_table"
+resource.labels.table_id="target_table"
+```
+
 **Explanation:**  
 - Advanced filter isolates target table + job type.  
 - Pub/Sub delivers instant events.  
 - A/B don’t notify.  
 - C lacks fine-grained filter.  
+
 
 #### Q26: Consultant with sensitive Dataflow job
 
