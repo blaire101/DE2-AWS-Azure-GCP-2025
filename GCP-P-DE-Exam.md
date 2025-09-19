@@ -1679,6 +1679,32 @@ B. Sliding windows
 <mark>C. Use watermarks and timestamps</mark>  
 D. Require all data sources to include timestamps  
 
+```mermaid
+flowchart TD
+    subgraph ET[Event time]
+        A1[10:00 - Event A]
+        A2[10:01 - Event B]
+        A3[10:02 - Event C late]
+    end
+
+    subgraph PT[Processing time]
+        B1[10:00 - Event A arrives]
+        B2[10:02 - Event B arrives delayed]
+        B3[10:05 - Event C arrives out of order late]
+    end
+
+    subgraph WM[Watermark]
+        W1[10:03 - Watermark advanced assumes all events before 10:01 received]
+        W2[10:05 - Event C considered late data sent to side output]
+    end
+
+    A1 --> B1
+    A2 --> B2
+    A3 --> B3
+    B2 --> W1
+    B3 --> W2
+```
+
 **Correct Answer:**  
 C
 
