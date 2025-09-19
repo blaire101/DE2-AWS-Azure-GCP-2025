@@ -4,6 +4,7 @@
   <img src="docs/gcp_storage_compare.png" alt="Diagram" width="750">
 </div>
 
+> Datastore ≈ Firestore (Datastore mode) = Document-oriented / Non-relational database
 
 ## 1. Machine Learning & TensorFlow
 - [Q1: TensorFlow Overfitting Prevention](#q1-tensorflow-overfitting-prevention)
