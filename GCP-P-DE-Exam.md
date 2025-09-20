@@ -3396,6 +3396,14 @@ D. <mark>Dataflow to precompute predictions for all users → write to Bigtable;
 **Question:**  
 Provide: (1) real-time event stream, (2) ANSI SQL over real-time + historical, (3) batch historical exports.
 
+```mermaid
+flowchart LR
+    A["📈 Market Data Producers"] --> B["📩 Cloud Pub/Sub<br>Real-time event stream"]
+    B --> C["⚡ BigQuery<br>ANSI SQL on real-time + history"]
+    C --> D["📦 Cloud Storage<br>Batch historical exports"]
+    C --> E["📊 Consumers<br>SQL queries & dashboards"]
+```
+
 **Options:**  
 A. Cloud Dataflow, Cloud SQL, Cloud Spanner  
 B. <mark>Cloud Pub/Sub, Cloud Storage, BigQuery</mark> ✅  
