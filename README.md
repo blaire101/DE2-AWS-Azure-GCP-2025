@@ -113,6 +113,32 @@ For a **Data Engineer role focusing on GCP Data Warehouse & ETL**.
   <img src="docs/GCP-BigQuery.png" alt="Diagram" width="500">
 </div>
 
+# BigQuery vs Redshift vs Spark — 20 Interview Questions
+
+| # | Question Type | BigQuery (GCP) | Redshift (AWS) | Spark |
+|---|---------------|----------------|----------------|-------|
+| 1 | Architecture fundamentals | Serverless; Colossus + Dremel slots | Cluster MPP; Leader + Compute nodes | Driver + Executors; YARN/K8s/Mesos |
+| 2 | Storage format | Capacitor columnar storage | Columnar (Postgres-based) | Parquet, ORC, Avro, JSON, CSV |
+| 3 | Data loading | Batch load (free); Streaming insert (costly); External tables | COPY from S3; Kinesis Firehose | Streaming (Kafka/S3/HDFS) |
+| 4 | Partitioning & clustering | Partition (DATE/INT); Clustering on columns | DISTKEY + SORTKEY | PartitionBy, BucketBy |
+| 5 | Concurrency & scalability | High concurrency, auto-scale | Limited by WLM queues | Scales with cluster resources |
+| 6 | Query optimization | Partition + clustering; avoid SELECT *; Materialized views | Correct DIST/SORT keys; VACUUM/ANALYZE | Catalyst Optimizer; Tungsten; cache() |
+| 7 | Join optimization | Auto Broadcast Join; partition pruning | Co-located joins via DISTKEY | Broadcast Join, Sort-Merge, Shuffle Hash |
+| 8 | Aggregation optimization | APPROX_COUNT_DISTINCT (HLL++) | Pre-aggregate staging tables | Approximate agg; partial combine |
+| 9 | Cost model | On-demand per TB or Flat-rate slots | Node-hour billing; reserved nodes | Pay by runtime (VMs/containers) |
+| 10 | Workload management | Auto resource allocation; reservations | WLM queues for priority | Dynamic allocation; YARN/K8s |
+| 11 | Real-time data | Streaming inserts (low latency, expensive) | Weak; batch via Kinesis+S3 | Strongest; Structured Streaming |
+| 12 | ETL vs ELT | Best for ELT; SQL in warehouse | Commonly ETL via Glue+S3 → Redshift | Strong for ETL (transformations) |
+| 13 | Data sharing | Authorized Views, cross-project, Omni | Limited; Spectrum+S3 | Hive Metastore, Delta Lake, Iceberg |
+| 14 | Execution plan | `EXPLAIN`, dry-run scan estimate | `EXPLAIN` shows dist/join strategy | `explain(true)`; Spark UI DAG |
+| 15 | Skew handling | Auto-balance; clustering keys | Adjust DISTKEY; redistribute | Salting keys; AQE skew join |
+| 16 | Materialized views | Yes, auto-refresh | Yes, incremental refresh | Not native; Delta or caching |
+| 17 | Caching | Query results cached 24h | Result cache (weaker) | `cache()` / `persist()` |
+| 18 | Streaming ETL design | Pub/Sub → Dataflow → BQ → Looker | Kinesis → Firehose → S3 → COPY | Kafka → Spark SS → Delta Lake |
+| 19 | Comparison to Hive | Managed; faster ad-hoc | OLAP; better batch than Hive MR | Faster; unified batch + stream |
+| 20 | Typical use cases | Interactive BI; ad-hoc analytics | Enterprise DW (finance, retail) | ETL, ML pipelines, streaming |
+
+
 ### Q1. What is BigQuery?
 
 - BigQuery is a **<mark>serverless</mark>**, **<mark>fully managed</mark>**, **<mark>cloud data warehouse</mark>** optimized for OLAP.  
