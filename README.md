@@ -45,28 +45,35 @@ flowchart LR
 
 # BigQuery vs Redshift vs Spark — 20 Interview Questions
 
+# BigQuery vs Redshift vs Synapse vs Spark — 25 Classic Interview Topics (Sorted by Importance)
+
 | # | Question Type | BigQuery (GCP) | Redshift (AWS) | Synapse (Azure) | Spark |
 |---|---------------|----------------|----------------|-----------------|-------|
-| 1 | <mark>**Architecture fundamentals**</mark> | **Serverless**; <mark>Colossus</mark> + <mark>Dremel slots</mark> | **Cluster MPP**; <mark>Leader Node</mark> + <mark>Compute Nodes</mark> | **MPP**; <mark>Control node</mark> + Compute nodes | **Driver + Executors**; <mark>YARN/K8s/Mesos</mark> |
-| 2 | Storage format | **Capacitor** columnar | **Columnar** (Postgres-based) | **Columnstore indexes** (row & column) | **Parquet**, ORC, Avro, JSON, CSV |
-| 3 | <mark>**Data loading**</mark> | **Batch load (free)**; **Streaming insert (costly)**; External tables | **COPY from S3**; <mark>Kinesis Firehose</mark> | **PolyBase** (ADLS, Blob); <mark>Event Hub</mark> streaming | **Structured Streaming** (Kafka/S3/HDFS) |
-| 4 | <mark>**Partitioning & clustering**</mark> | **Partition** (DATE/INT); **Clustering** | **DISTKEY + SORTKEY** | **Distribution** (<mark>Hash</mark>, Round-robin, Replicated) | **PartitionBy**, **BucketBy** |
-| 5 | Concurrency & scalability | **High concurrency**, **auto-scale** | Limited by <mark>WLM queues</mark> | **Scaling DWUs**; workload groups | Scales with **cluster resources** |
-| 6 | <mark>**Query optimization**</mark> | **Partition + clustering**; avoid **SELECT \***; **Materialized views** | Correct **DIST/SORT keys**; **VACUUM/ANALYZE** | **Statistics**; Materialized views; caching | **Catalyst Optimizer**, <mark>Tungsten</mark>; **cache()** |
-| 7 | <mark>**Join optimization**</mark> | Auto **Broadcast Join**; <mark>partition pruning</mark> | **Co-located joins** via DISTKEY | **Hash-distributed joins**; replicate small tables | **Broadcast Join**, **Sort-Merge**, Shuffle Hash |
-| 8 | <mark>**Aggregation optimization**</mark> | **APPROX_COUNT_DISTINCT** (<mark>HLL++</mark>) | **Pre-aggregate** staging tables | **Approx functions**; aggregate pushdown | Approximate agg; **map-side combine** |
-| 9 | <mark>**Cost model**</mark> | **On-demand (per TB)** or **Flat-rate slots** | **Node-hour billing**; reserved nodes | **DWU-based pricing** (compute units) | Pay by **runtime** (infra cost) |
-| 10 | Workload management | Auto allocation; **Reservations** | **WLM queues** | **Resource classes**; workload isolation | **Dynamic allocation**; YARN/K8s |
-| 11 | <mark>**Real-time data**</mark> | **Streaming inserts** (<mark>low latency</mark>, **expensive**) | **Weak real-time**; batch via Kinesis+S3 | **Event Hub / Synapse Link** | **Strongest**: **Structured Streaming** |
-| 12 | <mark>**ETL vs ELT**</mark> | Best for **ELT** (SQL in warehouse) | Commonly **ETL** via Glue+S3 | Typically **ELT** (T-SQL in Synapse); ETL via Data Factory | Strong for **ETL** (complex transforms) |
-| 13 | Data sharing | **Authorized Views**; Omni (multi-cloud) | Limited; Spectrum+S3 | **Synapse Link**; cross-service integration | **Hive Metastore**; **Delta Lake**; Iceberg |
-| 14 | <mark>**Execution plan**</mark> | **EXPLAIN**, **dry-run** | **EXPLAIN** shows <mark>dist/join</mark> | **EXPLAIN** T-SQL plan; Query Analyzer | `explain(true)`; **Spark UI DAG** |
-| 15 | <mark>**Skew handling**</mark> | **Auto-balance**; clustering keys | Adjust **DISTKEY**; redistribute | Choose correct distribution (<mark>Hash vs Round-robin</mark>) | **Salting keys**; **AQE skew join** |
-| 16 | Materialized views | **Yes**, <mark>auto-refresh</mark> | **Yes**, <mark>incremental refresh</mark> | **Yes**, auto refresh | Not native; Delta or caching |
-| 17 | <mark>**Caching**</mark> | **Query results cached 24h** | **Result cache** | **Result set caching** | **cache() / persist()** |
-| 18 | <mark>**Streaming ETL design**</mark> | **Pub/Sub → Dataflow → BQ** | **Kinesis → Firehose → S3 → COPY** | **Event Hub → Data Factory → Synapse** | **Kafka → Spark SS → Delta Lake** |
-| 19 | Comparison to Hive | **Serverless**; faster ad-hoc | **OLAP**; better batch than Hive MR | SQL-based; Azure ecosystem | **Faster engine**; batch + streaming unified |
-| 20 | <mark>**Typical use cases**</mark> | **Interactive BI**; **ad-hoc analytics** | **Enterprise DW** (finance, retail) | **Enterprise analytics**; Power BI | **ETL**, **ML pipelines**, **real-time** |
+| 1 | <mark>**Architecture**</mark> | **<mark>Serverless</mark>**; <mark>Colossus</mark> + Dremel slots | **<mark>MPP Cluster</mark>**; <mark>Leader + Compute Nodes</mark> | **<mark>MPP</mark>**; <mark>Control + Compute</mark> | **<mark>Driver + Executors</mark>**; <mark>YARN/K8s</mark> |
+| 2 | <mark>**Partitioning**</mark> | **<mark>Partition</mark>**: DATE / INT / ingestion-time | ❌ No native (use **<mark>DIST/SORT</mark>**) | **<mark>Table partitioning</mark>** (date, category) | **<mark>PartitionBy</mark>** (shuffle partitions) |
+| 3 | <mark>**Distribution**</mark> | Automatic (hidden) | **<mark>DISTKEY</mark>**: distribute rows | **<mark>Distribution</mark>**: Hash / Round-robin / Replicated | **<mark>Repartition</mark>** / Coalesce |
+| 4 | <mark>**Sorting / Clustering**</mark> | **<mark>Clustering</mark>**: column-based order | **<mark>SORTKEY</mark>**: physical order (date, amount) | **<mark>Clustered columnstore</mark>**; sort order | **<mark>BucketBy</mark>** (join efficiency) |
+| 5 | <mark>**Query optimization**</mark> | **<mark>Partition + clustering</mark>**; avoid SELECT *; **<mark>Materialized views</mark>** | **<mark>DIST/SORT keys</mark>**; <mark>VACUUM/ANALYZE</mark> | **<mark>Statistics</mark>**; Materialized views; caching | **<mark>Catalyst Optimizer</mark>**; <mark>Tungsten</mark>; cache() |
+| 6 | <mark>**Join optimization**</mark> | Auto **<mark>Broadcast Join</mark>**; partition pruning | **<mark>Co-located joins</mark>** via DISTKEY | **<mark>Hash-distributed joins</mark>**; replicate small tables | **<mark>Broadcast Join</mark>**; Sort-Merge; Shuffle Hash |
+| 7 | <mark>**Aggregation optimization**</mark> | **<mark>APPROX_COUNT_DISTINCT</mark>** (HLL++) | **<mark>Pre-aggregate</mark>** staging tables | **<mark>Approx functions</mark>**; pushdown | Approx agg; **<mark>map-side combine</mark>** |
+| 8 | <mark>**Skew handling**</mark> | **<mark>Auto-balance</mark>**; clustering keys | Adjust **<mark>DISTKEY</mark>**; redistribute | Choose **<mark>Hash vs Round-robin</mark>** | **<mark>Salting keys</mark>**; AQE skew join |
+| 9 | <mark>**Cost model**</mark> | **<mark>On-demand</mark>** (per TB) / Flat-rate slots | **<mark>Node-hour billing</mark>**; reserved nodes | **<mark>DWU-based pricing</mark>** (compute units) | Pay by **<mark>runtime</mark>** (infra cost) |
+| 10 | <mark>**Concurrency & scaling**</mark> | **<mark>Auto-scale</mark>**; high concurrency | Limited by **<mark>WLM queues</mark>** | **<mark>DWU scaling</mark>**; workload groups | Depends on cluster + **<mark>scheduler</mark>** |
+| 11 | <mark>**Real-time support**</mark> | **<mark>Streaming inserts</mark>** (low latency, costly) | **<mark>Weak real-time</mark>**; Kinesis+S3 batch | **<mark>Event Hub</mark>** / Synapse Link | **<mark>Structured Streaming</mark>** (strongest) |
+| 12 | <mark>**ETL vs ELT**</mark> | Best for **<mark>ELT</mark>** (SQL in warehouse) | Commonly **<mark>ETL</mark>** via Glue+S3 | Typically **<mark>ELT</mark>** (T-SQL); ETL via Data Factory | Strong for **<mark>ETL</mark>** (flexible transforms) |
+| 13 | <mark>**Execution plan**</mark> | **<mark>EXPLAIN</mark>**, dry-run | **<mark>EXPLAIN</mark>** (dist/join) | **<mark>EXPLAIN</mark>** T-SQL plan | `explain(true)`; **<mark>Spark UI DAG</mark>** |
+| 14 | <mark>**Use cases**</mark> | **<mark>Ad-hoc BI</mark>**, analytics | **<mark>Enterprise DW</mark>** (finance, retail) | **<mark>Enterprise analytics</mark>**; Power BI | **<mark>ETL</mark>**, ML, real-time |
+| 15 | Data ingestion | Batch load; Streaming; External | COPY from S3; Kinesis Firehose | PolyBase; Event Hub | Structured Streaming (Kafka/S3) |
+| 16 | Workload management | Auto allocation; Reservations | WLM queues | Resource classes | Dynamic allocation |
+| 17 | Materialized views | Yes, auto-refresh | Yes, incremental refresh | Yes, auto-refresh | Not native (Delta) |
+| 18 | Caching | Query results cached 24h | Result cache | Result set caching | cache() / persist() |
+| 19 | Data sharing | Authorized Views; Omni multi-cloud | Limited; Spectrum+S3 | Synapse Link; Power BI | Delta Lake; Hive Metastore |
+| 20 | Streaming ETL design | Pub/Sub → Dataflow → BQ | Kinesis → Firehose → S3 → COPY | Event Hub → Data Factory → Synapse | Kafka → Spark SS → Delta Lake |
+| 21 | Security & IAM | GCP IAM; dataset ACL | IAM roles | Azure AD + RBAC | Kerberos, Ranger |
+| 22 | Backup & Recovery | Automatic; Time Travel | Snapshots to S3 | Restore points | Depends on HDFS/Delta |
+| 23 | Integration | Looker, Data Studio | AWS Glue, Athena | Power BI, ADF | Kafka, HDFS, ML libs |
+| 24 | ML / Advanced Analytics | BQML in SQL | SageMaker + Redshift ML | Azure ML + Synapse | Spark MLlib, TensorFlow |
+| 25 | Misc features | Misc enterprise functions | Misc AWS features | Misc Azure features | Misc Spark ecosystem |
 
 - [1. BigQuery (Core Data Warehouse)](#1-bigquery-core-data-warehouse)
   - [Q1. What is BigQuery?](#q1-what-is-bigquery)
