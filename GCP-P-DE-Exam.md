@@ -3097,6 +3097,20 @@ B. BigQuery
 C. Regional Cloud Storage  
 D. <mark>Multi-regional Cloud Storage</mark> ✅  
 
+```mermaid
+flowchart TD
+    Data["Historical Data<br>CSV + Avro + PDF"]
+    A["Dataproc"]
+    B["BigQuery"]
+    C["Compute Engine"]
+
+    Data --> Storage["✅ Multi-Regional Cloud Storage<br>High Availability + Multi-format Support"]
+
+    Storage --> A
+    Storage --> B
+    Storage --> C
+```
+
 **Correct Answer:** D  
 
 **Explanation:**  
