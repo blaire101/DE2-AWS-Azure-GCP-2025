@@ -3352,6 +3352,14 @@ B. <mark>Cloud Spanner with leader in US + replicas in EU/Asia</mark> ✅
 C. Cloud SQL with master/replicas  
 D. Bigtable with clusters  
 
+```mermaid
+flowchart LR
+    A["📊 BigQuery ML Model"] --> B["⚙️ Dataflow Batch Job<br>Precompute Predictions"]
+    B --> C["🗄️ Bigtable<br>Per-user predictions"]
+    
+    C --> D["🌐 REST API<br><100ms lookup per user"]
+```
+
 **Correct Answer:** B  
 
 **Explanation:**  
