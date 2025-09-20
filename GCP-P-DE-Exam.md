@@ -2670,7 +2670,7 @@ D. <mark>Cloud Function + DLP API (tag + quarantine)</mark>
 **Correct Answer:** D  
 
 **Explanation:**  
-- Cloud DLP detects PII with confidence tags.  
+- Cloud DLP detects <mark>PII (Personally Identifiable Information)</mark> with confidence tags.  
 - Cloud Function = scalable inline filter.  
 
 ---
@@ -2680,7 +2680,7 @@ D. <mark>Cloud Function + DLP API (tag + quarantine)</mark>
 Need scheduling, monitoring, manual run.  
 
 **Options:**  
-A. <mark>Cloud Composer DAG</mark>  
+A. <mark>Cloud Composer DAG</mark>  - **<mark>Cloud Composer is based on Apache Airflow.</mark>**  
 B. Stackdriver + webhook  
 C. App Engine app  
 D. cron on GCE  
