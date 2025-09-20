@@ -2697,6 +2697,17 @@ D. cron on GCE
 **Question:**  
 What 2 causes?  
 
+```mermaid
+flowchart LR
+    P[Publisher<br>sends messages] --> PS[Pub/Sub]
+
+    PS --> S1[Cloud Function<br>Subscriber ACK]
+    S1 --> ACK[Message marked<br>as completed]
+
+    PS --> S2[Cloud Function<br>No ACK]
+    S2 --> RED[Message redelivered<br>Inflated rate]
+```
+
 **Options:**  
 A. Publisher quota  
 B. Outstanding messages > 10MB  
@@ -2715,6 +2726,14 @@ E. Subscriber not acking messages
 #### Q110: Filter corrupt IoT data in Dataflow
 **Question:**  
 2% of data corrupt → filter out.  
+
+```mermaid
+flowchart LR
+    A[IoT Devices<br>send data] --> B[Dataflow Pipeline]
+    B --> C[ParDo transform<br>check validity]
+    C -->|Valid| D[Valid data<br>kept for analytics]
+    C -->|Corrupt| E[Corrupt data<br>dropped]
+```
 
 **Options:**  
 A. SideInput Boolean  
