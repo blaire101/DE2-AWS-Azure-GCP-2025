@@ -3744,7 +3744,7 @@ flowchart TB
     DF --- GE
     CC --- SF
 
-    style AWS fill:#fff2cc,stroke:#aa8800,stroke-width:3px
+    style AWS fill:#fff2cc,stroke:#aa8800,stroke-width:2px
 ```
 
 **Correct Answer:** A  
