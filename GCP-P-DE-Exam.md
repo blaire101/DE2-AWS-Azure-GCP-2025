@@ -3179,6 +3179,15 @@ B. AutoML with reduced dataset
 C. Vision API hints  
 D. Train custom CNN  
 
+```mermaid
+flowchart TD
+    A["📂 Labeled Images<br>750 components × ~1000 images"] --> B["☁️ Upload to AutoML Vision"]
+    B --> C["⚙️ AutoML Training<br>Custom model generated"]
+    C --> D["🚀 Deploy Model<br>Cloud Endpoint"]
+    D --> E["🔍 Predictions<br>Classify new component images"]
+    E --> F["📊 Results Dashboard<br>Accuracy, performance metrics"]
+```
+
 **Correct Answer:** A  
 
 **Explanation:**  
