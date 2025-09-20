@@ -3180,7 +3180,7 @@ C. Vision API hints
 D. Train custom CNN  
 
 ```mermaid
-flowchart TD
+flowchart TB
     A["📂 Labeled Images<br>750 components × ~1000 images"] --> B["☁️ Upload to AutoML Vision"]
     B --> C["⚙️ AutoML Training<br>Custom model generated"]
     C --> D["🚀 Deploy Model<br>Cloud Endpoint"]
