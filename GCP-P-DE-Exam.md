@@ -2583,7 +2583,7 @@ Need 30-day recovery (RPO), minimize cost.
 
 **Options:**  
 A. Regional + point-in-time snapshot  
-B. <mark>Regional + scheduled query copies (time-suffixed tables)</mark>  
+B. <mark>Regional + scheduled query copies (time-suffixed tables)</mark>✅    
 C. Multi-regional + point-in-time snapshot  
 D. Multi-regional + scheduled query copies  
 
