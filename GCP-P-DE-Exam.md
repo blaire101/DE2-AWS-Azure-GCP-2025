@@ -2935,7 +2935,7 @@ You run a Cloud Dataflow streaming pipeline:
 * Sink = Cloud Storage bucket
   Throughput is consistent. You want to monitor alerts in Cloud Monitoring to ensure the pipeline is processing data. Which metrics should you alert on?
 
-**Options:**
+**Options:**  
 A. Alert on *decrease* of `subscription/num_undelivered_messages` and *increase* of `instance/storage/used_bytes`  
 B. Alert on *increase* of `subscription/num_undelivered_messages` and *decrease* of `instance/storage/used_bytes` ✅   
 C. Alert on *decrease* of `instance/storage/used_bytes` and *increase* of backlog  
