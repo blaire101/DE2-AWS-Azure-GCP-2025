@@ -3585,6 +3585,23 @@ B. Project-level sink to bucket in analyst projects
 C. Project-level sink to a new audit project  
 D. <mark>Aggregated export sink to a bucket in a dedicated audit project</mark> ✅  
 
+```mermaid
+flowchart LR
+    subgraph AllProjects["🌐 All GCP Projects"]
+        L1["📊 BigQuery Data Access Logs"]
+    end
+
+    AllProjects --> Sink["🔄 Aggregated Export Sink<br>Org/Folder Level"]
+
+    Sink --> Audit["🗄️ Dedicated Audit Project<br>Cloud Storage / BigQuery Sink"]
+
+    Audit --> Auditors["👩‍⚖️ Auditors (Read Access Only)"]
+
+    style Sink fill:#e6f7ff,stroke:#0066cc,stroke-width:2px
+    style Audit fill:#fff2cc,stroke:#aa8800,stroke-width:2px
+    style Auditors fill:#e6ffe6,stroke:#00aa44,stroke-width:2px
+```
+
 **Correct Answer:** D
 
 **Explanation:**  
