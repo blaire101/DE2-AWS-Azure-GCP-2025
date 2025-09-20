@@ -2566,13 +2566,13 @@ Need near real-time **inventory dashboard** on BigQuery.
 **Options:**  
 A. Use BQ UPDATE statements on balances directly  
 B. Partition balances table by item  
-C. <mark>Stream changes into daily movement table → calculate balances in a view (join to history) → nightly update balance table</mark>  ✅   
+C. <mark>Stream changes into daily movement table → calculate balances in a view (join to history) → nightly update balance table</mark>  ✅     
 D. Use bulk loader for daily movement table, join in a view, nightly update balances  
 
 **Correct Answer:** C  
 
 **Explanation:**  
-- **C:** Streaming inserts → near real-time updates in movement table; view joins history for accurate dashboards; nightly balance update keeps history consistent.  ✅   
+- **C:** Streaming inserts → near real-time updates in movement table; view joins history for accurate dashboards; nightly balance update keeps history consistent.  ✅      
 - **A:** Inefficient — thousands of UPDATEs/hour hit quotas and cost.  
 - **B:** Partitioning helps queries but not streaming updates.  
 - **D:** Bulk loader adds latency; not near real-time.  
