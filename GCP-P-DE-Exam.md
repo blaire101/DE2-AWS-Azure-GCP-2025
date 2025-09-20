@@ -2970,6 +2970,19 @@ D. Alert on *increase* of sink usage and *decrease* of backlog
 **Question:**  
 Kafka cluster (us-east) ingests IoT worldwide. Poor connectivity → bursts. Managing Kafka is costly. What’s the cloud-native solution?
 
+```mermaid
+flowchart LR
+    A["🌍 IoT Devices<br>(Worldwide Sensors)"] 
+        --> B["IoT Gateway<br>(Secure Device Access)"]
+
+    B --> C["☁️ Cloud Pub/Sub<br>(Global, Autoscaling Ingestion)"]
+
+    C --> D["⚡ Dataflow<br>(Stream Processing)"]
+
+    D --> E["📊 BigQuery<br>(Analytics)"]
+    D --> F["🗄️ Cloud Storage<br>(Raw Data Archive)"]
+```
+
 **Options:**  
 A. Edge TPUs to buffer and send data  
 B. Dataflow + on-prem Kafka  
