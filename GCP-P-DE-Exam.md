@@ -3455,13 +3455,17 @@ C. Move pipeline to `us-central1`
 D. Buffer to Bigtable first, then another pipeline to BigQuery  
 E. Buffer to Spanner first, then another pipeline to BigQuery
 
+<mark>**Larger machine types (e.g., n1-standard-4 or n1-highcpu-8) provide:**</mark>
+
+- More vCPUs → can process more Pub/Sub messages per worker.
+- More memory → reduces garbage collection and supports higher parallelism.
+
 **Correct Answer:** A, B
 
 **Explanation:**  
 - **Scale out** (more workers) and **scale up** (bigger machines) directly relieve CPU bottlenecks.  
 - Cross-region (C) breaks EU-data locality/compliance and adds latency.  
 - Adding intermediate stores (D/E) complicates design, not a CPU fix.
-
 
 ---
 
