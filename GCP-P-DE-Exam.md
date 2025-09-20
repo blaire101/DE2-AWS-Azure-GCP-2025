@@ -2541,14 +2541,14 @@ The solution must be **secure and time-efficient**.
 
 **Options:**  
 A. Export as Avro → upload via gsutil → load into BQ via Console  
-B. <mark>Export as Avro → load via Transfer Appliance → load into BQ via Console</mark>  
+B. <mark>Export as Avro → load via Transfer Appliance → load into BQ via Console</mark> ✅
 C. Export as CSV → publish as public URL → Storage Transfer Service → GCS → BQ  
 D. Export as Avro → publish as public URL → Storage Transfer Service → GCS → BQ  
 
 **Correct Answer:** B  
 
 **Explanation:**  
-- **B:** Transfer Appliance is Google’s recommended approach for **large (TB+) and sensitive datasets**, avoiding long uploads and public internet risks.  
+- **B:** Transfer Appliance is Google’s recommended approach for **large (TB+) and sensitive datasets**, ✅avoiding long uploads and public internet risks.  
 - **A:** Feasible if bandwidth is high, but risky for sensitive data and 10TB scale.  
 - **C/D:** Public URL introduces **security risks**, unacceptable for patient records.  
 
@@ -2566,13 +2566,13 @@ Need near real-time **inventory dashboard** on BigQuery.
 **Options:**  
 A. Use BQ UPDATE statements on balances directly  
 B. Partition balances table by item  
-C. <mark>Stream changes into daily movement table → calculate balances in a view (join to history) → nightly update balance table</mark>  
+C. <mark>Stream changes into daily movement table → calculate balances in a view (join to history) → nightly update balance table</mark>  ✅
 D. Use bulk loader for daily movement table, join in a view, nightly update balances  
 
 **Correct Answer:** C  
 
 **Explanation:**  
-- **C:** Streaming inserts → near real-time updates in movement table; view joins history for accurate dashboards; nightly balance update keeps history consistent.  
+- **C:** Streaming inserts → near real-time updates in movement table; view joins history for accurate dashboards; nightly balance update keeps history consistent.  ✅
 - **A:** Inefficient — thousands of UPDATEs/hour hit quotas and cost.  
 - **B:** Partitioning helps queries but not streaming updates.  
 - **D:** Bulk loader adds latency; not near real-time.  
