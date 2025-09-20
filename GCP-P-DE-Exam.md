@@ -2541,7 +2541,7 @@ The solution must be **secure and time-efficient**.
 
 **Options:**  
 A. Export as Avro → upload via gsutil → load into BQ via Console  
-B. <mark>Export as Avro → load via Transfer Appliance → load into BQ via Console</mark> ✅
+B. <mark>Export as Avro → load via Transfer Appliance → load into BQ via Console</mark> ✅  
 C. Export as CSV → publish as public URL → Storage Transfer Service → GCS → BQ  
 D. Export as Avro → publish as public URL → Storage Transfer Service → GCS → BQ  
 
@@ -2566,7 +2566,7 @@ Need near real-time **inventory dashboard** on BigQuery.
 **Options:**  
 A. Use BQ UPDATE statements on balances directly  
 B. Partition balances table by item  
-C. <mark>Stream changes into daily movement table → calculate balances in a view (join to history) → nightly update balance table</mark>  ✅     
+C. <mark>Stream changes into daily movement table → calculate balances in a view (join to history) → nightly update balance table</mark>✅        
 D. Use bulk loader for daily movement table, join in a view, nightly update balances  
 
 **Correct Answer:** C  
