@@ -3663,6 +3663,24 @@ B. In-place `--update` new job name
 C. Stop with **Cancel** and relaunch  
 D. <mark>Stop with **Drain**, then start a new job</mark> ✅  
 
+```mermaid
+flowchart LR
+    subgraph Old["🟦 Old Dataflow Job (Running)"]
+        A["Pub/Sub Messages<br>+ In-flight Data"]
+    end
+
+    A -->|Drain| B["✅ Process Remaining Data"]
+    B -->|Safe Stop| C["🟩 Start New Pipeline<br>(New Window/Trigger)"]
+
+    A -.->|Cancel| X["❌ Data Loss<br>Messages Dropped"]
+
+    style Old fill:#e6f2ff,stroke:#3399ff,stroke-width:2px
+    style B fill:#e6ffe6,stroke:#33aa33,stroke-width:2px
+    style C fill:#fff2cc,stroke:#aa8800,stroke-width:2px
+    style X fill:#ffe6e6,stroke:#cc0000,stroke-width:2px
+```
+
+
 **Correct Answer:** D
 
 **Explanation:**  
