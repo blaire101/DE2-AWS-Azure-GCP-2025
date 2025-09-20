@@ -2935,6 +2935,19 @@ You run a Cloud Dataflow streaming pipeline:
 * Sink = Cloud Storage bucket
   Throughput is consistent. You want to monitor alerts in Cloud Monitoring to ensure the pipeline is processing data. Which metrics should you alert on?
 
+```mermaid
+flowchart TB
+    subgraph Normal_Pipeline["✅ Normal Pipeline"]
+        A1["Pub/Sub<br>Backlog Low"] --> B1["Dataflow<br>Processing Active"]
+        B1 --> C1["Cloud Storage<br>Bytes Increasing"]
+    end
+
+    subgraph Stalled_Pipeline["❌ Stalled Pipeline"]
+        A2["Pub/Sub<br>Backlog Increasing"] --> B2["Dataflow<br>Stalled / Not Processing"]
+        B2 --> C2["Cloud Storage<br>Bytes Not Increasing"]
+    end
+```
+
 **Options:**  
 A. Alert on *decrease* of `subscription/num_undelivered_messages` and *increase* of `instance/storage/used_bytes`  
 B. Alert on *increase* of `subscription/num_undelivered_messages` and *decrease* of `instance/storage/used_bytes` ✅   
