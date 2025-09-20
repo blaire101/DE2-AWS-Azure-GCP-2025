@@ -43,7 +43,7 @@ flowchart LR
     AGG --> LS
 ```
 
-# 🚀 BigQuery vs Redshift vs Spark vs Synapse — Quick Cheat Sheet (Top 20 Must-Know)
+# 🚀 BigQuery vs Redshift vs Spark vs Synapse — (Top 20 Must-Know)
 
 | # | Category & Question | BigQuery (GCP) | Redshift (AWS) | Spark | Synapse (Azure) |
 |---|---------------------|----------------|----------------|-------|-----------------|
