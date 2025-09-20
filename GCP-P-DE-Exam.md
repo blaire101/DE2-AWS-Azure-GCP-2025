@@ -3056,6 +3056,24 @@ C. Use UPDATE
 D. <mark>Append status updates (no UPDATE)</mark> ✅  
 E. External GCS table  
 
+```mermaid
+flowchart TB
+    subgraph Bad_Design["❌ Normalized + UPDATE"]
+        U["User Table"]
+        T["Transaction Table"]
+        S["Status Table"]
+        U -->|"JOIN"| T -->|"JOIN"| S
+        Note1["Frequent UPDATEs → High Cost & Slow<br>Heavy JOINs → Poor Performance"]
+    end
+
+    subgraph Good_Design["✅ Denormalized + Append-only"]
+        D["Transaction_Denorm Table<br>(User + Transaction + Status)"]
+        Log["Append-only Updates<br>(New row for each status change)"]
+        D <-- Log
+        Note2["No UPDATEs → Append only<br>Less JOINs → Faster Queries<br>Keeps Full History"]
+    end
+```
+
 **Correct Answer:** A, D  
 
 **Explanation:**  
