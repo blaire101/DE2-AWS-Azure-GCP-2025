@@ -3723,6 +3723,32 @@ B. Load into BigQuery, use SQL transform/merge
 C. Analysts write Dataflow pipeline in Python  
 D. Use Dataproc + Spark SQL + HDFS  
 
+```mermaid
+
+flowchart TB
+    subgraph GCP["☁️ Google Cloud"]
+        DC["📂 Data Catalog<br>(Metadata management)"]
+        DP["🧹 Dataprep (Trifacta)<br>(Data wrangling, GUI)"]
+        DF["⚙️ Dataflow<br>(ETL / Batch + Streaming)"]
+        CC["📅 Cloud Composer<br>(Workflow orchestration)"]
+    end
+
+    subgraph AWS["☁️ AWS"]
+        GC["📂 Glue Data Catalog<br>(Metadata management)"]
+        DB["🧹 Glue DataBrew<br>(Data wrangling, GUI)"]
+        GE["⚙️ Glue ETL / EMR<br>(ETL / Batch + Streaming)"]
+        SF["📅 Step Functions / MWAA<br>(Workflow orchestration)"]
+    end
+
+    DC --- GC
+    DP --- DB
+    DF --- GE
+    CC --- SF
+
+    style GCP fill:#e6f7ff,stroke:#0066cc,stroke-width:2px
+    style AWS fill:#fff2cc,stroke:#aa8800,stroke-width:2px
+```
+
 **Correct Answer:** A  
 
 **Explanation:**  
