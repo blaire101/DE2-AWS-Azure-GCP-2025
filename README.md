@@ -43,9 +43,7 @@ flowchart LR
     AGG --> LS
 ```
 
-# BigQuery vs Redshift vs Spark — 20 Interview Questions
-
-# BigQuery vs Redshift vs Synapse vs Spark — 25 Classic Interview Topics (Sorted by Importance)
+## BigQuery vs Redshift vs Synapse vs Spark — 25 Classic Interview Topics
 
 | # | Question Type | BigQuery (GCP) | Redshift (AWS) | Synapse (Azure) | Spark |
 |---|---------------|----------------|----------------|-----------------|-------|
