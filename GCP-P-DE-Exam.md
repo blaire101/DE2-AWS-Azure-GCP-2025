@@ -2604,7 +2604,9 @@ Dataprep recipe on sample BQ table. Must run daily **after load (variable time)*
 A. Cron schedule in Dataprep  
 B. App Engine cron job  
 C. Export recipe template + Cloud Scheduler  
-D. Export Dataprep job as Dataflow template + use Composer  
+D. <mark>Export Dataprep job as Dataflow template + use Composer</mark>✅  
+
+ **orchestration tools (Composer/Airflow)**
 
 **Correct Answer:** D  
 
