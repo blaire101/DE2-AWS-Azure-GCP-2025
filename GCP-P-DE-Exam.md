@@ -3256,7 +3256,16 @@ D. Snapshot decorators
 - **Snapshots**: limited to 7 days.  
 - **Duplicate tables**: costly, hard to maintain.  
 
----
+```mermaid
+flowchart LR
+    A["⚠️ ETL sometimes corrupts data<br>Errors found after 2 weeks"] --> B["❌ Time travel only 7 days<br>Not enough"]
+    A --> C["✅ Partition by month<br>+ Export compressed to GCS"]
+    C --> D["💾 Low-cost archive in GCS<br>Avro/Parquet"]
+    D --> E["🔄 Reload specific month partition<br>Rollback when errors found"]
+
+    A -.-> F["❌ Duplicate tables<br>High cost & maintenance"]
+    A -.-> G["❌ Snapshot decorators<br>Limited to 7 days"]
+```
 
 #### Q130: Updating BigQuery with 1M CSV records
 
