@@ -2583,14 +2583,14 @@ Need 30-day recovery (RPO), minimize cost.
 
 **Options:**  
 A. Regional + point-in-time snapshot  
-B. Regional + scheduled query copies (time-suffixed tables)  
+B. <mark>Regional + scheduled query copies (time-suffixed tables)</mark>  
 C. Multi-regional + point-in-time snapshot  
 D. Multi-regional + scheduled query copies  
 
 **Correct Answer:** B  
 
 **Explanation:**  
-- Time travel = only 7 days. For 30 days → need **scheduled copies**.  
+- Time travel = only 7 days. <mark>For 30 days → need **scheduled copies**</mark>.  
 - Regional storage = cheaper than multi-regional.  
 - C/D = mislead; "point-in-time snapshot" is max 7 days.  
 
