@@ -3307,6 +3307,31 @@ C. <mark>Use groups instead of individuals</mark> ✅
 D. Service accounts only  
 E. Manual bucket/dataset policies  
 
+```mermaid
+flowchart TB
+    O["🏢 Organization Level<br>(Global IAM policies)"] --> F["📂 Folder Level<br>(Department / Environment)"]
+    F --> P["📦 Project Level<br>(Unique configs)"]
+    P --> R["📊 Resource Level<br>BQ Datasets, Buckets, VMs"]
+
+    G["👥 Google Groups<br>(IT Admins, Analysts, Engineers)"] --> O
+    G --> F
+    G --> P
+
+    %% ====== Styles ======
+    classDef org fill:#ffd966,stroke:#e69138,stroke-width:2px,color:#000;        %% Yellow-Orange
+    classDef folder fill:#f9cb9c,stroke:#cc7a00,stroke-width:2px,color:#000;     %% Light Orange
+    classDef project fill:#cfe2f3,stroke:#1155cc,stroke-width:2px,color:#000;    %% Light Blue
+    classDef resource fill:#d9ead3,stroke:#38761d,stroke-width:2px,color:#000;   %% Light Green
+    classDef group fill:#f4cccc,stroke:#990000,stroke-width:2px,color:#000;      %% Light Red
+
+    %% Assign classes
+    class O org
+    class F folder
+    class P project
+    class R resource
+    class G group
+```
+
 **Correct Answer:** B, C  
 
 **Explanation:**  
