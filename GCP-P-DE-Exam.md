@@ -3063,14 +3063,16 @@ flowchart TB
         T["Transaction Table"]
         S["Status Table"]
         U -->|"JOIN"| T -->|"JOIN"| S
-        Note1["Frequent UPDATEs → High Cost & Slow<br>Heavy JOINs → Poor Performance"]
+        Note1["⚠ Frequent UPDATEs = High Cost<br>⚠ Heavy JOINs = Slow Queries"]
+        S --> Note1
     end
 
     subgraph Good_Design["✅ Denormalized + Append-only"]
         D["Transaction_Denorm Table<br>(User + Transaction + Status)"]
-        Log["Append-only Updates<br>(New row for each status change)"]
-        D <-- Log
-        Note2["No UPDATEs → Append only<br>Less JOINs → Faster Queries<br>Keeps Full History"]
+        Log["Append-only Inserts<br>(New row for each status change)"]
+        Log --> D
+        Note2["✔ No UPDATEs, only INSERTs<br>✔ Fewer JOINs = Faster Queries<br>✔ Full History Preserved"]
+        D --> Note2
     end
 ```
 
