@@ -3847,6 +3847,28 @@ D. Create authorized views per team in separate datasets; grant dataset access a
 **Question:**  
 One Dataproc Hadoop job is disk I/O-heavy and runs slowly when intermediates are stored in Cloud Storage.  
 
+```mermaid
+flowchart LR
+    subgraph GCS["☁️ Cloud Storage (GCS)"]
+        IN["📥 Input Data (Durable, Cheap)"]
+        OUT["📤 Final Output (Durable, Cheap)"]
+    end
+
+    subgraph Dataproc["⚡ Dataproc Cluster"]
+        MEM["💾 RAM (Fast but Limited)"]
+        DISK["🗄️ Persistent Disk + HDFS<br>(Fast, Scalable Shuffle Storage)"]
+    end
+
+    IN --> Dataproc
+    Dataproc --> OUT
+
+    MEM --> DISK
+
+    style GCS fill:#e6f7ff,stroke:#0066cc,stroke-width:2px
+    style Dataproc fill:#fff2cc,stroke:#aa8800,stroke-width:2px
+    style DISK fill:#ffe6e6,stroke:#cc0000,stroke-width:2px
+```
+
 **Options:**  
 A. Add memory to keep intermediates in RAM  
 B. <mark>Add persistent disk and store intermediates on native HDFS</mark> ✅  
