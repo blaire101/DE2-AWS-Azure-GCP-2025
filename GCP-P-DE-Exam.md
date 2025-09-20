@@ -3002,7 +3002,18 @@ D. Kafka on Compute Engine + Cloud Load Balancer
 #### Q122: Datastore backup & recovery
 
 **Question:**  
-Need low-cost archival, PIT recovery, clone to another environment.
+Need low-cost archival, Point-in-time recovery, clone to another environment.
+
+```mermaid
+flowchart LR
+    A["Datastore (Prod)"] 
+        --> B["Managed Export"]
+
+    B --> C["Cloud Storage<br>Nearline / Coldline / Archive<br>(Low-cost Archival)"]
+
+    C --> D["Import into Datastore<br>(Same Project)<br>Point-in-Time Recovery"]
+    C --> E["Import into Datastore<br>(Other Project / Namespace)<br>Clone Environment"]
+```
 
 **Options:**  
 A. <mark>Managed export → Cloud Storage Nearline/Coldline</mark> ✅  
