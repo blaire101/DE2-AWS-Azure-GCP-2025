@@ -3126,6 +3126,27 @@ flowchart TD
 **Question:**  
 1 PB dataset. Must support BigQuery analytics + expose files for other providers.
 
+```mermaid
+flowchart TB
+    subgraph OptionC["✅ Option C: BigQuery + GCS Copy"]
+        A1["📦 1 PB Dataset"]
+        A2["BigQuery<br>Analytics & SQL"]
+        A3["Cloud Storage<br>(Compressed Copy for external delivery)"]
+        A1 --> A2
+        A1 --> A3
+    end
+
+    subgraph OptionD["❌ Option D: 80% GCS + 20% BQ"]
+        B1["📦 1 PB Dataset"]
+        B2["BigQuery<br>(Only 20% Data)"]
+        B3["Cloud Storage<br>(80% Data)"]
+        B1 --> B2
+        B1 --> B3
+        NoteD["⚠️ Problem:<br>- Arbitrary split (80/20)<br>- Queries on GCS = slow/expensive<br>- High complexity"]
+        B3 -.-> NoteD
+    end
+```
+
 **Options:**  
 A. BigQuery only  
 B. Bigtable  
@@ -3139,6 +3160,11 @@ D. 80% GCS, 20% BigQuery
 - **GCS export**: file delivery for external systems.  
 - **Bigtable**: wrong fit (NoSQL).  
 - **Split storage**: unnecessary complexity.  
+
+---
+
+* **Core analytical data** → Store in **BigQuery** (for example, the last 90 days, last year, or other high-frequency data).
+* **Complete raw / historical data** → Store in **Cloud Storage (GCS)** in compressed formats (Avro/Parquet). This is cheaper, suitable for long-term archiving, and can be exported or shared with third parties at any time.
 
 ---
 
