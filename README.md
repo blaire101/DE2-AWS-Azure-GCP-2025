@@ -47,26 +47,26 @@ flowchart LR
 
 | # | Question Type | BigQuery (GCP) | Redshift (AWS) | Spark |
 |---|---------------|----------------|----------------|-------|
-| 1 | Architecture fundamentals | **Serverless**; <mark>Colossus</mark> + <mark>Dremel slots</mark> | Cluster <mark>MPP</mark>; **Leader Node + Compute Nodes** | Driver + Executors; <mark>YARN/K8s/Mesos</mark> |
-| 2 | Storage format | <mark>Capacitor</mark> columnar storage | Columnar (**Postgres-based**) | Parquet, ORC, Avro, JSON, CSV |
-| 3 | Data loading | Batch load (**free**); Streaming insert (**costly**); External tables | **COPY** from S3; Kinesis Firehose | Structured Streaming (**Kafka/S3/HDFS**) |
-| 4 | Partitioning & clustering | **Partition** (DATE/INT); **Clustering** on columns | **DISTKEY + SORTKEY** | PartitionBy, BucketBy |
-| 5 | Concurrency & scalability | **High concurrency**, auto-scale | Limited by <mark>WLM queues</mark> | Scales with cluster resources |
-| 6 | Query optimization | Partition + clustering; avoid **SELECT \***; **Materialized views** | Correct DIST/SORT keys; **VACUUM/ANALYZE** | **Catalyst Optimizer**; Tungsten; cache() |
-| 7 | Join optimization | Auto **Broadcast Join**; partition pruning | **Co-located joins** via DISTKEY | **Broadcast Join**, Sort-Merge, Shuffle Hash |
-| 8 | Aggregation optimization | **APPROX_COUNT_DISTINCT** (HLL++) | Pre-aggregate staging tables | Approx agg; **partial combine** |
-| 9 | Cost model | On-demand (**per TB scanned**) or **Flat-rate slots** | Node-hour billing; reserved nodes | Pay by runtime (**VMs/containers**) |
-| 10 | Workload management | Auto allocation; **Reservations** | **WLM queues** manage priority | **Dynamic allocation**; YARN/K8s |
-| 11 | Real-time data | Streaming inserts (**low latency, expensive**) | Weak; batch via Kinesis+S3 | **Strongest**: Structured Streaming |
-| 12 | ETL vs ELT | Best for **ELT** (SQL in warehouse) | Commonly **ETL** via Glue+S3 → Redshift | Strong for **ETL** transformations |
-| 13 | Data sharing | **Authorized Views**, cross-project, Omni (multi-cloud) | Limited; Spectrum+S3 | **Hive Metastore**, Delta, Iceberg |
-| 14 | Execution plan | `EXPLAIN`, **dry-run** scan estimate | `EXPLAIN` shows **dist/join** | `explain(true)`; **Spark UI DAG** |
-| 15 | Skew handling | Auto-balance; clustering keys | Adjust **DISTKEY**; redistribute | **Salting keys**; AQE skew join |
-| 16 | Materialized views | Yes, **auto-refresh** | Yes, **incremental refresh** | Not native; Delta/caching |
-| 17 | Caching | **Query results cached 24h** | Result cache (limited) | **cache() / persist()** |
-| 18 | Streaming ETL design | **Pub/Sub → Dataflow → BQ → Looker** | **Kinesis → Firehose → S3 → COPY** | **Kafka → Spark SS → Delta Lake** |
-| 19 | Comparison to Hive | **Serverless**; faster ad-hoc | OLAP; better batch than Hive MR | **Faster**; unified batch + streaming |
-| 20 | Typical use cases | **Interactive BI**; ad-hoc analytics | **Enterprise DW** (finance, retail) | **ETL**, ML pipelines, streaming |
+| 1 | <mark>**Architecture fundamentals**</mark> | **Serverless**; <mark>Colossus</mark> + <mark>Dremel slots</mark> | **Cluster MPP**; <mark>Leader Node</mark> + <mark>Compute Nodes</mark> | **Driver + Executors**; <mark>YARN/K8s/Mesos</mark> |
+| 2 | Storage format | **Capacitor** columnar storage | **Columnar** (Postgres-based) | **Parquet**, ORC, Avro, JSON, CSV |
+| 3 | Data loading | **Batch load (free)**; **Streaming insert (costly)**; External tables | **COPY from S3**; <mark>Kinesis Firehose</mark> | **Structured Streaming** (Kafka/S3/HDFS) |
+| 4 | <mark>**Partitioning & clustering**</mark> | **Partition** (DATE/INT); **Clustering** on columns | **DISTKEY + SORTKEY** | **PartitionBy**, **BucketBy** |
+| 5 | Concurrency & scalability | **High concurrency**, **auto-scale** | Limited by <mark>WLM queues</mark> | Scales with **cluster resources** |
+| 6 | <mark>**Query optimization**</mark> | **Partition + clustering**; avoid **SELECT \***; **Materialized views** | Correct **DIST/SORT keys**; **VACUUM/ANALYZE** | **Catalyst Optimizer**; <mark>Tungsten</mark>; **cache()** |
+| 7 | <mark>**Join optimization**</mark> | Auto **Broadcast Join**; <mark>partition pruning</mark> | **Co-located joins** via DISTKEY | **Broadcast Join**, **Sort-Merge**, Shuffle Hash |
+| 8 | <mark>**Aggregation optimization**</mark> | **APPROX_COUNT_DISTINCT** (<mark>HLL++</mark>) | **Pre-aggregate** staging tables | Approx agg; **map-side combine** |
+| 9 | <mark>**Cost model**</mark> | **On-demand (per TB scanned)** or **Flat-rate slots** | **Node-hour billing**; reserved nodes | Pay by **runtime** (VMs/containers) |
+| 10 | Workload management | **Auto resource allocation**; <mark>Reservations</mark> | **WLM queues** for priority | **Dynamic allocation**; YARN/K8s |
+| 11 | <mark>**Real-time data**</mark> | **Streaming inserts** (<mark>low latency</mark>, **expensive**) | **Weak real-time**; batch via Kinesis+S3 | **Strongest**: **Structured Streaming** |
+| 12 | <mark>**ETL vs ELT**</mark> | Best for **ELT** (SQL in warehouse) | Commonly **ETL** via Glue+S3 → Redshift | Strong for **ETL** (complex transforms) |
+| 13 | Data sharing | **Authorized Views**; cross-project; **Omni (multi-cloud)** | Limited; **Spectrum+S3** | **Hive Metastore**; **Delta Lake**; Iceberg |
+| 14 | Execution plan | **EXPLAIN**, **dry-run** for scan size | **EXPLAIN** shows **dist/join strategy** | `explain(true)`; **Spark UI DAG** |
+| 15 | <mark>**Skew handling**</mark> | **Auto-balance**; clustering keys | Adjust **DISTKEY**; redistribute | **Salting keys**; **AQE skew join** |
+| 16 | Materialized views | **Yes**, <mark>auto-refresh</mark> | **Yes**, <mark>incremental refresh</mark> | **Not native**; use Delta or caching |
+| 17 | Caching | **Query results cached 24h** | **Result cache** (limited) | **cache() / persist()** |
+| 18 | Streaming ETL design | **Pub/Sub → Dataflow → BigQuery → Looker** | **Kinesis → Firehose → S3 → COPY** | **Kafka → Spark SS → Delta Lake** |
+| 19 | Comparison to Hive | **Serverless**; faster ad-hoc | **OLAP**; better batch than Hive MR | **Faster engine**; **batch + streaming unified** |
+| 20 | <mark>**Typical use cases**</mark> | **Interactive BI**; **ad-hoc analytics** | **Enterprise DW** (finance, retail) | **ETL**, **ML pipelines**, **real-time** |
 
 
 - [1. BigQuery (Core Data Warehouse)](#1-bigquery-core-data-warehouse)
