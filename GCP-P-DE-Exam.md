@@ -3624,6 +3624,24 @@ B. <mark>Dashboard on `bigquery.googleapis.com/slots/allocated_for_project`</mar
 C. Per-project log export → custom metric from `totalSlotMs`  
 D. Org aggregated log export → custom metric  
 
+```mermaid
+flowchart TB
+    subgraph Teams["👥 Teams"]
+        T1["📦 Team A Project"]
+        T2["📦 Team B Project"]
+        T3["📦 Team C Project"]
+    end
+
+    T1 --> M1["📊 Metric: bigquery.googleapis.com/slots/allocated_for_project"]
+    T2 --> M2["📊 Metric: bigquery.googleapis.com/slots/allocated_for_project"]
+    T3 --> M3["📊 Metric: bigquery.googleapis.com/slots/allocated_for_project"]
+
+    M1 & M2 & M3 --> D["📈 Cloud Monitoring Dashboard<br>(Per-project slot usage)"]
+
+    style Teams fill:#f0f8ff,stroke:#0066cc,stroke-width:2px
+    style D fill:#e6ffe6,stroke:#00aa44,stroke-width:2px
+```
+
 **Correct Answer:** B
 
 **Explanation:**  
