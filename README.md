@@ -47,27 +47,26 @@ flowchart LR
 
 | # | Category | Question Type | BigQuery (GCP) | Redshift (AWS) | Spark | Synapse (Azure) |
 |---|----------|---------------|----------------|----------------|-------|-----------------|
-| 1 | 🏗️ Architecture | **Architecture 🏛️** | **<mark>Serverless ☁️</mark>** | **<mark>MPP Cluster 🖥️</mark>** (Leader+Compute) | **<mark>Driver + Executors ⚙️</mark>** | **<mark>MPP 🖧</mark>** (Control+Compute) |
-| 2 | 📂 Data Modeling | **Partitioning 🗂️** | **<mark>DATE / INT / ⏱️ ingestion-time</mark>** | ❌ No native → use **<mark>DIST/SORT</mark>** | **<mark>PartitionBy 🔀</mark>** | **<mark>Table partitioning 📊</mark>** |
-| 3 | 📂 Data Modeling | **Distribution 🔀** | Auto (hidden 🤖) | **<mark>DISTKEY 🎯</mark>** | **<mark>Repartition ↔️</mark>** / Coalesce | **<mark>Hash / Round-robin 🎲</mark>** |
-| 4 | 📂 Data Modeling | **Sorting / Clustering 📊** | **<mark>Clustering 📌</mark>** | **<mark>SORTKEY 📏</mark>** | **<mark>BucketBy 🪣</mark>** | **<mark>Clustered columnstore 🏢</mark>** |
-| 5 | ⚡ Optimization | **Query optimization ⚙️** | Partition + **<mark>MatViews 📑</mark>** | **<mark>DIST/SORT keys 🧩</mark>**, VACUUM | **<mark>Catalyst Optimizer 🔮</mark>** | **<mark>Statistics 📐</mark>**, MatViews |
-| 6 | ⚡ Optimization | **Join optimization 🔗** | Auto **<mark>Broadcast Join 📡</mark>** | **<mark>Co-located joins 🤝</mark>** | **<mark>Broadcast / Sort-Merge 🔀</mark>** | **<mark>Hash-distributed joins 🔄</mark>** |
-| 7 | ⚡ Optimization | **Aggregation ➕** | **<mark>APPROX_COUNT_DISTINCT 📏</mark>** | Pre-aggregate staging 📦 | **<mark>map-side combine 🧮</mark>** | **<mark>Approx functions 🔢</mark>** |
-| 8 | ⚡ Optimization | **Skew handling ⚖️** | **<mark>Auto-balance ⚙️</mark>** | Adjust **<mark>DISTKEY 🎯</mark>** | **<mark>Salting 🧂</mark>**, AQE | Choose **<mark>Hash 🎲</mark> vs Round-robin** |
-| 9 | 💰 Cost | **Cost model 💵** | **<mark>On-demand 💳</mark>** / Flat-rate | **<mark>Node-hour billing ⏳</mark>** | Pay by **<mark>runtime 🖥️</mark>** | **<mark>DWU pricing 📊</mark>** |
-| 10 | 📈 Concurrency | **Concurrency & scaling 📊** | **<mark>Auto-scale 📈</mark>** | Limited by **<mark>WLM queues 📥</mark>** | Scheduler dependent ⏲️ | **<mark>DWU scaling ⚡</mark>** |
-| 11 | ⏱️ Real-time | **Real-time support 🚦** | **<mark>Streaming inserts 🚀</mark>** | Weak (Kinesis batch 📦) | **<mark>Structured Streaming 💧</mark>** | **<mark>Event Hub 📡</mark>** / Synapse Link |
-| 12 | 🔍 Execution | **Execution plan 🔎** | **<mark>EXPLAIN 📜</mark>**, dry-run | **<mark>EXPLAIN 📜</mark>** (dist/join) | `explain(true)`; **<mark>Spark UI 🖥️</mark>** | **<mark>EXPLAIN 📑</mark>** T-SQL |
-| 13 | 🎯 Use Case | **Use cases 🎯** | **<mark>Ad-hoc BI 📊</mark>** | **<mark>Enterprise DW 🏢</mark>** | **<mark>ETL 🔄</mark>**, ML 🤖, real-time ⏱️ | **<mark>Enterprise analytics 📈</mark>** + Power BI |
-| 14 | 📥 Data Ingestion | **Loading methods 📥** | Batch; **Streaming 🚀** | COPY from S3 📦 | **Structured Streaming 💧** | PolyBase; Event Hub 📡 |
-| 15 | 🔒 Security | **IAM & Security 🔐** | **IAM 🛡️** | IAM roles 🧑‍💼 | Kerberos, Ranger 🔑 | Azure AD + RBAC 👥 |
-| 16 | 💾 Recovery | **Backup & Recovery 💾** | **Time Travel ⏳** | Snapshots → S3 📦 | HDFS / Delta backup 📂 | Restore points ♻️ |
-| 17 | 🗂️ Views | **Materialized views 📑** | Yes, **auto-refresh 🔄** | Yes, incremental ♻️ | Not native ❌ | Yes, auto-refresh 🔄 |
-| 18 | ⚡ Caching | **Caching ⚡** | Query cache 24h ⏱️ | Result cache 📦 | **cache() 🖥️** | Result set caching 📂 |
-| 19 | 🔗 Data Sharing | **Data sharing 🌐** | Authorized Views 🔐; Omni ☁️ | Spectrum + S3 📦 | **Delta Lake 🌊**; Hive 🐝 | Synapse Link 🔗; Power BI 📊 |
-| 20 | 🔄 ETL Design | **Streaming ETL pipeline 🔄** | Pub/Sub → Dataflow → **BQ 🚀** | Kinesis → Firehose → **COPY 🔥** | Kafka → Spark SS 💧 → Delta | Event Hub 📡 → ADF → Synapse |
-
+| 1 | 🏗️ Architecture | **Architecture 🏛️** | **<mark>Serverless ☁️</mark>** | **<mark>MPP Cluster 🖥️</mark>** (Leader+Compute) | **<mark>Driver + Executors ⚙️</mark>** | MPP (Control+Compute) |
+| 2 | 📂 Data Modeling | **Partitioning 🗂️** | **<mark>DATE / INT / ⏱️ ingestion-time</mark>** | ❌ No native → use **<mark>DIST/SORT</mark>** | **<mark>PartitionBy 🔀</mark>** | Table partitioning |
+| 3 | 📂 Data Modeling | **Distribution 🔀** | Auto (hidden 🤖) | **<mark>DISTKEY 🎯</mark>** | **<mark>Repartition ↔️</mark>** / Coalesce | Hash / Round-robin |
+| 4 | 📂 Data Modeling | **Sorting / Clustering 📊** | **<mark>Clustering 📌</mark>** | **<mark>SORTKEY 📏</mark>** | **<mark>BucketBy 🪣</mark>** | Clustered columnstore |
+| 5 | ⚡ Optimization | **Query optimization ⚙️** | Partition + **<mark>MatViews 📑</mark>** | **<mark>DIST/SORT keys 🧩</mark>**, VACUUM | **<mark>Catalyst Optimizer 🔮</mark>** | Statistics; MatViews |
+| 6 | ⚡ Optimization | **Join optimization 🔗** | Auto **<mark>Broadcast Join 📡</mark>** | **<mark>Co-located joins 🤝</mark>** | **<mark>Broadcast / Sort-Merge 🔀</mark>** | Hash-distributed joins |
+| 7 | ⚡ Optimization | **Aggregation ➕** | **<mark>APPROX_COUNT_DISTINCT 📏</mark>** | Pre-aggregate staging | **<mark>map-side combine 🧮</mark>** | Approx functions |
+| 8 | ⚡ Optimization | **Skew handling ⚖️** | **<mark>Auto-balance ⚙️</mark>** | Adjust **<mark>DISTKEY 🎯</mark>** | **<mark>Salting 🧂</mark>**, AQE | Hash vs Round-robin |
+| 9 | 💰 Cost | **Cost model 💵** | **<mark>On-demand 💳</mark>** / Flat-rate | **<mark>Node-hour billing ⏳</mark>** | Pay by **<mark>runtime 🖥️</mark>** | DWU pricing |
+| 10 | 📈 Concurrency | **Concurrency & scaling 📊** | **<mark>Auto-scale 📈</mark>** | Limited by **<mark>WLM queues 📥</mark>** | Scheduler dependent ⏲️ | DWU scaling |
+| 11 | ⏱️ Real-time | **Real-time support 🚦** | **<mark>Streaming inserts 🚀</mark>** | Weak (Kinesis batch) | **<mark>Structured Streaming 💧</mark>** | Event Hub / Synapse Link |
+| 12 | 🔍 Execution | **Execution plan 🔎** | **<mark>EXPLAIN 📜</mark>**, dry-run | **<mark>EXPLAIN 📜</mark>** (dist/join) | `explain(true)`; **<mark>Spark UI 🖥️</mark>** | EXPLAIN T-SQL |
+| 13 | 🎯 Use Case | **Use cases 🎯** | **<mark>Ad-hoc BI 📊</mark>** | **<mark>Enterprise DW 🏢</mark>** | **<mark>ETL 🔄</mark>**, ML, real-time | Enterprise analytics; Power BI |
+| 14 | 📥 Data Ingestion | **Loading methods 📥** | Batch; **Streaming 🚀** | COPY from S3 | **Structured Streaming 💧** | PolyBase; Event Hub |
+| 15 | 🔒 Security | **IAM & Security 🔐** | **IAM 🛡️** | IAM roles | Kerberos, Ranger | Azure AD + RBAC |
+| 16 | 💾 Recovery | **Backup & Recovery 💾** | **Time Travel ⏳** | Snapshots → S3 | HDFS / Delta backup | Restore points |
+| 17 | 🗂️ Views | **Materialized views 📑** | Yes, **auto-refresh 🔄** | Yes, incremental | Not native | Yes, auto-refresh |
+| 18 | ⚡ Caching | **Caching ⚡** | Query cache 24h | Result cache | **cache() 🖥️** | Result set caching |
+| 19 | 🔗 Data Sharing | **Data sharing 🌐** | Authorized Views; Omni | Spectrum + S3 | **Delta Lake 🌊**; Hive | Synapse Link; Power BI |
+| 20 | 🔄 ETL Design | **Streaming ETL pipeline 🔄** | Pub/Sub → Dataflow → **BQ 🚀** | Kinesis → Firehose → **COPY 🔥** | Kafka → Spark SS → Delta | Event Hub → ADF → Synapse |
 
 - [1. BigQuery (Core Data Warehouse)](#1-bigquery-core-data-warehouse)
   - [Q1. What is BigQuery?](#q1-what-is-bigquery)
