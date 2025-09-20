@@ -3286,6 +3286,13 @@ D. <mark>Stage table + MERGE</mark> ✅
 - **Quota increase**: not feasible.  
 - **Splitting files**: doesn’t solve core issue.  
 
+```mermaid
+flowchart LR
+    A["📂 1M CSV update records"] --> B["⬆️ Load into Staging Table"]
+    B --> C["⚙️ MERGE with Target Table<br>Update / Insert / Delete"]
+    C --> D["✅ Scalable update applied successfully"]
+```
+
 ---
 
 #### Q131: Simplify IAM across many projects
