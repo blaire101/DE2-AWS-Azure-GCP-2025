@@ -61,17 +61,13 @@ flowchart LR
 | 12 | <mark>**ETL vs ELT**</mark> | Best for **<mark>ELT</mark>** (SQL in warehouse) | Commonly **<mark>ETL</mark>** via Glue+S3 | Typically **<mark>ELT</mark>** (T-SQL); ETL via Data Factory | Strong for **<mark>ETL</mark>** (flexible transforms) |
 | 13 | <mark>**Execution plan**</mark> | **<mark>EXPLAIN</mark>**, dry-run | **<mark>EXPLAIN</mark>** (dist/join) | **<mark>EXPLAIN</mark>** T-SQL plan | `explain(true)`; **<mark>Spark UI DAG</mark>** |
 | 14 | <mark>**Use cases**</mark> | **<mark>Ad-hoc BI</mark>**, analytics | **<mark>Enterprise DW</mark>** (finance, retail) | **<mark>Enterprise analytics</mark>**; Power BI | **<mark>ETL</mark>**, ML, real-time |
-| 15 | Data ingestion | Batch load; Streaming; External | COPY from S3; Kinesis Firehose | PolyBase; Event Hub | Structured Streaming (Kafka/S3) |
-| 16 | Workload management | Auto allocation; Reservations | WLM queues | Resource classes | Dynamic allocation |
+| 15 | Data ingestion | Batch load; Streaming; External | COPY from S3; Kinesis Firehose | PolyBase; Event Hub | - |
+| 16 | Backup & Recovery | Automatic; Time Travel | Snapshots to S3 | Restore points | Depends on HDFS/Delta |
 | 17 | Materialized views | Yes, auto-refresh | Yes, incremental refresh | Yes, auto-refresh | Not native (Delta) |
 | 18 | Caching | Query results cached 24h | Result cache | Result set caching | cache() / persist() |
 | 19 | Data sharing | Authorized Views; Omni multi-cloud | Limited; Spectrum+S3 | Synapse Link; Power BI | Delta Lake; Hive Metastore |
 | 20 | Streaming ETL design | Pub/Sub → Dataflow → BQ | Kinesis → Firehose → S3 → COPY | Event Hub → Data Factory → Synapse | Kafka → Spark SS → Delta Lake |
 | 21 | Security & IAM | GCP IAM; dataset ACL | IAM roles | Azure AD + RBAC | Kerberos, Ranger |
-| 22 | Backup & Recovery | Automatic; Time Travel | Snapshots to S3 | Restore points | Depends on HDFS/Delta |
-| 23 | Integration | Looker, Data Studio | AWS Glue, Athena | Power BI, ADF | Kafka, HDFS, ML libs |
-| 24 | ML / Advanced Analytics | BQML in SQL | SageMaker + Redshift ML | Azure ML + Synapse | Spark MLlib, TensorFlow |
-| 25 | Misc features | Misc enterprise functions | Misc AWS features | Misc Azure features | Misc Spark ecosystem |
 
 - [1. BigQuery (Core Data Warehouse)](#1-bigquery-core-data-warehouse)
   - [Q1. What is BigQuery?](#q1-what-is-bigquery)
