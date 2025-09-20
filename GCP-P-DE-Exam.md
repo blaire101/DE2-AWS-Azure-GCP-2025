@@ -3030,6 +3030,18 @@ E. Export JSON → Source Repositories
 - **BigQuery**: built for analytics, not recovery.  
 - **Repos**: not for data storage.  
 
+```json
+{
+  "kind": "User",
+  "id": 12345,
+  "properties": {
+    "name": "Alice",
+    "email": "alice@example.com",
+    "signup_date": "2025-09-19"
+  }
+}
+```
+
 ---
 
 #### Q123: BigQuery schema for transactions
