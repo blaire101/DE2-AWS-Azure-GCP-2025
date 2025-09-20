@@ -3724,7 +3724,6 @@ C. Analysts write Dataflow pipeline in Python
 D. Use Dataproc + Spark SQL + HDFS  
 
 ```mermaid
-
 flowchart TB
     subgraph GCP["☁️ Google Cloud"]
         DC["📂 Data Catalog<br>(Metadata management)"]
@@ -3745,8 +3744,7 @@ flowchart TB
     DF --- GE
     CC --- SF
 
-    style GCP fill:#e6f7ff,stroke:#0066cc,stroke-width:2px
-    style AWS fill:#fff2cc,stroke:#aa8800,stroke-width:2px
+    style AWS fill:#fff2cc,stroke:#aa8800,stroke-width:3px
 ```
 
 **Correct Answer:** A  
