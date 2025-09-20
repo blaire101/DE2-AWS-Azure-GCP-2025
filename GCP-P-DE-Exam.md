@@ -3514,7 +3514,7 @@ D. Bash script (create cluster, run, teardown)
 #### Q139: Scalable decoupled job handoff (generators → runners)
 
 **Question:**  
-You’re building a data pipeline between job generators and job runners. It must scale with usage and allow new apps without hurting existing ones.
+You’re building a data pipeline between **job generators** and **job runners**. It must scale with usage and allow new apps without hurting existing ones.
 
 **Options:**  
 A. App Engine API  
@@ -3544,6 +3544,26 @@ C. <mark>UUID v4 (random)</mark> ✅
 D. Monotonically increasing order ID  
 
 **Correct Answer:** C
+
+```mermaid
+flowchart TB
+    subgraph Seq["Sequential Primary Key (e.g., Timestamp, Auto-ID)"]
+        A1["Write 1 → 1001"] --> A2["Write 2 → 1002"] --> A3["Write 3 → 1003"]
+        style A3 fill:#ffcccc,stroke:#ff0000,stroke-width:2px
+        Note1["⚠️ Hotspot: All new writes go to the last partition"]
+    end
+
+    subgraph Rand["Random Primary Key (UUID v4)"]
+        B1["Write → UUID a1f3"] 
+        B2["Write → UUID 9d7c"]
+        B3["Write → UUID c4b8"]
+        B4["Write → UUID e21f"]
+        B1 --- B2 --- B3 --- B4
+        Note2["✅ Evenly distributed across partitions"]
+    end
+
+    Seq --> Rand
+```
 
 **Explanation:**  
 - ✅ **C is correct**: **UUID v4** generates random values, spreading writes evenly and **avoiding hotspots**.  
