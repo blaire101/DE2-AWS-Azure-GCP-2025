@@ -3057,7 +3057,7 @@ D. <mark>Append status updates (no UPDATE)</mark> ✅
 E. External GCS table  
 
 ```mermaid
-flowchart TB
+flowchart TD
     subgraph Bad_Design["❌ Normalized + UPDATE"]
         U["User Table"]
         T["Transaction Table"]
