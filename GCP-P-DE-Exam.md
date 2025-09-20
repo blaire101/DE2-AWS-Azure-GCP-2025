@@ -3278,6 +3278,13 @@ B. Increase quota
 C. Split CSV smaller  
 D. <mark>Stage table + MERGE</mark> ✅  
 
+```mermaid
+flowchart LR
+    A["📂 1M CSV update records"] --> B["⬆️ Load into Staging Table"]
+    B --> C["⚙️ MERGE with Target Table<br>Update / Insert / Delete"]
+    C --> D["✅ Scalable update applied successfully"]
+```
+
 **Correct Answer:** D  
 
 **Explanation:**  
@@ -3285,13 +3292,6 @@ D. <mark>Stage table + MERGE</mark> ✅
 - **UPDATE**: inefficient, quota-bound.  
 - **Quota increase**: not feasible.  
 - **Splitting files**: doesn’t solve core issue.  
-
-```mermaid
-flowchart LR
-    A["📂 1M CSV update records"] --> B["⬆️ Load into Staging Table"]
-    B --> C["⚙️ MERGE with Target Table<br>Update / Insert / Delete"]
-    C --> D["✅ Scalable update applied successfully"]
-```
 
 ---
 
