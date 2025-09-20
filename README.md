@@ -45,8 +45,6 @@ flowchart LR
 
 # BigQuery vs Redshift vs Spark — 20 Interview Questions
 
-# BigQuery vs Redshift vs Synapse vs Spark — 20 Interview Questions (Key Highlights)
-
 | # | Question Type | BigQuery (GCP) | Redshift (AWS) | Synapse (Azure) | Spark |
 |---|---------------|----------------|----------------|-----------------|-------|
 | 1 | <mark>**Architecture fundamentals**</mark> | **Serverless**; <mark>Colossus</mark> + <mark>Dremel slots</mark> | **Cluster MPP**; <mark>Leader Node</mark> + <mark>Compute Nodes</mark> | **MPP**; <mark>Control node</mark> + Compute nodes | **Driver + Executors**; <mark>YARN/K8s/Mesos</mark> |
