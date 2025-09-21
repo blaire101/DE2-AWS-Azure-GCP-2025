@@ -2471,6 +2471,19 @@ D. Create a feature cross of latitude and longitude, bucketize at minute level, 
 **Question:**  
 Deploying **MariaDB** on GCE VMs. Need metrics (network connections, disk I/O, replication status) with **minimal development effort**, using **Stackdriver dashboards/alerts**.  
 
+```mermaid
+flowchart LR
+    A["🐬 MariaDB on GCE VMs"] --> B["📥 Stackdriver Ops Agent"]
+    B --> C["🔌 MySQL Plugin (compatible with MariaDB)"]
+    C --> D["📊 Metrics Collected:<br>- Connections<br>- Disk I/O<br>- Replication Status"]
+    D --> E["☁️ Cloud Monitoring (Stackdriver)<br>Dashboards & Alerts"]
+
+    style A fill:#e6f0ff,stroke:#0066cc,stroke-width:2px
+    style B fill:#fff2cc,stroke:#aa8800,stroke-width:2px
+    style C fill:#ffe6e6,stroke:#cc0000,stroke-width:2px
+    style E fill:#e6ffe6,stroke:#00aa44,stroke-width:2px
+```
+
 **Options:**  
 A. Install OpenCensus Agent + custom exporter to Stackdriver  
 B. Place MariaDB instances in Instance Group with Health Check  
