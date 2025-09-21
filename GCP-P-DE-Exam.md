@@ -2294,6 +2294,28 @@ You are a head of BI at a large enterprise with multiple business units.
 - Users sometimes cannot get slots to run queries  
 - Want to solve without adding new projects  
 
+```mermaid
+flowchart LR
+    subgraph OnDemand["⚡ On-demand Pricing"]
+        P1["📦 Project A<br>Max 2000 slots"]
+        P2["📦 Project B<br>Max 2000 slots"]
+        P3["📦 Project C<br>Max 2000 slots"]
+        Note1["❌ Hard cap: 2000 slots/project<br>Users often wait in queue"]
+    end
+
+    subgraph FlatRate["💡 Flat-rate Pricing + Priority Model"]
+        Slots["🎯 Central Slot Pool<br>(e.g., 10,000 slots)"]
+        Dept1["🏢 Finance Dept<br>2000 slots reserved"]
+        Dept2["📊 Marketing Dept<br>1500 slots reserved"]
+        Dept3["🧑‍💻 R&D Dept<br>1500 slots reserved"]
+        Note2["✅ No per-project cap<br>Fair allocation across teams"]
+    end
+
+    Slots --> Dept1
+    Slots --> Dept2
+    Slots --> Dept3
+```
+
 **Options:**  
 A. Convert batch BQ queries into interactive queries  
 B. Create an additional project to bypass 2K slot quota  
