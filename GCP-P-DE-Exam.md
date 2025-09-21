@@ -2421,6 +2421,20 @@ B. Try/catch in DoFn, log errors only
 C. Try/catch in DoFn, write bad rows directly to Pub/Sub  
 D. <mark>Try/catch in DoFn, sideOutput → PCollection → later Pub/Sub/BigQuery</mark>  
 
+```mermaid
+flowchart LR
+    A["📥 Input Data (Pub/Sub / GCS)"] --> B["⚙️ Dataflow DoFn<br>Process Records"]
+
+    B -->|✅ Valid Rows| C["📊 Main PCollection<br>→ BigQuery / Storage"]
+
+    B -->|❌ Bad Rows via SideOutput| D["📦 Dead-letter PCollection"]
+
+    D --> E["☁️ Pub/Sub (retry) or BigQuery (analysis)"]
+
+    style D fill:#ffe6e6,stroke:#cc0000,stroke-width:2px
+    style C fill:#e6ffe6,stroke:#00aa00,stroke-width:2px
+```
+
 **Correct Answer:** D  
 
 **Explanation:**  
