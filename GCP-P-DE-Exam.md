@@ -2138,6 +2138,20 @@ B. Cloud Bigtable and Cloud SQL
 C. <mark>BigQuery and Cloud Bigtable</mark>  
 D. BigQuery and Cloud Storage  
 
+```mermaid
+flowchart LR
+    Ingest["📥 Data Ingestion<br>(IoT, logs, transactions)"] --> BQ["🔷 BigQuery<br>Petabyte-scale analytics"]
+    Ingest --> BT["🟦 Cloud Bigtable<br>Time-series DB"]
+
+    BQ --> Note1["📊 PB-scale aggregations → BigQuery"]
+    BT --> Note2["⚡ Time-range queries → Bigtable"]
+
+    style BQ fill:#e6f7ff,stroke:#0066cc,stroke-width:2px
+    style BT fill:#f0fff4,stroke:#00aa44,stroke-width:2px
+    style Note1 fill:#fff2cc,stroke:#aa8800,stroke-width:1px
+    style Note2 fill:#fff2cc,stroke:#aa8800,stroke-width:1px
+```
+
 **Correct Answer:** C  
 
 **Explanation:**  
