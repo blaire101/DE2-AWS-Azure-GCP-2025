@@ -2337,6 +2337,25 @@ D. Increase concurrent slots quota per project in Cloud Console
 On-prem Kafka cluster with web logs. Need replication to Google Cloud (for BQ + GCS).  
 - Preferred: **mirroring** (avoid Kafka Connect plugins).  
 
+```mermaid
+flowchart LR
+    subgraph OnPrem["On-Prem Data Center"]
+        K1["Kafka Cluster - Web Logs"]
+    end
+
+    subgraph GCP["Google Cloud"]
+        K2["Kafka Cluster on GCE"]
+        D1["Dataproc / Dataflow ETL"]
+        S1["Cloud Storage GCS"]
+        B1["BigQuery Analytics"]
+    end
+
+    K1 -->|MirrorMaker Replication| K2
+    K2 --> D1
+    D1 --> S1
+    D1 --> B1
+```
+
 **Options:**  
 A. <mark>Deploy Kafka on GCE → mirror from on-prem → read with Dataproc/Dataflow → GCS</mark>  
 B. Kafka on GCE + Pub/Sub Kafka connector (Sink)  
