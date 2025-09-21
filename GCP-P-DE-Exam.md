@@ -2253,6 +2253,24 @@ After migrating ETL jobs to BigQuery, you need to verify new vs old outputs.
 * Tables have **no primary key**.
 * Must confirm outputs are **identical**.
 
+```mermaid
+flowchart TB
+    O["📦 Old ETL Output Table"] --> H1["🔄 Sort & Hash<br>(Dataproc + BQ connector)"]
+    N["📦 New BigQuery Output Table"] --> H2["🔄 Sort & Hash<br>(Dataproc + BQ connector)"]
+
+    H1 --> Cmp["⚖️ Compare Checksums"]
+    H2 --> Cmp
+
+    Cmp --> R["✅ Identical Outputs<br>or ❌ Mismatches Found"]
+
+    style O fill:#e6f7ff,stroke:#0066cc,stroke-width:2px
+    style N fill:#e6f7ff,stroke:#0066cc,stroke-width:2px
+    style H1 fill:#fff2cc,stroke:#aa8800,stroke-width:2px
+    style H2 fill:#fff2cc,stroke:#aa8800,stroke-width:2px
+    style Cmp fill:#ffe6e6,stroke:#cc0000,stroke-width:2px
+    style R fill:#e6ffe6,stroke:#00aa44,stroke-width:2px
+```
+
 **Options:**  
 A. Random sample with RAND().  
 B. Random sample with HASH().  
