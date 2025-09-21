@@ -2045,7 +2045,7 @@ D. Use a **Cloud Storage** bucket only reachable via an App Engine service that 
 - **B**: BigQuery’s **Data Access logs** + IAM provide native, fine-grained query/access auditing.  
 - **A**: Encryption ≠ access audit trail.  
 - **C**: Admin logs cover admin actions, not data read access granularity.  
-- **D**: Custom logging adds complexity and is easier to bypass.  
+- **D**: Custom logging adds complexity and is easier to bypass.  If someone accesses GCS directly, they bypass App Engine and the logging no longer works.   
 
 
 ---
