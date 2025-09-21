@@ -2555,6 +2555,20 @@ D. <mark>Cloud SQL</mark>
 **Question:**  
 Real-time Bigtable app (heavy read/write). New **hourly** analytics over whole DB; must protect production reliability.  
 
+```mermaid
+flowchart TB
+    subgraph BigtableInstance["☁️ Bigtable Instance"]
+        C1["Cluster 1 (Prod)<br>Single-Cluster Routing"]
+        C2["Cluster 2 (Analytics)<br>Single-Cluster Routing"]
+    end
+
+    App1["📱 Real-time App"] -->|App Profile A| C1
+    Job["📊 Hourly Analytics Jobs"] -->|App Profile B| C2
+
+    style C1 fill:#e6ffe6,stroke:#00aa44,stroke-width:2px
+    style C2 fill:#e6f0ff,stroke:#0066cc,stroke-width:2px
+```
+
 **Options:**  
 A. Export dump to GCS and run analytics on files  
 B. Add second cluster with **multi-cluster** routing; live app vs batch profiles  
