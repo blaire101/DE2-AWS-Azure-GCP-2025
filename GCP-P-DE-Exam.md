@@ -2589,6 +2589,24 @@ D. Double the size of existing cluster and run both workloads there
 **Question:**  
 Enrich **Pub/Sub** events with small static reference data from **BigQuery**; write enriched results back to BigQuery.  
 
+```mermaid
+flowchart LR
+    A["📡 Streaming Job<br>(Apache Beam / Dataflow)"]
+
+    A --> B["📥 PubSubIO<br>Subscribe to Pub/Sub events"]
+    A --> C["📑 Side-inputs<br>Load small reference data<br>from BigQuery"]
+
+    B --> D["⚙️ Enrichment Step<br>Join events + reference data"]
+    C --> D
+
+    D --> E["📤 BigQueryIO<br>Write enriched results to BigQuery"]
+
+    style B fill:#e6f7ff,stroke:#1a73e8,stroke-width:2px
+    style C fill:#fff2cc,stroke:#fbbc05,stroke-width:2px
+    style D fill:#f0fff4,stroke:#34a853,stroke-width:2px
+    style E fill:#f9f0ff,stroke:#9c27b0,stroke-width:2px
+```
+
 **Options:**  
 A. Batch job, PubSubIO, side-inputs  
 B. Streaming job, PubSubIO, JdbcIO, side-outputs  
