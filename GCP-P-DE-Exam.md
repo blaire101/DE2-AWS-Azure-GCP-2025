@@ -2423,9 +2423,9 @@ D. <mark>Try/catch in DoFn, sideOutput → PCollection → later Pub/Sub/BigQuer
 
 ```mermaid
 flowchart LR
-    A["📥 Input Data (Pub/Sub / GCS)"] --> B["⚙️ Dataflow DoFn<br>Process Records"]
+    A["📥 Input Data (Pub/Sub / GCS)"] --> B["⚙️ Dataflow DoFn（Do Function）<br>Process Records"]
 
-    B -->|✅ Valid Rows| C["📊 Main PCollection<br>→ BigQuery / Storage"]
+    B -->|✅ Valid Rows| C["📊 Main PCollection（Parallel Collection~same RDD）<br>→ BigQuery / Storage"]
 
     B -->|❌ Bad Rows via SideOutput| D["📦 Dead-letter PCollection"]
 
