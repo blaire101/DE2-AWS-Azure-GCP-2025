@@ -4541,6 +4541,8 @@ D. <mark>Sliding 30s window with 5s period; trigger AfterWatermark</mark> ✅
 **Question:**  
 Need to aggregate events into **hourly buckets** before loading to BigQuery, at scale.  
 
+**Tumbling window (fixed window) → lets you define “one non-overlapping window per hour,” and it will automatically aggregate your data by hour.**
+
 **Options:**  
 A. Cloud Function per message  
 B. Hourly Cloud Function batch  
@@ -4558,6 +4560,21 @@ D. <mark>Streaming Dataflow job with tumbling (hourly) windows</mark> ✅
 
 **Question:**  
 Which intents should be automated first?  
+
+```mermaid
+flowchart TB
+    U["💬 User Queries (100%)"]
+    U --> S["⚡ Simple Intents (Top 10)<br>~70% of traffic"]
+    U --> C["🔧 Complex Intents<br>~30% of traffic"]
+
+    S --> R1["✅ Automate First<br>Quick ROI, Easy Wins"]
+    C --> R2["❌ Automate Later<br>Lower ROI, More Effort"]
+
+    style S fill:#e6ffe6,stroke:#00aa44,stroke-width:2px
+    style C fill:#ffe6e6,stroke:#cc0000,stroke-width:2px
+    style R1 fill:#d9f0ff,stroke:#0077cc,stroke-width:2px
+    style R2 fill:#f9f2ec,stroke:#996633,stroke-width:1.5px
+```
 
 **Options:**  
 A. <mark>Automate top 10 simple intents (70% traffic)</mark> ✅  
