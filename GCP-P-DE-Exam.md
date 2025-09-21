@@ -2624,7 +2624,7 @@ D. Streaming job, PubSubIO, BigQueryIO, side-outputs
 #### Q95: Scale Bigtable writes — what to monitor (choose 2)
 
 **Question:**  
-Pipeline writes to Bigtable with good row keys. When should you scale the cluster?  
+Pipeline **writes** to Bigtable with good row keys. When should you scale the cluster?  
 
 **Options:**  
 A. Key Visualizer: Read pressure index > 100  
@@ -2684,6 +2684,8 @@ D. Federated BigQuery tables with queries
 
 **Question:**  
 Security forbids external IP access **into** on-prem. After initial upload, add daily data from on-prem apps.  
+
+**On-prem: The server is in the company's own computer room, a local environment.** 
 
 **Options:**  
 A. <mark>Run **gsutil rsync** from on-prem servers</mark>  
