@@ -1876,6 +1876,28 @@ You are designing storage for very large text files in a Google Cloud data pipel
 * Support **compression**.
 * Support **parallel load** from input locations (Google best practices).
 
+```mermaid
+flowchart TD
+    subgraph OptionA["❌ Option A: Avro → BigQuery"]
+        A1["📂 Very Large Text Files"]
+        A2["⚙️ Dataflow: Transform to Avro (Compressed)"]
+        A3["🗄️ Store in BigQuery<br>(High Storage Cost)"]
+        A4["🔎 Query with ANSI SQL"]
+        A1 --> A2 --> A3 --> A4
+    end
+
+    subgraph OptionB["✅ Option B: Avro → GCS + External Table"]
+        B1["📂 Very Large Text Files"]
+        B2["⚙️ Dataflow: Transform to Avro (Compressed)"]
+        B3["☁️ Store in Cloud Storage<br>(Cheap, Durable)"]
+        B4["🔗 BigQuery External Table<br>(ANSI SQL, Pay-per-Query)"]
+        B1 --> B2 --> B3 --> B4
+    end
+
+    style OptionA fill:#ffe6e6,stroke:#cc0000,stroke-width:2px
+    style OptionB fill:#e6ffe6,stroke:#00aa44,stroke-width:2px
+```
+
 **Options:**  
 A. Transform text files to compressed **Avro** using Cloud Dataflow. Store in BigQuery for storage and query.  
 B. <mark>Transform text files to compressed **Avro** using Cloud Dataflow. Store in **Cloud Storage** and query via permanent BigQuery external tables.</mark>  
@@ -1942,6 +1964,20 @@ A. **Cloud SQL** with secondary indexes.
 B. **Cloud SQL** + Dataflow transforms.  
 C. <mark>**Cloud Spanner** with **secondary indexes**.</mark>  
 D. **Cloud Spanner** + Dataflow transforms.  
+
+```mermaid
+flowchart TB
+
+    subgraph WithIndex["✅ With Secondary Index on order_date"]
+        TBL2["📂 Transactions Table (10 TB)"]
+        IDX["📑 Secondary Index: order_date"]
+        Q2["🔎 Query: WHERE order_date BETWEEN '2023-01-01' AND '2023-01-31'"]
+        FAST["⚡ Range Lookup via Index<br>(Fast, only Jan data read)"]
+        TBL2 --> IDX --> Q2 --> FAST
+    end
+
+    style WithIndex fill:#e6ffe6,stroke:#00aa44,stroke-width:2px
+```
 
 **Correct Answer:** C  
 
