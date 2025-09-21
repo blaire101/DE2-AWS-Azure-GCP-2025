@@ -4659,6 +4659,12 @@ D. <mark>Use CoGroupByKey instead of SideInput</mark> ✅
 
 **Correct Answer:** D  
 
+| Dataflow Concept | Spark Equivalent                          | Explanation                                                                                               |
+| ---------------- | ----------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| <mark>**SideInput**</mark>    | <mark>**Broadcast Join**</mark>                       | Small table is broadcast to every executor’s memory for local hash joins. Best for dimension/lookups.     |
+| **CoGroupByKey** | **Shuffle Join** (Sort-Merge / Hash Join) | Large tables are shuffled globally by key, then repartitioned and joined. Best for large fact–fact joins. |
+
+
 **Explanation:**  
 - ✅ **D is correct**: Large SideInputs force data into worker memory; CoGroupByKey shuffles & scales joins.  
 - ❌ **A**: File format change doesn’t fix join bottleneck.  
