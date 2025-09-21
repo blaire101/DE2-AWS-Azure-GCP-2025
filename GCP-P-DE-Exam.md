@@ -2524,6 +2524,17 @@ D. Match loan applicants with their social profiles to enable feature engineerin
 **Question:**  
 Migrate a **2TB relational database** to GCP. Minimal refactoring; cost is primary concern.  
 
+```mermaid
+flowchart TB
+    A["📦 Relational DB (2TB, on-prem)"] --> B{"Which GCP DB?"}
+
+    B -->|💰 Cost-sensitive<br>⚡ Minimal Refactor<br>📍 Single-region OK| SQL["☁️ Cloud SQL"]
+    B -->|🌍 Global Scale<br>💾 10s+ TB<br>🔒 Strong Consistency Needed| Spanner["☁️ Cloud Spanner"]
+
+    style SQL fill:#e6ffe6,stroke:#00aa44,stroke-width:2px
+    style Spanner fill:#ffe6e6,stroke:#cc0000,stroke-width:2px
+```
+
 **Options:**  
 A. Cloud Spanner  
 B. Cloud Bigtable  
