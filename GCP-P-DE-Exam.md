@@ -2335,7 +2335,7 @@ D. Increase concurrent slots quota per project in Cloud Console
 
 **Question:**  
 On-prem Kafka cluster with web logs. Need replication to Google Cloud (for BQ + GCS).  
-- Preferred: **mirroring** (avoid Kafka Connect plugins).  
+- Preferred: **mirroring** (avoid Kafka Connect **plugins**).  
 
 ```mermaid
 flowchart LR
