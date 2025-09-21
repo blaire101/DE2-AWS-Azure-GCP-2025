@@ -2378,6 +2378,21 @@ Migrated Hadoop job → Dataproc + GCS.
 - Organization is **cost-sensitive**, using preemptibles (2 non-preemptibles only)  
 - Performance degraded after migration  
 
+```mermaid
+flowchart LR
+    A["📂 Input Data<br>Parquet in GCS"] --> B["⚙️ Spark Executors<br>Running on Dataproc"]
+
+    subgraph Shuffle["🔄 Shuffle Stage"]
+        B --> D1["💾 Local Disk HDD<br>(default, slow, small)"]
+        D1 -. bottleneck .-> X["🐌 Performance Degraded"]
+
+        B --> D2["⚡ Local Disk SSD<br>(larger, faster)"]
+        D2 --> Y["🚀 Improved Shuffle Performance"]
+    end
+
+    B --> C["📂 Output Data<br>Back to GCS"]
+```
+
 **Options:**  
 A. Increase Parquet file size ≥ 1 GB  
 B. Switch to TFRecords (~200 MB each)  
