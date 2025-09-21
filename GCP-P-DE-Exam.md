@@ -2085,6 +2085,16 @@ D. Python using MapReduce
 
 **Correct Answer:** A  
 
+**PigLatin** is a high-level scripting language designed specifically for ETL data pipelines on Hadoop.  
+
+<mark>**Features**</mark>
+
+- **Checkpointing**  
+  Allows intermediate results to be saved, making them reusable and enabling error recovery.  
+
+- **Splitting pipelines**  
+  Makes it easy to branch the data flow into multiple downstream processing paths.  
+
 **Explanation:**  
 - **PigLatin**: High-level scripting language built for **ETL pipelines**, supports **checkpointing** and **pipeline splitting**.  
 - **Hive**: SQL-like → designed for querying, not ETL control flow.  
