@@ -4530,7 +4530,7 @@ D. Use Cloud Data Fusion to assign each city a numeric region code
 #### Q165: Database for North American bank transactions (ACID required)
 
 **Question:**  
-A bank operates across North America. You need a **SQL database with ACID compliance** to handle **account transactions**.  
+A bank operates across <mark>**North America**</mark>. You need a **SQL database with ACID compliance** to handle **account transactions**.  
 
 **Options:**  
 A. Cloud Spanner with stale reads  
