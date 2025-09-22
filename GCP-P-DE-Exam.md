@@ -4959,6 +4959,25 @@ D. Separate table per index, row key = reverse timestamp
 **Question:**  
 Streaming API ingestion; need staging + production table setup for reporting.
 
+```mermaid
+flowchart TB
+    subgraph Pipeline["📌 Streaming Pipeline"]
+        API["Streaming API"]
+        STG["🗄️ Staging Table (append-only)"]
+        PROD["📊 Production Table (reporting)"]
+    end
+
+    API --> STG
+    STG -- every 3h batch move --> PROD
+    STG -- clear --> STG
+
+    classDef staging fill:#ffe5e5,stroke:#cc0000,color:#000
+    classDef prod fill:#e6ffe6,stroke:#1b7f1b,color:#000
+
+    class STG staging
+    class PROD prod
+```
+
 **Options:**  
 A. Append-only staging; update prod every 3 hours  
 B. Append-only staging; update prod every 90 minutes  
@@ -4978,6 +4997,21 @@ D. Move staged data → production; clear staging every 30 minutes
 
 **Question:**  
 Job starts, processes some elements, then fails. Monitoring shows DoFn errors.
+
+```mermaid
+flowchart TB
+    subgraph Requirement["📌 Job Behavior"]
+        R1["Job starts successfully"]
+        R2["Processes some elements"]
+        R3["Then fails with DoFn errors"]
+    end
+
+    subgraph Options["Possible Causes"]
+        B["✅ Exceptions in worker DoFn<br>- Runtime error mid-execution"]
+    end
+
+    R1 & R2 & R3 --> B
+```
 
 **Options:**  
 A. Job validation  
@@ -5022,8 +5056,23 @@ Dev team: access Storage + BQ. External team: BQ only.
 **Options:**  
 A. Remove IAM on Storage for external  
 B. VPC firewall rules  
-C. VPC-SC perimeter + restrict BQ  
-D. <mark>VPC-SC perimeter + restrict GCS, add Dev to Access Level</mark> ✅  
+C. VPC-Service Controls perimeter + restrict BQ  
+D. <mark>VPC-Service Controls perimeter + restrict GCS, add Dev to Access Level</mark> ✅  
+
+```mermaid
+flowchart TB
+    subgraph Requirement["📌 Requirements"]
+        R1["Dev: Access GCS + BQ"]
+        R2["External: Access BQ only"]
+        R3["Prevent external GCS access"]
+    end
+
+    subgraph Options["Choices"]
+        D["✅ VPC-SC restrict GCS<br>- Dev in Access Level<br>- External blocked"]
+    end
+
+    R1 & R2 & R3 --> D
+```
 
 **Correct Answer:** D  
 
@@ -5060,6 +5109,21 @@ D. Cloud SQL zonal → Cloud SQL HA
 **Question:**  
 1 PB transfer in “a few hours,” secure connection.
 
+```mermaid
+flowchart TB
+    subgraph Requirement["📌 Requirements"]
+        R1["1 PB data"]
+        R2["Transfer in few hours"]
+        R3["Secure connection"]
+    end
+
+    subgraph Options["Choices"]
+        A["✅ Dedicated Interconnect + STS<br>- 100–200 Gbps<br>- PB-scale in hours<br>- Secure"]
+    end
+
+    R1 & R2 & R3 --> A
+```
+
 **Options:**  
 A. <mark>Dedicated Interconnect + Storage Transfer Service</mark> ✅  
 B. Transfer Appliance + manual encrypt/decrypt  
@@ -5082,6 +5146,21 @@ A. <mark>Use Data Fusion to transform before loading</mark> ✅
 B. Data Fusion convert to Avro, then load  
 C. Stage table + SQL transform → final  
 D. Load directly into final table + SQL fix  
+
+```mermaid
+flowchart TB
+    subgraph Requirement["📌 Requirements"]
+        R1["CSV source"]
+        R2["Messy data (types, formatting)"]
+        R3["Need pipeline to BigQuery"]
+    end
+
+    subgraph Options["Approaches"]
+        A["✅ Data Fusion transform before load<br>- Cleansing<br>- Type casting<br>- Validation"]
+    end
+
+    R1 & R2 & R3 --> A
+```
 
 **Correct Answer:** A  
 
