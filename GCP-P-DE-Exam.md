@@ -4095,6 +4095,30 @@ D. Add extra NICs and bond links
 **Question:**  
 You need rapid lift-and-shift of Spark ML pipelines, data now in BigQuery.  
 
+```mermaid
+flowchart LR
+    subgraph BQ["📊 BigQuery (Data Source)"]
+        T1["Training Data<br>(Tables)"]
+    end
+
+    subgraph DP["☁️ Dataproc (Managed Spark Cluster)"]
+        ML["Spark ML Pipelines<br>(Lift-and-Shift)"]
+    end
+
+    subgraph OUT["📈 Model Output"]
+        O1["Predictions / Metrics"]
+        O2["Store Back to BigQuery<br>or GCS"]
+    end
+
+    T1 -->|BigQuery Connector| ML
+    ML --> O1
+    ML --> O2
+
+    style BQ fill:#e6f7ff,stroke:#0066cc,stroke-width:2px
+    style DP fill:#fff2cc,stroke:#aa8800,stroke-width:2px
+    style OUT fill:#e6ffe6,stroke:#00aa44,stroke-width:2px
+```
+
 **Options:**  
 A. Use Vertex AI to train Spark ML models  
 B. Rewrite models in TensorFlow for Vertex AI  
@@ -4155,6 +4179,22 @@ D. Kafka → Pub/Sub → BigQuery + Cloud Scheduler every 5min
 **Question:**  
 Need HA for MySQL in Cloud SQL in case of zone failure.  
 
+```mermaid
+flowchart LR
+    subgraph ZoneA["Zone A"]
+        P["🟢 Primary MySQL Instance"]
+    end
+
+    subgraph ZoneB["Zone B"]
+        F["🔄 Failover Replica (HA)"]
+    end
+
+    C["👩‍💻 Application Clients"] --> P
+    C --> F
+
+    P -.replication.-> F
+```
+
 **Options:**  
 A. <mark>Create primary in one zone + failover replica in another zone</mark> ✅  
 B. Primary + read replica in another zone  
@@ -4178,6 +4218,24 @@ Requirements:
 - Seek to specific offset in topic  
 - Hundreds of pub/sub topics  
 - Retain per-key ordering  
+
+```mermaid
+flowchart LR
+    P["📤 Producers<br>(Web logs, apps)"] --> T["📦 Kafka Topics<br>(Hundreds of topics)"]
+
+    subgraph K["Apache Kafka Cluster"]
+        T -->|Partition by Key| Part1["📂 Partition 1<br>Offset 0 → N"]
+        T -->|Partition by Key| Part2["📂 Partition 2<br>Offset 0 → N"]
+        T -->|Partition by Key| Part3["📂 Partition 3<br>Offset 0 → N"]
+    end
+
+    Part1 --> C["📥 Consumers<br>(Seek(offset), Per-key ordering)"]
+    Part2 --> C
+    Part3 --> C
+
+    style K fill:#f0f8ff,stroke:#1e90ff,stroke-width:2px
+    style C fill:#e6ffe6,stroke:#228b22,stroke-width:2px
+```
 
 **Options:**  
 A. <mark>Apache Kafka</mark> ✅  
@@ -4241,6 +4299,28 @@ D. Scale predictions output
 **Question:**  
 Company forbids Dataproc nodes from internet access; still need dependencies at startup.  
 
+```mermaid
+flowchart LR
+    subgraph VPC["VPC Internal Network"]
+        DP["🖥️ Dataproc Cluster<br>(no public IP)"]
+        GCS["📦 GCS Bucket<br>(init scripts & dependencies)"]
+    end
+
+    subgraph Google["Google Internal Services"]
+        PGA["🔒 Private Google Access"]
+    end
+
+    DP -- fetch dependencies --> PGA --> GCS
+
+    classDef cluster fill:#e6f3ff,stroke:#0066cc,color:#000
+    classDef storage fill:#fff2cc,stroke:#aa8800,color:#000
+    classDef pga fill:#e6ffe6,stroke:#1b7f1b,color:#000
+
+    class DP cluster
+    class GCS storage
+    class PGA pga
+```
+
 **Options:**  
 A. Deploy Cloud SQL Proxy  
 B. Use SSH tunnel for internet access  
@@ -4289,6 +4369,28 @@ B. Cloud Bigtable
 C. Cloud Spanner  
 D. Cloud Datastore  
 
+```mermaid
+flowchart TB
+    subgraph Requirement["📌 Requirement"]
+        R1["OLTP (Transactional)"]
+        R2["20 TB Size"]
+        R3["Fully Managed"]
+        R4["SQL / ACID"]
+    end
+
+    subgraph Options["GCP Database Options"]
+        A["✅ Cloud SQL<br>- SQL, ACID<br>- Up to 64 TB<br>- Best for OLTP"]
+        B["❌ Bigtable<br>- NoSQL<br>- Not transactional"]
+        C["❌ Cloud Spanner<br>- SQL, ACID<br>- Global scale<br>- Overkill for 20 TB"]
+        D["❌ Datastore<br>- NoSQL<br>- Not full SQL"]
+    end
+
+    R1 & R2 & R3 & R4 --> A
+    R1 -.-> B
+    R2 -.-> C
+    R3 -.-> D
+```
+
 **Correct Answer:** A  
 
 **Explanation:**  
@@ -4302,6 +4404,29 @@ D. Cloud Datastore
 
 **Question:**  
 You need to store CPU and memory metrics sampled every second for millions of computers. Analysts will run real-time, ad hoc analytics. You want to avoid being charged per query and need a schema design that scales with future growth.
+
+```mermaid
+flowchart TB
+    subgraph Requirement["📌 Requirements"]
+        R1["Millions of computers"]
+        R2["Metrics per second (CPU, memory)"]
+        R3["Real-time, ad hoc analytics"]
+        R4["Avoid per-query charges"]
+        R5["Future schema growth"]
+    end
+
+    subgraph Options["Database Options"]
+        A["❌ BigQuery Append<br>- Per-query charges<br>- Not ideal for real-time"]
+        B["❌ BigQuery Wide Table<br>- Column explosion<br>- Schema rigid"]
+        C["✅ Bigtable Narrow Schema<br>- Row key = computerID#timestamp<br>- Scales efficiently"]
+        D["❌ Bigtable Wide Schema<br>- Hard schema evolution<br>- Too rigid"]
+    end
+
+    R1 & R2 & R3 & R4 & R5 --> C
+    R2 -.-> A
+    R2 -.-> B
+    R5 -.-> D
+```
 
 **Options:**  
 A. Create a table in BigQuery, and append samples per second  
@@ -4343,6 +4468,28 @@ D. Use CSEK in `.boto` file; upload; save CSEK in a separate project only securi
 
 **Question:**  
 You need to perform health checks and monitoring of pipelines in BigQuery, Dataflow, and Dataproc across multiple projects, and notify the team on failure. Prefer managed services.
+
+```mermaid
+flowchart TB
+    subgraph Requirement["📌 Requirements"]
+        R1["Monitor BigQuery, Dataflow, Dataproc"]
+        R2["Across multiple projects"]
+        R3["Health checks + failure alerts"]
+        R4["Prefer managed services"]
+    end
+
+    subgraph Options["Solutions"]
+        A["✅ Cloud Monitoring + Alerting<br>- Managed<br>- Cross-project<br>- Native integration"]
+        B["❌ Airflow on VM<br>- Self-managed<br>- Extra overhead"]
+        C["❌ Logs → BigQuery + App Engine<br>- Custom<br>- Complex"]
+        D["❌ App Engine + API parsing<br>- Custom<br>- High maintenance"]
+    end
+
+    R1 & R2 & R3 & R4 --> A
+    R3 -.-> C
+    R3 -.-> D
+    R4 -.-> B
+```
 
 **Options:**  
 A. <mark>Export to Cloud Monitoring and configure Alerting policies</mark> ✅  
