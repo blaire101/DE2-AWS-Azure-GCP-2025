@@ -5266,6 +5266,25 @@ D. <mark>Apache Beam custom connector + Dataflow streaming in Avro</mark> ✅
 **Question:**  
 Need secure queuing, trigger Python API jobs at high volume.
 
+```mermaid
+flowchart TB
+    subgraph Flow["📌 High-Volume Trade Processing"]
+        P["📨 Pub/Sub (secure queue)"]
+        CF["⚡ Cloud Function (Python API trigger)"]
+        API["🐍 Python API Job"]
+    end
+
+    P --> CF --> API
+
+    classDef pubsub fill:#e6f3ff,stroke:#0066cc,color:#000
+    classDef function fill:#fff2cc,stroke:#aa8800,color:#000
+    classDef api fill:#e6ffe6,stroke:#1b7f1b,color:#000
+
+    class P pubsub
+    class CF function
+    class API api
+```
+
 **Options:**  
 A. <mark>Pub/Sub push subscription → Cloud Function → Python API</mark> ✅  
 B. Compute Engine app with Pub/Sub push  
@@ -5286,6 +5305,21 @@ D. Cloud Composer subscribe to Pub/Sub
 
 **Question:**  
 Need SQL-accessible, low-maintenance, cost-effective analytics on 10TB+.
+
+```mermaid
+flowchart TB
+    subgraph Requirement["📌 Requirements"]
+        R1["10TB+ medical DB"]
+        R2["SQL analytics"]
+        R3["Low maintenance & cost-effective"]
+    end
+
+    subgraph Options["Choices"]
+        B["✅ BigQuery<br>- Serverless<br>- Scales PB<br>- Query caching saves cost"]
+    end
+
+    R1 & R2 & R3 --> B
+```
 
 **Options:**  
 A. Cloud SQL + JOIN queries  
@@ -5328,6 +5362,21 @@ D. STS agent on GCP VM
 
 **Question:**  
 Need ACID database with automatic failure recovery.
+
+```mermaid
+flowchart TB
+    subgraph Requirement["📌 Requirements"]
+        R1["ACID compliance"]
+        R2["Automatic failover"]
+        R3["Minimal manual intervention"]
+    end
+
+    subgraph Options["Choices"]
+        B["✅ Cloud SQL PostgreSQL + HA<br>- ACID<br>- Automatic failover"]
+    end
+
+    R1 & R2 & R3 --> B
+```
 
 **Options:**  
 A. Cloud SQL MySQL + PITR  
@@ -5391,10 +5440,26 @@ D. BI Engine + authorized views
 **Question:**  
 Need access control, encryption, compliance, service account best practices.
 
+```mermaid
+flowchart TB
+    subgraph Requirement["📌 Banking Requirements"]
+        R1["Protect PII"]
+        R2["Access control + Encryption"]
+        R3["Compliance (auditability)"]
+        R4["Service Account best practices"]
+    end
+
+    subgraph Options["Choices"]
+        D["✅ Multiple SAs per IAM group<br>- Least privilege<br>- Audit-ready<br>- Compliant"]
+    end
+
+    R1 & R2 & R3 & R4 --> D
+```
+
 **Options:**  
-A. IAM roles to employees + one shared SA  
-B. One SA for DB, one per user  
-C. Cloud Storage + one shared SA  
+A. IAM roles to employees + one shared Service Account  
+B. One Service Account for DB, one per user  
+C. Cloud Storage + one shared Service Account    
 D. <mark>Cloud Storage + multiple SAs mapped to IAM groups</mark> ✅  
 
 **Correct Answer:** D  
@@ -5403,7 +5468,7 @@ D. <mark>Cloud Storage + multiple SAs mapped to IAM groups</mark> ✅
 - ✅ **D is correct**: Cloud Storage compliant; multiple service accounts per group = granular least-privilege access.  
 - ❌ **A**: Shared service account = bad practice.  
 - ❌ **B**: Human users shouldn’t get service accounts.  
-- ❌ **C**: Single shared SA = weak isolation.  
+- ❌ **C**: Single shared Service Account = weak isolation.  
 
 ---
 
