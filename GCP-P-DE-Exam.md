@@ -4574,6 +4574,28 @@ D. Partition by delivery date
 **Question:**  
 On-prem Spark + Hive + HDFS cluster must migrate in **2 months**. Usage fluctuates; goal = reduce infra overhead + cost, later modernize.  
 
+```mermaid
+flowchart TB
+    subgraph Requirement["📌 Requirements"]
+        R1["Migrate Spark + Hive + HDFS"]
+        R2["Timeline = 2 months"]
+        R3["Reduce infra overhead & cost"]
+        R4["Allow modernization later"]
+    end
+
+    subgraph Options["Migration Options"]
+        A["❌ Dataproc + HDFS<br>- Still ops overhead"]
+        B["✅ Dataproc + Cloud Storage<br>- Fast lift & shift<br>- Lower cost<br>- Fits 2 months"]
+        C["❌ Spark → Dataproc + HDFS<br>Hive → BigQuery<br>- Too modernized for 2 months"]
+        D["❌ Spark → Dataflow<br>Hive → BigQuery<br>- Unrealistic deadline"]
+    end
+
+    R1 & R2 & R3 & R4 --> B
+    R3 -.-> A
+    R2 -.-> C
+    R2 -.-> D
+```
+
 **Options:**  
 A. Dataproc + HDFS; modernize later  
 B. <mark>Dataproc + Cloud Storage; modernize later</mark> ✅  
@@ -4598,7 +4620,7 @@ Customer registration data flows into Pub/Sub then BigQuery. Requirement: **reda
 A. BigQuery AEAD encryption + separate key table  
 B. BigQuery column-level security on ID column  
 C. Cloud DLP cryptographic hash of IDs  
-D. <mark>Cloud DLP format-preserving encryption (FPE) before BigQuery</mark> ✅  
+D. <mark>Cloud DLP（Data Loss Prevention） format-preserving encryption (FPE) before BigQuery</mark> ✅  
 
 **Correct Answer:** D  
 
