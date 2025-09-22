@@ -5195,6 +5195,21 @@ D. Reduce training data, and decrease input features
 **Question:**  
 Retailer wants chatbot for text/voice, low-code/no-code, easy keyword/intents training.
 
+```mermaid
+flowchart TB
+    subgraph Requirement["📌 Requirements"]
+        R1["Text + Voice chatbot"]
+        R2["Low-code / No-code"]
+        R3["Easy keyword & intent training"]
+    end
+
+    subgraph Options["Solutions"]
+        D["✅ Dialogflow<br>- Low-code<br>- Intents-based<br>- Text + Voice support"]
+    end
+
+    R1 & R2 & R3 --> D
+```
+
 **Options:**  
 A. Speech-to-Text API + App Engine app  
 B. Speech-to-Text API + Compute Engine app  
@@ -5214,6 +5229,21 @@ D. <mark>Use Dialogflow to implement chatbot, define intents</mark> ✅
 
 **Question:**  
 Proprietary data format, must stream efficiently into BigQuery.
+
+```mermaid
+flowchart TB
+    subgraph Requirement["📌 Requirements"]
+        R1["Proprietary aerospace format"]
+        R2["Stream efficiently into BigQuery"]
+        R3["Schema-friendly & scalable"]
+    end
+
+    subgraph Options["Approaches"]
+        D["✅ Beam custom connector + Dataflow streaming<br>- Parses proprietary format<br>- Avro format efficient<br>- Direct to BigQuery"]
+    end
+
+    R1 & R2 & R3 --> D
+```
 
 **Options:**  
 A. Shell script + Cloud Function batch ETL  
