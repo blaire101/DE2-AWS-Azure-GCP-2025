@@ -4883,6 +4883,21 @@ D. Use CSEK in boto config; store key in separate project
 **Question:**  
 Pipeline must call external service to generate GUIDs, tens of thousands messages/sec, multi-threaded. How to minimize backpressure?
 
+```mermaid
+flowchart TB
+    subgraph Requirement["📌 Requirements"]
+        R1["External GUID service"]
+        R2["Tens of thousands msgs/sec"]
+        R3["Need to minimize backpressure"]
+    end
+
+    subgraph Options["Approaches"]
+        D["✅ Batch into 10-sec increments<br>- Fewer calls<br>- Prevents backpressure"]
+    end
+
+    R1 & R2 & R3 --> D
+```
+
 **Options:**  
 A. Call out to the service via HTTP  
 B. Create the pipeline statically in the class definition  
