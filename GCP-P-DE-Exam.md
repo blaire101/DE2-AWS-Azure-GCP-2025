@@ -6549,6 +6549,49 @@ D. Store in Cloud SQL for smaller queries.
 **Question:**  
 Airlines, hotels, ride-hailing domains. Each has analytics & data science teams. Central platform is a bottleneck. Use **Dataplex** to implement a **data mesh**.  
 
+```mermaid
+flowchart TB
+    %% === Style Definitions ===
+    classDef lake fill:#e6f3ff,stroke:#1a73e8,stroke-width:2px,color:#000,rx:10,ry:10
+    classDef zone fill:#fef7e0,stroke:#f9ab00,stroke-width:1px,color:#000,rx:10,ry:10
+    classDef asset fill:#e6ffe6,stroke:#34a853,stroke-width:1px,color:#000,rx:10,ry:10
+    classDef note fill:#fff2cc,stroke:#ffa500,stroke-dasharray: 3 3,color:#000,rx:10,ry:10
+
+    %% === Domain Lakes ===
+    subgraph LA["🌊 Lake - Airlines (Domain)"]
+        direction TB
+        ZAA["Zone: Analytics Team"]:::zone
+        ZAD["Zone: Data Science Team"]:::zone
+        ZAA --> AA1["Asset: BQ Dataset - Flight Sales"]:::asset
+        ZAA --> AA2["Asset: BQ Dataset - Ops Logs"]:::asset
+        ZAD --> AD1["Asset: BQ Dataset - ML Features"]:::asset
+    end
+    class LA lake
+
+    subgraph LH["🌊 Lake - Hotels (Domain)"]
+        direction TB
+        ZHA["Zone: Analytics Team"]:::zone
+        ZHD["Zone: Data Science Team"]:::zone
+        ZHA --> HA1["Asset: BQ Dataset - Booking Data"]:::asset
+        ZHD --> HD1["Asset: BQ Dataset - Recommendation Features"]:::asset
+    end
+    class LH lake
+
+    subgraph LR["🌊 Lake - Ride-Hailing (Domain)"]
+        direction TB
+        ZRA["Zone: Analytics Team"]:::zone
+        ZRD["Zone: Data Science Team"]:::zone
+        ZRA --> RA1["Asset: BQ Dataset - Trip Data"]:::asset
+        ZRD --> RD1["Asset: BQ Dataset - Pricing Features"]:::asset
+    end
+    class LR lake
+
+    NoteC["✅ Each Domain manages its own Lake (Data Mesh principle)"]:::note
+    LA --> NoteC
+    LH --> NoteC
+    LR --> NoteC
+```
+
 **Options:**  
 A. One lake per team, zones per domain, central platform manages.  
 B. One lake per team, zones per domain, each domain manages own zones.  
