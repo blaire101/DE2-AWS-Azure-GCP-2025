@@ -6236,6 +6236,16 @@ D. Use external Python preprocessing code for training only.
 **Question:**  
 Need to store **IoT sensor metrics per second** from millions of devices, with efficient **time-series queries**.  
 
+```mermaid
+flowchart LR
+    Devices["📡 IoT Devices (Millions)"] --> PubSub["📩 Pub/Sub / Dataflow (Ingestion)"]
+    PubSub --> Bigtable["🗄️ Bigtable<br/>RowKey = DeviceID#Timestamp"]
+    Analysts["👩‍💻 Analysts / Dashboards"] --> Bigtable
+
+    Note["✔️ Scales to millions/sec<br/>✔️ Narrow schema<br/>✔️ Efficient range scans"]
+    Bigtable -.-> Note
+```
+
 **Options:**  
 A. Wide table in BigQuery with many columns.  
 B. Store in Cloud SQL with per-device table.  
