@@ -6386,6 +6386,16 @@ D. Store in BigQuery external tables.
 **Question:**  
 Pipeline uses **SideInput** for a large dataset join, causing slow performance.  
 
+```mermaid
+flowchart LR
+    DatasetA["📂 Large Dataset A"] --> CoGroup["🔀 CoGroupByKey (Shuffle Join)"]
+    DatasetB["📂 Large Dataset B"] --> CoGroup
+    CoGroup --> Output["📊 Joined Results"]
+
+    Note["✔️ CoGroupByKey = scalable distributed join<br/>❌ SideInput = only for small lookup tables"]
+    CoGroup -.-> Note
+```
+
 **Options:**  
 A. Split input into smaller SideInputs.  
 B. <mark>Replace SideInput with CoGroupByKey</mark> ✅  
