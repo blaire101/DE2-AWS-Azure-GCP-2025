@@ -5789,6 +5789,20 @@ D. Authorized views in same project only
 **Question:**  
 Need backup/restore of GKE cluster configs (not workload data).
 
+```mermaid
+flowchart LR
+    subgraph GitRepo["📂 Git Repository (Configs-as-Code)"]
+        Files["YAML: RBAC, Namespaces, Services, Policies"]
+    end
+
+    GitRepo --> ConfigSync["⚙️ Config Sync / Anthos Config Management"]
+    ConfigSync --> GKE["☸️ GKE Cluster"]
+
+    Note["🔑 Versioned configs → Easy rollback & restore"]
+    GitRepo -.-> Note
+    ConfigSync -.-> Note
+```
+
 **Options:**  
 A. Export etcd database manually  
 B. <mark>Use Config Sync / Anthos Config Management</mark> ✅  
@@ -5808,6 +5822,20 @@ D. Backup GCS bucket
 
 **Question:**  
 Analysts run exploratory queries; need hard limits on spending.
+
+```mermaid
+flowchart LR
+    Analysts["👩‍💻 Analysts (Ad-hoc Queries)"]
+    Analysts --> BQ["📊 BigQuery"]
+
+    subgraph Controls["Cost Controls"]
+        Quotas["⏳ Custom Query Quotas"]
+        Reservations["📦 Reservations (fixed slots)"]
+    end
+
+    BQ --> Controls
+    Controls --> Bill["💰 Predictable Spend (Hard Limit)"]
+```
 
 **Options:**  
 A. <mark>Use custom quotas + reservations</mark> ✅  
