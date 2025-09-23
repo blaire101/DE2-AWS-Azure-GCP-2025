@@ -5477,6 +5477,21 @@ D. <mark>Cloud Storage + multiple SAs mapped to IAM groups</mark> ✅
 **Question:**  
 Migrate on-prem Redis → Memorystore with minimal cost/effort.
 
+```mermaid
+flowchart TB
+    subgraph Requirement["📌 Requirements"]
+        R1["Migrate on-prem Redis"]
+        R2["→ Memorystore"]
+        R3["Minimal cost & effort"]
+    end
+
+    subgraph Options["Choices"]
+        A["✅ RDB backup → GCS → Import<br>- Simple<br>- Low cost<br>- Officially supported"]
+    end
+
+    R1 & R2 & R3 --> A
+```
+
 **Options:**  
 A. <mark>RDB backup → GCS → import</mark> ✅  
 B. Secondary instance on GCE, live cutover  
@@ -5520,7 +5535,7 @@ Training takes 2 days on CPU; need faster & cost-effective, some ops require CPU
 **Options:**  
 A. n2-highmem-32  
 B. e2-standard-32  
-C. <mark>GPU VM</mark> ✅  
+C. <mark>GPU VM</mark> ✅ GPU VM because it can significantly shorten training time    
 D. TPU VM  
 
 **Correct Answer:** C  
@@ -5593,6 +5608,10 @@ D. IoT Core → Pub/Sub → BQ streaming
 
 **Question:**  
 Data split between GCP and on-prem; need secure queries across both.
+
+<div align="center">
+  <img src="docs/Google_Cloud_Omni_01.png" alt="Diagram" width="700">
+</div>
 
 **Options:**  
 A. BQ federated query with Cloud SQL  
@@ -5689,6 +5708,13 @@ D. Dataproc Spark streaming job
 
 **Question:**  
 Need scalable ML predictions from BigQuery models for millions of rows.
+
+```mermaid
+flowchart LR
+    IoT["📡 IoT Devices"] --> GCS["🗄️ Cloud Storage (landing)"]
+    GCS --> DF["⚙️ Dataflow (batch, schema handling)"]
+    DF --> BQ["📊 BigQuery (analytics + ML)"]
+```
 
 **Options:**  
 A. Export data to AI Platform, call model API per row  
