@@ -6265,6 +6265,24 @@ D. Use Cloud Storage JSON files.
 **Question:**  
 New subscriber code may **ack messages erroneously**. Need recovery without losing messages.  
 
+```mermaid
+flowchart LR
+    PubSub["📩 Pub/Sub Topic"]
+    Sub["🔔 Subscription"]
+    Snapshot["📸 Snapshot (before deploy)"]
+    Seek["⏪ Seek to Snapshot"]
+    Consumer["⚙️ Subscriber (new code)"]
+
+    PubSub --> Sub
+    Sub --> Snapshot
+    Consumer -.-> Sub
+    Seek --> Sub
+    Sub --> Consumer
+
+    Note["✅ Snapshot + Seek allows re-delivery<br/>❌ Prevents message loss from bad ACKs"]
+    Seek -.-> Note
+```
+
 **Options:**  
 A. Test locally with Pub/Sub emulator.  
 B. <mark>Create Pub/Sub snapshot before deployment, use Seek to replay</mark> ✅  
@@ -6284,6 +6302,23 @@ D. Use Cloud Build timestamp to re-seek.
 **Question:**  
 Dataflow job processing Pub/Sub messages is running **slower than expected**. Need to optimize latency.  
 
+```mermaid
+flowchart LR
+    PubSub["📩 Pub/Sub Messages"] --> Dataflow["⚙️ Dataflow Job"]
+
+    subgraph Workers["🖥️ Dataflow Workers"]
+        Compute["💡 Compute Only"]
+    end
+
+    Dataflow --> Workers
+    Workers --> StreamingEngine["⚡ Streaming Engine (Shuffle + State Mgmt)"]
+
+    StreamingEngine --> Output["📊 Sink (BigQuery / Storage)"]
+
+    Note["✔️ Streaming Engine reduces latency<br/>✔️ Offloads shuffle & state from workers"]
+    StreamingEngine -.-> Note
+```
+
 **Options:**  
 A. Increase worker disk size.  
 B. <mark>Enable Dataflow Streaming Engine</mark> ✅  
@@ -6302,6 +6337,16 @@ D. Retry failed messages manually.
 
 **Question:**  
 Compliance requires **redacting PII** while allowing analysts to query anonymized data.  
+
+```mermaid
+flowchart LR
+    PII["📂 Raw Data with PII"] --> DLP["🛡️ Cloud DLP<br/>De-identification (Tokenization)"]
+    DLP --> BQ["📊 BigQuery (Anonymized Data)"]
+    Analysts["👩‍💻 Analysts (SQL Queries)"] --> BQ
+
+    Note["✔️ Tokens replace PII<br/>✔️ Data usable for analytics<br/>✔️ Compliance met"]
+    BQ -.-> Note
+```
 
 **Options:**  
 A. Encrypt all columns with AEAD and manage keys manually.  
