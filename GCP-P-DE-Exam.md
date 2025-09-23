@@ -6588,7 +6588,29 @@ D. Use Dataflow to batch into another BQ table.
 #### Q249: Optimize Cloud Storage raw data cost
 
 **Question:**  
-~25GB/day ingested. Old data: deletable anytime, no defined pattern, must be instantly available, no retrieval fees.  
+~25GB/day ingested. Old data: deletable anytime, no defined pattern, must be instantly available, **no retrieval fees.**  
+
+```mermaid
+flowchart LR
+    Ingest["📥 Raw Data (~25GB/day)"] --> GCS["🗄️ Cloud Storage Bucket (Autoclass)"]
+
+    subgraph AutoClasses["Autoclass"]
+        Standard["☁️ Standard<br/>(Recent, Hot Data)"]
+        Nearline["💾 Nearline<br/>(30+ days idle)"]
+        Coldline["📦 Coldline<br/>(90+ days idle)"]
+        Archive["🗃️ Archive<br/>(365+ days idle)"]
+    end
+
+    GCS --> Standard
+    GCS --> Nearline
+    GCS --> Coldline
+    GCS --> Archive
+
+    Analysts["👩‍💻 Users / Apps (Query Anytime)"] --> GCS
+
+    Note["✅ Auto cost optimization<br/>✅ Instant availability<br/>✅ No retrieval fees<br/>✅ No manual lifecycle needed"]
+    GCS -.-> Note
+```
 
 **Options:**  
 A. <mark>Create bucket with **Autoclass**.</mark> ✅  
