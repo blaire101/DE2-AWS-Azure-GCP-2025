@@ -6569,6 +6569,30 @@ D. One lake per domain, zones per team, central platform manages all.
 **Question:**  
 VM inventory table (nested schema). Need regular reports excluding rows with **vCPU < 8**, most cost-effective.  
 
+```mermaid
+flowchart TD
+    subgraph A["✅ Option A: View + UNNEST + Filter"]
+        A1["VM Inventory (Nested)"]
+        A2["View (UNNEST + WHERE vCPU ≥ 8)"]
+        A3["Reports (Zero storage cost)"]
+        A1 --> A2 --> A3
+    end
+
+    subgraph B["❌ Option B: Materialized View + Filter"]
+        B1["VM Inventory (Nested)"]
+        B2["Materialized View<br/>(Filter)"]
+        B3["Reports (Extra storage + refresh cost)"]
+        B1 --> B2 --> B3
+    end
+
+    subgraph C["❌ Option C: View + Filter only"]
+        C1["VM Inventory (Nested)"]
+        C2["View (Filter only)"]
+        C3["Reports (Incorrect if nested not UNNESTed)"]
+        C1 --> C2 --> C3
+    end
+```
+
 **Options:**  
 A. <mark>Create a **View** with filter + **UNNEST**.</mark> ✅  
 B. Create a materialized view with filter and CTE.  
