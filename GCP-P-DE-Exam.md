@@ -6035,6 +6035,24 @@ D. Migrate data to BigLake. Refactor Spark pipelines to use GCS, run on Dataproc
 **Question:**  
 Project A has a Pub/Sub topic with confidential data. Only resources in **Project A** should access it. Need to ensure Project B and any future projects cannot access the topic.  
 
+```mermaid
+flowchart LR
+    subgraph ProjectA["🛡️ Project A (Perimeter)"]
+        PubSub["📩 Pub/Sub Topic (Confidential Data)"]
+        VM_A["VMs / Services in Project A"]
+    end
+
+    subgraph ProjectB["🚫 Project B"]
+        VM_B["VMs / Services"]
+    end
+
+    VM_A --> PubSub
+    VM_B -.-x PubSub
+
+    Note["VPC Service Controls perimeter blocks Project B & future projects"]
+    ProjectA -.-> Note
+```
+
 **Options:**  
 A. Add firewall rules in Project A so only traffic from its VPC is permitted.  
 B. <mark>Configure VPC Service Controls with a perimeter around Project A</mark> ✅  
@@ -6072,6 +6090,20 @@ D. Copy data to BigLake for cross-project access.
 
 **Question:**  
 Org policy requires **all BigQuery tables** to be encrypted with **CMEK**.  
+
+```mermaid
+flowchart TD
+    OrgPolicy["🏢 Org Policy<br/>constraints/bigquery.requireCmekKey"] --> Project["📂 Project A"]
+    OrgPolicy --> Project2["📂 Project B"]
+
+    Project --> Dataset["📊 BigQuery Dataset"]
+    Project2 --> Dataset2["📊 BigQuery Dataset"]
+
+    Dataset & Dataset2 --> CMEK["🔑 CMEK Key (Cloud KMS)"]
+
+    Note["✅ Ensures all new tables use CMEK<br/>❌ Blocks default Google-managed keys"]
+    OrgPolicy -.-> Note
+```
 
 **Options:**  
 A. Manually set CMEK per table after creation.  
@@ -6148,6 +6180,23 @@ D. Enable CMEK only.
 
 **Question:**  
 Company has **2 years of logs** in Cloud Storage. Requirement: retain for compliance but minimize cost.  
+
+```mermaid
+flowchart LR
+    Logs["📂 Cloud Storage Bucket (2 years logs)"]
+
+    Logs --> Standard["☁️ Standard (recent, active)"]
+    Standard --> Nearline["💾 Nearline / Coldline (older months)"]
+    Nearline --> Archive["📦 Archive Storage (1+ years, compliance)"]
+
+    Policy["⚙️ Object Lifecycle Policy"]
+    Policy -.-> Standard
+    Policy -.-> Nearline
+    Policy -.-> Archive
+
+    Note["✅ Compliance retained\n✅ Lowest cost\n⚡ Automatic transitions"]
+    Archive -.-> Note
+```
 
 **Options:**  
 A. Store all logs in Standard storage.  
