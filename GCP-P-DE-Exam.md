@@ -6756,6 +6756,37 @@ D. <mark>Denormalized, **append-only** with nested/repeated fields, track histor
 **Question:**  
 Dataflow batch job → GCS → BigQuery. Org constraint: **no external IPs** on Compute Engine.  
 
+```mermaid
+flowchart TB
+    %% Styles
+    classDef vm fill:#e6f3ff,stroke:#1a73e8,stroke-width:2px,rx:6,ry:6
+    classDef api fill:#e6ffe6,stroke:#34a853,stroke-width:2px,rx:6,ry:6
+    classDef wrong fill:#ffe6e6,stroke:#ea4335,stroke-width:2px,rx:6,ry:6
+    classDef note fill:#fff2cc,stroke:#ffa500,stroke-dasharray: 3 3,rx:6,ry:6
+
+    %% Correct Path (PGA)
+    subgraph Correct["✅ With Private Google Access"]
+        direction TB
+        VM1["Dataflow Worker (no external IP)"]:::vm
+        PGA["Private Google Access"]:::api
+        API1["Google API (GCS / BigQuery)"]:::api
+        VM1 --> PGA --> API1
+        Note1["🔑 PGA = Internal IP → Google APIs"]:::note
+        API1 --> Note1
+    end
+
+    %% Wrong Path (VPC-SC only)
+    subgraph Wrong["❌ With VPC-SC only"]
+        direction TB
+        VM2["Dataflow Worker (no external IP)"]:::vm
+        SC["VPC-SC Perimeter"]:::wrong
+        API2["Google API (GCS / BigQuery)"]:::api
+        VM2 -.X.-> SC -.X.-> API2
+        Note2["⚠️ VPC-SC = API access control, not connectivity"]:::note
+        API2 --> Note2
+    end
+```
+
 **Options:**  
 A. Workers with network tags, internal IP only.  
 B. Firewall rules for GCS & BQ, internal IP only.  
