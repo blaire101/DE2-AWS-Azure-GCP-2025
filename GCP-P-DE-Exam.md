@@ -5993,6 +5993,29 @@ D. Copy tables to new dataset
 **Question:**  
 On-prem Hadoop cluster stores **Parquet data**, processed daily by Spark. Migrating to Google Cloud; future pipelines will use BigQuery. Need managed services + minimal ETL refactor + low overhead.  
 
+```mermaid
+flowchart LR
+    subgraph OnPrem["🏢 On-Prem Hadoop Cluster"]
+        HDFS["HDFS (Parquet Data)"]
+        Hive["Hive Metastore"]
+        SparkOnPrem["Spark Jobs"]
+    end
+
+    subgraph GCP["☁️ Google Cloud"]
+        GCS["🗄️ Cloud Storage (Parquet)"]
+        DPMS["📒 Dataproc Metastore (Hive metadata)"]
+        DPServerless["⚙️ Dataproc Serverless (Spark)"]
+        BQ["📊 BigQuery (future analytics)"]
+    end
+
+    HDFS --> GCS
+    Hive --> DPMS
+    SparkOnPrem --> DPServerless
+    GCS --> DPServerless
+    DPMS --> DPServerless
+    DPServerless --> BQ
+```
+
 **Options:**  
 A. <mark>Migrate data to Cloud Storage + metadata to Dataproc Metastore (DPMS). Refactor Spark pipelines to use GCS, run on Dataproc Serverless.</mark> ✅  
 B. Migrate data to Cloud Storage, register bucket as Dataplex asset. Refactor Spark pipelines to use GCS, run on Dataproc Serverless.  
