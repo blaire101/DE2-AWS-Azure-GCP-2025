@@ -7,7 +7,7 @@
 ---
 
 <div align="center">
-  <img src="docs/GCP-4-Component.png" alt="Diagram" width="800">
+  <img src="docs/GCP-4-Component.png" alt="Diagram" width="750">
 </div>
 
 
