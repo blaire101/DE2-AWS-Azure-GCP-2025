@@ -7,6 +7,13 @@
 ---
 
 <div align="center">
+  <img src="docs/GCP-4-Component.png" alt="Diagram" width="800">
+</div>
+
+
+---
+
+<div align="center">
   <img src="docs/gcp_storage_compare.png" alt="Diagram" width="750">
 </div>
 
