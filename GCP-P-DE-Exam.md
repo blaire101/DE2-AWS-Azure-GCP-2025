@@ -7300,6 +7300,8 @@ D. Cancel old, start new
 **Question:**  
 Data in BigQuery, Pub/Sub, and PostgreSQL on GCE. Need data discovery, minimal setup.  
 
+<mark>**PostgreSQL on GCE → Not natively supported. You need to manually register using Data Catalog API (or connectors).**</mark>
+
 **Options:**  
 A. Data Catalog auto BQ; API for Pub/Sub + PG  
 B. <mark>Data Catalog auto BQ + Pub/Sub; API for PostgreSQL</mark> ✅  
