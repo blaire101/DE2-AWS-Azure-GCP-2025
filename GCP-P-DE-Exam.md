@@ -6806,11 +6806,89 @@ D. <mark>Enable **Private Google Access** on subnet, internal IP only.</mark> �
 **Question:**  
 Streaming pipeline with **autoscaling**, max 1000 workers. Using only 10, performance low. Autoscaler not scaling up.  
 
+```mermaid
+flowchart TB
+    %% 样式
+    classDef step fill:#e6f3ff,stroke:#1a73e8,stroke-width:2px,rx:6,ry:6
+    classDef worker fill:#e6ffe6,stroke:#34a853,stroke-width:2px,rx:6,ry:6
+    classDef note fill:#fff2cc,stroke:#f9ab00,stroke-dasharray:3 3,rx:6,ry:6
+
+    %% 左边：过度 Fusion
+    subgraph Fused["❌ Over-fused Pipeline"]
+        direction TB
+        S1["Step A"]:::step
+        S2["Step B"]:::step
+        S3["Step C"]:::step
+        S1 --> S2 --> S3
+        W1["Only 1 Worker handling all"]:::worker
+        S3 --> W1
+    end
+
+    %% 右边：Reshuffle 打断
+    subgraph Reshuffled["✅ With Reshuffle"]
+        direction TB
+        SA["Step A"]:::step
+        R["Reshuffle (break fusion)"]:::step
+        SB["Step B"]:::step
+        SC["Step C"]:::step
+        SA --> R --> SB --> SC
+        W2["Worker 1"]:::worker
+        W3["Worker 2"]:::worker
+        W4["Worker 3"]:::worker
+        SB --> W2
+        SB --> W3
+        SC --> W4
+    end
+
+    %% 说明
+    NoteF["Fusion = combine steps into 1 stage → less shuffle but less parallelism"]:::note
+    NoteR["Reshuffle = force shuffle → break fusion → unlock parallelism & scaling"]:::note
+
+    Fused --> NoteF
+    Reshuffled --> NoteR
+```
+
 **Options:**  
 A. Enable Vertical Autoscaling.  
 B. <mark>Add **Reshuffle** step to break fusion.</mark> ✅  
 C. Increase max workers.  
 D. Use Dataflow Prime Right Fitting.  
+
+```mermaid
+flowchart TB
+    %% Styles
+    classDef stage fill:#e6f3ff,stroke:#1a73e8,stroke-width:2px,rx:6,ry:6
+    classDef unit fill:#e6ffe6,stroke:#34a853,stroke-width:2px,rx:6,ry:6
+    classDef exec fill:#ffe6e6,stroke:#ea4335,stroke-width:2px,rx:6,ry:6
+    classDef note fill:#fff2cc,stroke:#f9ab00,stroke-dasharray:3 3,rx:6,ry:6
+
+    %% Spark
+    subgraph SP["⚡ Apache Spark"]
+        direction TB
+        SPStage["Stage (set of narrow ops)"]:::stage
+        SPPart["Partitions of data"]:::unit
+        SPTask["Task = process 1 partition"]:::unit
+        SPExec["Executor = JVM process<br/>runs many tasks"]:::exec
+        SPStage --> SPPart --> SPTask --> SPExec
+    end
+
+    %% Dataflow
+    subgraph DF["🌀 Google Cloud Dataflow"]
+        direction TB
+        DFStage["Fusion Stage (fused steps)"]:::stage
+        DFBund["Bundle = smallest batch of elements"]:::unit
+        DFThread["Thread executes bundle"]:::unit
+        DFWorker["Worker = VM/container<br/>runs multiple threads"]:::exec
+        DFStage --> DFBund --> DFThread --> DFWorker
+    end
+
+    %% Notes
+    Note1["Spark Task ≈ Dataflow Bundle (both are smallest execution units)"]:::note
+    Note2["Spark Executor ≈ Dataflow Worker (both run multiple units in parallel)"]:::note
+
+    SPExec --> Note1
+    DFWorker --> Note2
+```
 
 **Correct Answer:** B  
 
@@ -6841,6 +6919,41 @@ D. <mark>Use **Datastream** Oracle → BigQuery with private connectivity.</mark
 
 **Question:**  
 Reactive DAG runs on each new object in GCS; Composer 2 in a subnet with **no Internet access**.
+
+```mermaid
+flowchart TB
+    %% Styles
+    classDef source fill:#e6f3ff,stroke:#1a73e8,stroke-width:2px,rx:6,ry:6
+    classDef service fill:#e6ffe6,stroke:#34a853,stroke-width:2px,rx:6,ry:6
+    classDef target fill:#fff2cc,stroke:#f9ab00,stroke-width:2px,rx:6,ry:6
+    classDef note fill:#ffe6e6,stroke:#ea4335,stroke-dasharray:3 3,rx:6,ry:6
+
+    %% Q255: Oracle -> BigQuery
+    subgraph Q_255["Q255: Oracle → BigQuery (CDC Replication)"]
+        direction LR
+        ORA["Oracle DB on VM (VPC)"]:::source
+        DS["Datastream (serverless CDC)<br/>Private Connectivity"]:::service
+        BQ["BigQuery (Analytics & Reporting)"]:::target
+        ORA --> DS --> BQ
+    end
+
+    %% Q256: GCS -> Composer
+    subgraph Q_256["Q256: GCS → Trigger Airflow DAG (Composer 2)"]
+        direction LR
+        GCS["Cloud Storage<br/>New File Event"]:::source
+        PUB["Pub/Sub Notification"]:::service
+        CF["Cloud Function"]:::service
+        PSC["Private Service Connect (PSC)"]:::service
+        CMP["Cloud Composer 2 (Airflow DAG)"]:::target
+        GCS --> PUB --> CF --> PSC --> CMP
+    end
+
+    %% Notes
+    N1["✅ Q255: Datastream = serverless CDC, minimal ops"]:::note
+    N2["✅ Q256: PSC ensures no Internet required"]:::note
+    BQ --> N1
+    CMP --> N2
+```
 
 **Options:**  
 A. Private Google Access + GCS → Pub/Sub; **push** to web server URL.  
