@@ -1,6 +1,12 @@
 # Google Cloud Professional Data Engineer — Q&A (Q319)
 
 <div align="center">
+  <img src="docs/GCP-all-Data-Fusion-Google-Cloud-4.png" alt="Diagram" width="750">
+</div>
+
+---
+
+<div align="center">
   <img src="docs/gcp_storage_compare.png" alt="Diagram" width="750">
 </div>
 
@@ -6975,11 +6981,47 @@ D. Airflow REST API; Cloud Function; Serverless VPC Access to web server URL.
 **Question:**  
 You are planning to use Cloud Storage as part of your data lake solution. The bucket will contain objects ingested from external systems. Each object will be ingested once, and the access patterns are random. You want to minimize cost and ensure cost optimization is transparent to users.  
 
+```mermaid
+flowchart LR
+    subgraph Ingestion["Data Ingestion<br>(External Systems)"]
+        File1["Object 1"]
+        File2["Object 2"]
+    end
+
+    Ingestion -->|Write Once| Bucket["Cloud Storage Bucket<br>(Autoclass Enabled)"]
+
+    subgraph Autoclass["Autoclass Smart Tiering"]
+        Std["Standard<br>(Frequent Access)"]
+        Near["Nearline<br>(<1 access / month)"]
+        Cold["Coldline<br>(<1 access / quarter)"]
+        Arch["Archive<br>(<1 access / year)"]
+    end
+
+    Bucket --> Std
+    Bucket --> Near
+    Bucket --> Cold
+    Bucket --> Arch
+
+    User["Analytics / Users"] -->|Random Access| Bucket
+
+    Note["💡 Autoclass automatically moves objects<br>between tiers, transparent to users,<br>no retrieval fees."]
+    Bucket --- Note
+```
+
 **Options:**  
 A. <mark>Create a Cloud Storage bucket with **Autoclass** enabled.</mark> ✅  
 B. Lifecycle rule: Standard → Coldline after 30 days  
 C. Lifecycle rule: Standard → Coldline when not live  
 D. Two buckets (Standard → Coldline after 30 days)
+
+
+| Class        | Access Frequency        | Cost          | Retention Rule | Example                  |
+| ------------ | ----------------------- | ------------- | -------------- | ------------------------ |
+| **Standard** | Frequent (daily/hourly) | 💰 High       | None           | Website images, app data |
+| **Nearline** | Occasional (<1/month)   | 💲 Medium     | 30 days        | Monthly reports          |
+| **Coldline** | Rare (<1/quarter)       | 💲💲 Low      | 90 days        | Disaster recovery        |
+| **Archive**  | Very rare (<1/year)     | 💲💲💲 Lowest | 365 days       | Compliance archives      |
+
 
 **Correct Answer:** A  
 
