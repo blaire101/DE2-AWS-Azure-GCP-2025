@@ -6812,7 +6812,6 @@ D. <mark>Enable **Private Google Access** on subnet, internal IP only.</mark> �
 - ✅ **D is correct**: **Private Google Access** lets VMs without external IPs reach Google APIs (e.g., GCS, BQ).  
 - ❌ **A/B**: Tags/firewalls don’t solve API access.  
 - ❌ **C**: VPC-SC protects APIs, not VM connectivity.  
----
 
 #### Q254: Dataflow streaming pipeline underutilizing workers
 
@@ -6909,7 +6908,6 @@ flowchart TB
 - ✅ **B is correct**: Fusion optimization blocks parallelism. **Reshuffle** forces redistribution → more workers used.  
 - ❌ **A/C**: Worker size/limit won’t help if pipeline is fused.  
 - ❌ **D**: Right Fitting optimizes sizing, not parallelism.  
----
 
 #### Q255: Replicate Oracle DB (VM) → BigQuery, minimal infra mgmt
 
@@ -7069,6 +7067,17 @@ A. <mark>**Dataprep** → **BigQuery** → **Connected Sheets**</mark> ✅
 B. Dataprep → BigQuery → Looker Studio  
 C. Dataflow → BigQuery → Connected Sheets  
 D. Dataflow → BigQuery → Looker Studio  
+
+| Feature               | **Dataprep**                                            | **Data Fusion**                                         |
+| --------------------- | ------------------------------------------------------- | ------------------------------------------------------- |
+| **Target Users**      | Business analysts / data analysts (non-technical users) | Data engineers / architects                             |
+| **Main Purpose**      | Data cleaning, preparation, light transformations       | Complex ETL/ELT, cross-system data integration          |
+| **Interface**         | Pure GUI, rule-based point-and-click                    | GUI + extensible plugins + code support                 |
+| **Execution Engine**  | Dataflow (pipeline auto-generated)                      | Dataflow / Dataproc / Spark                             |
+| **Supported Sources** | Limited (mainly files, tables, BigQuery, GCS)           | Very broad (databases, message queues, APIs, SaaS apps) |
+| **Typical Outputs**   | BigQuery / GCS                                          | BigQuery / GCS / Pub/Sub / DB / APIs…                   |
+| **Complexity**        | Simple, quick to start                                  | Complex, suited for enterprise-level data platforms     |
+
 
 **Correct Answer:** A  
 
