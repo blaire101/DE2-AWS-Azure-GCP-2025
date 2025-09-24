@@ -7178,6 +7178,24 @@ B. Reservation for job
 C. Reservation for service account  
 D. <mark>Reservation for **project**</mark> ✅  
 
+```mermaid
+flowchart LR
+    subgraph CDC_Process["CDC Process"]
+        A[📥 Load 1GB data <br/> every 10 min] --> B[🗂 Temp Table]
+        B --> C[🔄 MERGE into 10TB Target Table]
+    end
+
+    C --> D[⚡ BigQuery Execution]
+
+    subgraph Billing["BigQuery Billing Models"]
+        X1[On-Demand Billing <br/> unpredictable cost]
+        X2[Reservation Assigned at Project Level <br/> ✅ predictable cost]
+    end
+
+    D --> X1
+    D --> X2
+```
+
 **Correct Answer:** D  
 
 **Explanation:**  
@@ -7209,6 +7227,21 @@ D. Multi-region dataset
 
 **Question:**  
 Sensors emit if noise >70dBA. Need average when data >30min, window ends if idle 15min.  
+
+```mermaid
+timeline
+    title Noise Sensor Events and Session Window (15-min gap)
+    section Events
+      Event1: t=0s
+      Event2: t=5min
+      Event3: t=20min
+      Event4: t=35min
+      Idle: no events 15min
+    section Window Behavior
+      Session window opens: t=0s
+      Session extended: t=5min, t=20min, t=35min
+      Session closes: t=50min (15-min idle gap reached)
+```
 
 **Options:**  
 A. <mark>**Session windows** with 15-min gap</mark> ✅  
