@@ -1,7 +1,7 @@
 # Google Cloud Professional Data Engineer — Q&A (Q319)
 
 <div align="center">
-  <img src="docs/GCP-all-Data-Fusion-Google-Cloud-4.png" alt="Diagram" width="750">
+  <img src="docs/GCP-all-Data-Fusion-Google-Cloud-4.png" alt="Diagram" width="900">
 </div>
 
 ---
