@@ -1,5 +1,25 @@
 # 📚 GCP Data Engineering Q&A  
 
+
+<div align="center">
+  <img src="docs/GCP-all-Data-Fusion-Google-Cloud-4.png" alt="Diagram" width="900">
+</div>
+
+---
+
+<div align="center">
+  <img src="docs/GCP-4-Component.png" alt="Diagram" width="750">
+</div>
+
+
+---
+
+<div align="center">
+  <img src="docs/gcp_storage_compare.png" alt="Diagram" width="750">
+</div>
+
+---
+
 ```mermaid
 flowchart LR
     classDef src fill:#d0f0fd,stroke:#007acc,stroke-width:2px,color:#000,font-weight:bold
