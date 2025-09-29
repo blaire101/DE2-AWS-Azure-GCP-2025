@@ -190,6 +190,19 @@ AWS Redshift is a fully managed, petabyte-scale data warehouse service in the cl
 | Latency | Fast | Slow | Fast |
 | Deployment | Fully managed | Self-hosted Hadoop | Self-host
 
+| Feature        | MPP 数据仓库 (Redshift / Teradata / Greenplum) | Spark / Hadoop (大数据框架)                      |
+| ----------- | ------------------------------------------ | ------------------------------------------- |
+| **架构模式**    | 存算一体（节点本地存储+计算）                            | 存算分离（HDFS/S3 存储 + 计算集群）                     |
+| **数据分布**    | 预先分片，分布键决定数据落在哪个节点                         | 数据存储在 HDFS/S3，Executor 动态拉取                 |
+| **调度方式**    | Leader 节点解析 SQL → 分发到 Worker 并行执行          | Driver 生成 DAG → 划分 Stage/Task → Executor 执行 |
+| **计算粒度**    | Operator 级别（Scan、Join、Agg 并行）              | Task 级别（每个 Task 处理数据分片）                     |
+| **数据本地性**   | 强（计算尽量在本地分片上执行）                            | 弱（可跨节点拉数据，但有 Shuffle 开销）                    |
+| **优化器**     | 类数据库优化器（CBO、统计信息驱动）                        | Catalyst + Tungsten（更通用，偏代码层面）              |
+| **支持数据类型**  | 主要是结构化表数据（行/列存储）                           | 结构化、半结构化、非结构化（JSON/日志/图像）                   |
+| **典型场景**    | OLAP、BI 报表、交互式分析                           | ETL、批处理、流处理、机器学习、大规模非结构化数据                  |
+| **性能特点**    | 复杂 SQL、聚合/Join 高效（前提是分布键设计合理）              | 灵活通用，可横向扩展到 PB 级，适合多样计算                     |
+| **成本 & 伸缩** | 按集群节点定价，伸缩相对固定                             | 按计算资源付费，弹性伸缩好（云上更灵活）                        |
+
 - Amazon Redshift Cluster
 - RA3 and DC2 Node types
 - Amazon Redshift snapshots
