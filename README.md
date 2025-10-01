@@ -1,3 +1,30 @@
+```mermaid
+flowchart TB
+    subgraph AWS
+        S3[Amazon S3<br/>Object Storage] --> EMR[EMR / Athena / Redshift Spectrum]
+    end
+
+    subgraph Azure
+        ADLS[Azure Data Lake Storage Gen2<br/>HDFS Compatible] --> Synapse[Synapse / Databricks / HDInsight]
+    end
+
+    subgraph GCP
+        GCS[Google Cloud Storage<br/>Object Storage] --> BQ[BigQuery / Dataflow / Dataproc]
+    end
+
+    classDef aws fill:#fce5ff,stroke:#333,stroke-width:1px;
+    classDef azure fill:#e6f0ff,stroke:#333,stroke-width:1px;
+    classDef gcp fill:#fff2cc,stroke:#333,stroke-width:1px;
+    classDef engine fill:#e6ffe6,stroke:#333,stroke-width:1px;
+
+    class S3 aws;
+    class ADLS azure;
+    class GCS gcp;
+    class EMR engine;
+    class Synapse engine;
+    class BQ engine;
+```
+
 # 📚 GCP Data Engineering Q&A  
 
 
