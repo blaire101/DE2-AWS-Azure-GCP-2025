@@ -1,21 +1,37 @@
 ```mermaid
 flowchart TB
-    subgraph AWS
-        S3[Amazon S3<br/>Object Storage] --> EMR[Athena <br> EMR <br> Redshift Spectrum]
+    %% === AWS Side ===
+    subgraph AWS[AWS]
+        direction TB
+        S3[**Amazon S3**<br/>Object Storage]
+        EMR[**EMR / Glue**<br/>Managed Hadoop/Spark, ETL]
+        RS[**Redshift** — Data Warehouse<br/>**Athena** — Serverless SQL on S3]
+        QS[**QuickSight**<br/>BI Visualization]
     end
 
-    subgraph GCP
-        GCS[Google Cloud Storage<br/>Object Storage] --> BQ[Dataflow <br> Dataproc <br> BigQuery]
+    %% === GCP Side ===
+    subgraph GCP[GCP]
+        direction TB
+        GCS[**Google Cloud Storage**<br/>Object Storage]
+        DP[**Dataproc / Dataflow**<br/>Managed Spark / ETL]
+        BQ[**BigQuery**<br/>Serverless Data Warehouse]
+        Looker[**Looker Studio**<br/>BI Visualization]
     end
 
-    classDef aws fill:#fce5ff,stroke:#333,stroke-width:1px;
-    classDef gcp fill:#fff2cc,stroke:#333,stroke-width:1px;
-    classDef engine fill:#e6ffe6,stroke:#333,stroke-width:1px;
+    %% === Flow Arrows ===
+    S3 --> EMR --> RS --> QS
+    GCS --> DP --> BQ --> Looker
 
-    class S3 aws;
-    class GCS gcp;
-    class EMR engine;
-    class BQ engine;
+    %% === Styles ===
+    classDef storage fill:#fce5ff,stroke:#333,stroke-width:1px;
+    classDef process fill:#e6ffe6,stroke:#333,stroke-width:1px;
+    classDef warehouse fill:#fff2cc,stroke:#333,stroke-width:1px;
+    classDef bi fill:#d5b3ff,stroke:#333,stroke-width:1px;
+
+    class S3,GCS storage;
+    class EMR,DP process;
+    class RS,BQ warehouse;
+    class QS,Looker bi;
 ```
 
 # 📚 GCP Data Engineering Q&A  
