@@ -1,11 +1,11 @@
 ```mermaid
 flowchart TB
     subgraph AWS
-        S3[Amazon S3<br/>Object Storage] --> EMR[EMR <br> Athena <br> Redshift Spectrum]
+        S3[Amazon S3<br/>Object Storage] --> EMR[Athena <br> EMR <br> Redshift Spectrum]
     end
 
     subgraph GCP
-        GCS[Google Cloud Storage<br/>Object Storage] --> BQ[BigQuery <br> Dataflow <br> Dataproc]
+        GCS[Google Cloud Storage<br/>Object Storage] --> BQ[Dataflow <br> Dataproc <br> BigQuery]
     end
 
     classDef aws fill:#fce5ff,stroke:#333,stroke-width:1px;
