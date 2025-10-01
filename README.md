@@ -3,24 +3,28 @@ flowchart TB
     %% === AWS Side ===
     subgraph AWS[AWS]
         direction TB
-        S3[**Amazon S3**<br/>Object Storage]
-        EMR[**EMR / Glue**<br/>Managed Hadoop/Spark, ETL]
-        RS[**Redshift** — Data Warehouse<br/>**Athena** — Serverless SQL on S3]
         QS[**QuickSight**<br/>BI Visualization]
+        RS[**Redshift** — Data Warehouse<br/>**Athena** — Serverless SQL on S3]
+        Glue[**Glue**<br/>Serverless ETL]
+        EMR[**EMR**<br/>Managed Hadoop / Spark]
+        S3[**Amazon S3**<br/>Object Storage]
     end
 
     %% === GCP Side ===
     subgraph GCP[GCP]
         direction TB
-        GCS[**Google Cloud Storage**<br/>Object Storage]
-        DP[**Dataproc / Dataflow**<br/>Managed Spark / ETL]
-        BQ[**BigQuery**<br/>Serverless Data Warehouse]
         Looker[**Looker Studio**<br/>BI Visualization]
+        BQ[**BigQuery**<br/>Serverless Data Warehouse]
+        Dataflow[**Dataflow**<br/>Batch + Streaming ETL - Beam]
+        Dataproc[**Dataproc**<br/>Managed Hadoop / Spark]
+        GCS[**Google Cloud Storage**<br/>Object Storage]
     end
 
     %% === Flow Arrows ===
-    S3 --> EMR --> RS --> QS
-    GCS --> DP --> BQ --> Looker
+    S3 --> Glue --> RS --> QS
+    S3 --> EMR --> RS
+    GCS --> Dataflow --> BQ --> Looker
+    GCS --> Dataproc --> BQ
 
     %% === Styles ===
     classDef storage fill:#fce5ff,stroke:#333,stroke-width:1px;
@@ -29,7 +33,7 @@ flowchart TB
     classDef bi fill:#d5b3ff,stroke:#333,stroke-width:1px;
 
     class S3,GCS storage;
-    class EMR,DP process;
+    class EMR,Dataproc,Glue,Dataflow process;
     class RS,BQ warehouse;
     class QS,Looker bi;
 ```
