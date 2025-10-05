@@ -15,7 +15,7 @@ flowchart TB
         direction TB
         Looker[**Looker Studio**<br/>BI Visualization]
         BQ[**BigQuery**<br/>Serverless Data Warehouse]
-        Dataflow[**Dataflow**<br/>Batch + Streaming ETL - Beam<br/>Serverless ]
+        Dataflow[**Dataflow**<br/>Batch + Streaming ETL<br/>Apache Beam<br/>Serverless ETL ]
         Dataproc[**Dataproc**<br/>Managed Hadoop / Spark]
         GCS[**Google Cloud Storage**<br/>Object Storage]
     end
