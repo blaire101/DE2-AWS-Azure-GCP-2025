@@ -7362,6 +7362,44 @@ All employees should be able to search for tables by tag values, but only the HR
 You already gave all employees `bigquery.metadataViewer` and `bigquery.connectionUser` on the dataset.  
 What should you do next, with minimal overhead?
 
+```mermaid
+flowchart TB
+    %% --- Entities ---
+    subgraph AllEmployees["👥 All Employees"]
+        Search["🔍 Can search tables<br>(metadataViewer + public tag)"]
+    end
+
+    subgraph HR["👤 HR Group"]
+        SearchHR["🔍 Can search tables<br>(same as employees)"]
+        DataView["📖 Can view data<br>(bigquery.dataViewer)"]
+    end
+
+    subgraph Dataset["📂 BigQuery Dataset: customers"]
+        Sensitive["🗂 Sensitive Tables<br>tag: has_sensitive_data=true"]
+        NonSensitive["🗂 Non-sensitive Tables<br>tag: has_sensitive_data=false"]
+    end
+
+    %% --- Flows ---
+    Search --> Sensitive
+    Search --> NonSensitive
+
+    SearchHR --> Sensitive
+    SearchHR --> NonSensitive
+    DataView --> Sensitive
+    DataView --> NonSensitive
+
+    %% --- Styles ---
+    classDef sensitive fill:#ffe6e6,stroke:#cc0000,stroke-width:2px;
+    classDef nonsensitive fill:#e6ffe6,stroke:#009933,stroke-width:2px;
+    classDef employee fill:#e6f2ff,stroke:#0066cc,stroke-width:1px;
+    classDef hr fill:#fff2cc,stroke:#cc9900,stroke-width:1px;
+
+    class Sensitive sensitive
+    class NonSensitive nonsensitive
+    class AllEmployees employee
+    class HR hr
+```
+
 **Options:**  
 A. Private template; HR `bigquery.dataViewer` on sensitive tables.  
 B. Private template; all employees `datacatalog.tagTemplateViewer`; HR `bigquery.dataViewer`.  
