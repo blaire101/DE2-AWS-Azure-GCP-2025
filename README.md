@@ -1,11 +1,11 @@
 ```mermaid
-flowchart TB 
+flowchart TB
     %% === AWS Side ===
     subgraph AWS[AWS]
         direction TB
         QS[**QuickSight**<br/>BI Visualization]
-        RS[**Redshift** — Data Warehouse<br/>**Athena** — Serverless SQL on S3]
-        Glue[**Glue**<br/>Serverless ETL]
+        RS[**Redshift** — Data Warehouse<br/>**Athena** — SQL on S3]
+        Glue[**Glue**<br/>ETL + Data Catalog + Low-code Studio]
         EMR[**EMR**<br/>Managed Hadoop / Spark]
         S3[**Amazon S3**<br/>Object Storage]
     end
@@ -15,7 +15,8 @@ flowchart TB
         direction TB
         Looker[**Looker Studio**<br/>BI Visualization]
         BQ[**BigQuery**<br/>Serverless Data Warehouse]
-        Dataflow[**Dataflow**<br/>Batch + Streaming ETL<br/>Apache Beam<br/>Serverless ETL ]
+        DataFusion[**Data Fusion**<br/>Low-code Data Integration<br/>Managed CDAP]
+        Dataflow[**Dataflow**<br/>Batch + Streaming ETL<br/>Apache Beam<br/>Serverless ETL]
         Dataproc[**Dataproc**<br/>Managed Hadoop / Spark]
         GCS[**Google Cloud Storage**<br/>Object Storage]
     end
@@ -23,7 +24,7 @@ flowchart TB
     %% === Flow Arrows ===
     S3 --> Glue --> RS --> QS
     S3 --> EMR --> RS
-    GCS --> Dataflow --> BQ --> Looker
+    GCS --> DataFusion --> Dataflow --> BQ --> Looker
     GCS --> Dataproc --> BQ
 
     %% === Styles ===
@@ -33,7 +34,7 @@ flowchart TB
     classDef bi fill:#d5b3ff,stroke:#333,stroke-width:1px;
 
     class S3,GCS storage;
-    class EMR,Dataproc,Glue,Dataflow process;
+    class EMR,Dataproc,Glue,Dataflow,DataFusion process;
     class RS,BQ warehouse;
     class QS,Looker bi;
 ```
