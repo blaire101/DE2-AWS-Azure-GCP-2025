@@ -7504,6 +7504,7 @@ D. Create new BQ table + Pub/Sub topic with CMEK, then migrate.
 **Question:**  
 You migrated ORC files with Hive partitioning from HDFS to Cloud Storage. Data scientists want SQL-based exploration, similar to Hive, but cost-effectively. What should you do?
 
+
 **Options:**  
 A. Import to Bigtable.  
 B. Import to BigQuery native tables.  
@@ -7524,6 +7525,31 @@ D. <mark>Copy ORC to **GCS**; create **BigQuery external tables**.</mark> ✅
 
 **Question:**  
 You are designing a **batch Dataflow** pipeline. You want to minimize risk of **zonal failures** at job submission. What should you do?
+
+```mermaid
+flowchart LR
+    subgraph Input["Real-time Input"]
+        D[Driver updates]
+        B[Booking events]
+    end
+
+    subgraph Processing["Dataflow / Streaming Engine"]
+        W[Hopping Window<br/>Size: 30s<br/>Slide: 2s]
+        Agg[Aggregate counts<br/>per location]
+    end
+
+    subgraph Storage["Low-latency Store"]
+        M[Memorystore Redis]
+    end
+
+    subgraph Output["Dashboard"]
+        H[Heatmap Visualization<br/>refresh every 2s]
+    end
+
+    D --> W
+    B --> W
+    W --> Agg --> M --> H
+```
 
 **Options:**  
 A. Submit duplicate jobs in two zones.  
