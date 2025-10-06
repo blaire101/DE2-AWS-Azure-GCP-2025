@@ -7423,43 +7423,31 @@ D. Public template; all employees `datacatalog.tagTemplateViewer`; HR `bigquery.
 **Question:**  
 You have two Cloud Composer environments: **dev** and **prod**. DAG code is stored in Git. You want CI/CD so that when a tag is pushed, DAGs are tested in dev and then deployed to prod automatically. What should you do?
 
-> CMEK = Customer-Managed Encryption Key
+
+**Options:**  
+A. <mark>Use **Cloud Build** to copy DAGs to **dev** Composer bucket; if tests pass, copy to **prod** bucket.</mark> ✅  
+B. Build container; deploy to Composer’s GKE via `KubernetesPodOperator`.  
+C. Container to GKE for testing; then copy to prod bucket.  
+D. Copy to dev; if pass, containerize and deploy to GKE on prod.
+
+**Correct Answer:** A
+
+**Explanation:**  
+- ✅ **A**: Cloud Build copying to Composer buckets is the **standard, simple CI/CD approach** for DAGs.  
+- ❌ **B**: GKE containerization not needed for Composer DAGs.  
+- ❌ **C**: Unnecessarily mixes GKE with Composer workflow.  
+- ❌ **D**: Adds complexity by containerizing for prod.
+
+---
+
+#### Q274: Enforce centralized CMEK for BigQuery table fed from Pub/Sub
+
+**Question:**  
+You ingest Pub/Sub data into a BigQuery table encrypted with a **Google-managed key**. New policy requires **CMEK from centralized KMS** for BigQuery at rest. What should you do?
+
+> CMEK = Customer-Managed Encryption Key    
 > GMEK = Google-Managed Encryption key
 
-
-```mermaid
-flowchart LR
-  %% --- KMS ---
-  subgraph KMS["Central KMS project"]
-    key["cryptoKey: cmek-bq\nregion: same-as-dataset"]
-  end
-
-  %% --- BigQuery ---
-  subgraph BQ["BigQuery dataset (default: CMEK recommended)"]
-    old["old_table\n(GMEK)"]
-    new["new_table\n(CMEK)"]
-  end
-
-  %% --- Ingest ---
-  subgraph Ingest["Ingest pipeline (unchanged)"]
-    pub["Pub/Sub topic"]
-    pipe["Dataflow / BQ streaming"]
-  end
-
-  %% Flows
-  pub --> pipe
-  pipe -. "before cutover" .-> old
-  pipe --> new
-
-  old -- "COPY / CTAS\n(server-side rewrite to CMEK)" --> new
-  key --> BQ
-
-  %% Styles
-  classDef gmek fill:#ffe6e6,stroke:#c00,stroke-width:1px;
-  classDef cmek fill:#e6ffe6,stroke:#090,stroke-width:1px;
-  class old gmek
-  class new cmek
-```
 
 ```mermaid
 flowchart LR
@@ -7494,27 +7482,6 @@ flowchart LR
   class old gmek
   class new cmek
 ```
-
-**Options:**  
-A. <mark>Use **Cloud Build** to copy DAGs to **dev** Composer bucket; if tests pass, copy to **prod** bucket.</mark> ✅  
-B. Build container; deploy to Composer’s GKE via `KubernetesPodOperator`.  
-C. Container to GKE for testing; then copy to prod bucket.  
-D. Copy to dev; if pass, containerize and deploy to GKE on prod.
-
-**Correct Answer:** A
-
-**Explanation:**  
-- ✅ **A**: Cloud Build copying to Composer buckets is the **standard, simple CI/CD approach** for DAGs.  
-- ❌ **B**: GKE containerization not needed for Composer DAGs.  
-- ❌ **C**: Unnecessarily mixes GKE with Composer workflow.  
-- ❌ **D**: Adds complexity by containerizing for prod.
-
----
-
-#### Q274: Enforce centralized CMEK for BigQuery table fed from Pub/Sub
-
-**Question:**  
-You ingest Pub/Sub data into a BigQuery table encrypted with a **Google-managed key**. New policy requires **CMEK from centralized KMS** for BigQuery at rest. What should you do?
 
 **Options:**  
 A. Use Dataflow with CMEK into existing BQ table.  
