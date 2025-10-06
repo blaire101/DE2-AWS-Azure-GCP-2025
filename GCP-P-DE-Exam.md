@@ -7461,6 +7461,40 @@ flowchart LR
   class new cmek
 ```
 
+```mermaid
+flowchart LR
+  %% --- KMS ---
+  subgraph KMS["Central KMS project"]
+    key["cryptoKey: cmek-bq<br/>region: same-as-dataset"]
+  end
+
+  %% --- BigQuery ---
+  subgraph BQ["BigQuery dataset (default: CMEK recommended)"]
+    old["old_table<br/>(GMEK)"]
+    new["new_table<br/>(CMEK)"]
+  end
+
+  %% --- Ingest ---
+  subgraph Ingest["Ingest pipeline (unchanged)"]
+    pub["Pub/Sub topic"]
+    pipe["Dataflow / BQ streaming"]
+  end
+
+  %% Flows
+  pub --> pipe
+  pipe -. "before cutover" .-> old
+  pipe --> new
+
+  old -- "COPY / CTAS<br/>(server-side rewrite to CMEK)" --> new
+  key --> BQ
+
+  %% Styles
+  classDef gmek fill:#ffe6e6,stroke:#c00,stroke-width:1px;
+  classDef cmek fill:#e6ffe6,stroke:#090,stroke-width:1px;
+  class old gmek
+  class new cmek
+```
+
 **Options:**  
 A. <mark>Use **Cloud Build** to copy DAGs to **dev** Composer bucket; if tests pass, copy to **prod** bucket.</mark> ✅  
 B. Build container; deploy to Composer’s GKE via `KubernetesPodOperator`.  
