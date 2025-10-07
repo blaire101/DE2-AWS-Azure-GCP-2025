@@ -7713,6 +7713,30 @@ D. Max age 30 days; set versions to 2.
 **Question:**  
 Source bus is **at-least-once**. Need **exactly-once** writes into BigQuery at ~**1.5 GB/s**.
 
+```mermaid
+flowchart LR
+  subgraph SRC[Source bus at-least-once]
+    P[Pub Sub or Kafka]
+  end
+
+  subgraph PIPE[Writers in same region]
+    S1[Shard 1 write stream<br>Managed Writer + offset]
+    S2[Shard 2 write stream<br>Managed Writer + offset]
+    SN[Shard N write stream<br>Managed Writer + offset]
+  end
+
+  subgraph BQ[BigQuery regional dataset]
+    T[Target table<br>Storage Write API<br>exactly once per stream]
+  end
+
+  P --> S1
+  P --> S2
+  P --> SN
+  S1 --> T
+  S2 --> T
+  SN --> T
+```
+
 **Options:**  
 A. <mark>Use **BigQuery Storage Write API** to a **regional** table.</mark> ✅  
 B. Storage Write API to a multiregional table.  
