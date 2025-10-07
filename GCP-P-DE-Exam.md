@@ -7679,14 +7679,14 @@ Order data in Bigtable has GC rule: **max age 30 days, 1 version**. Analysts sti
 ```mermaid
 flowchart LR
     subgraph BT["Bigtable"]
-      old["Rows > 30 days\n(still exist until GC runs)"]
+      old["Rows > 30 days<br>(still exist until GC runs)"]
       new["Rows <= 30 days"]
     end
 
-    query["Analyst Query\n(no filter)"] --> old
+    query["Analyst Query<br>(no filter)"] --> old
     query --> new
 
-    filter["Query with Timestamp Filter\n<= 30 days"] -.-> old
+    filter["Query with Timestamp Filter<br>(<= 30 days)"] -.-> old
     filter --> new
 
     style old fill:#ffe6e6,stroke:#c00,stroke-width:2px
