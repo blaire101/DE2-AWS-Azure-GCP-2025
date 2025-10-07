@@ -7757,6 +7757,36 @@ D. BigQuery **Streaming** API to a multiregional table.
 **Question:**  
 External table over many ORC files (Hive partitions) on GCS is **slow**. Improve performance.
 
+```mermaid
+flowchart TB
+    %% --- External Table Path ---
+    subgraph EXT["Traditional External Table - Hive partitions on GCS"]
+        direction TB
+        Q1[BigQuery Query Engine]
+        M1[Metadata scan<br>thousands of ORC files]
+        R1[Read data from GCS<br>ORC partitions]
+    end
+
+    Q1 --> M1 --> R1
+
+    %% --- BigLake Path ---
+    subgraph BL["BigLake with Metadata Caching"]
+        direction TB
+        Q2[BigQuery Query Engine]
+        M2[Cached metadata<br>partition + schema]
+        R2[Read only relevant ORC files<br>from GCS]
+    end
+
+    Q2 --> M2 --> R2
+
+    %% --- Styles ---
+    classDef slow fill:#ffe6e6,stroke:#c00,stroke-width:1px;
+    classDef fast fill:#e6ffe6,stroke:#090,stroke-width:1px;
+
+    class M1 slow
+    class M2 fast
+```
+
 **Options:**  
 A. Change GCS class from Coldline to Standard.  
 B. One external table per partition + wildcard queries.  
@@ -7776,6 +7806,36 @@ D. Move data to multi-region bucket.
 
 **Question:**  
 1000 sensors, 1 metric/sensor/sec, 1 TB now + 1 GB/day. Need **single-digit ms** point lookups and **daily complex analytics**.
+
+```mermaid
+flowchart TB
+    %% --- External Table Path ---
+    subgraph EXT["Traditional External Table - Hive partitions on GCS"]
+        direction TB
+        Q1[BigQuery Query Engine]
+        M1[Metadata scan<br>thousands of ORC files]
+        R1[Read data from GCS<br>ORC partitions]
+    end
+
+    Q1 --> M1 --> R1
+
+    %% --- BigLake Path ---
+    subgraph BL["BigLake with Metadata Caching"]
+        direction TB
+        Q2[BigQuery Query Engine]
+        M2[Cached metadata<br>partition + schema]
+        R2[Read only relevant ORC files<br>from GCS]
+    end
+
+    Q2 --> M2 --> R2
+
+    %% --- Styles ---
+    classDef slow fill:#ffe6e6,stroke:#c00,stroke-width:1px;
+    classDef fast fill:#e6ffe6,stroke:#090,stroke-width:1px;
+
+    class M1 slow
+    class M2 fast
+```
 
 **Options:**  
 A. BigQuery with sensorID+timestamp primary key.  
