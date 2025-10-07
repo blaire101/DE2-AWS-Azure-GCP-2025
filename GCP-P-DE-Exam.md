@@ -7638,6 +7638,24 @@ D. Viewer on shared; one common edit dataset.
 **Question:**  
 Your streaming pipeline uses **hopping windows**. Some events arrive **late**, but aren’t being marked late, causing wrong aggregations. How can you fix this?
 
+```mermaid
+timeline
+    title Hopping Window with Watermark and Late Data
+    section Events
+      t0: Event arrives on time
+      t5: Event arrives on time
+      t8: Event arrives late
+    section Watermark
+      t10: Watermark moves to 10s
+      t15: Watermark moves to 15s
+    section Window
+      [0s–30s]: Hopping Window active
+      Emit results every 10s
+    section With vs Without Allowed Lateness
+      Without lateness: t8 event dropped (too late)
+      With lateness: t8 event still accepted & re-aggregated
+```
+
 **Options:**  
 A. <mark>Configure **watermarks** and **allow lateness**.</mark> ✅  
 B. Switch to tumbling windows.  
