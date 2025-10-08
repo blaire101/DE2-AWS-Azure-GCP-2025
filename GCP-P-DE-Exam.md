@@ -7807,36 +7807,6 @@ D. Move data to multi-region bucket.
 **Question:**  
 1000 sensors, 1 metric/sensor/sec, 1 TB now + 1 GB/day. Need **single-digit ms** point lookups and **daily complex analytics**.
 
-```mermaid
-flowchart TB
-    %% --- External Table Path ---
-    subgraph EXT["Traditional External Table - Hive partitions on GCS"]
-        direction TB
-        Q1[BigQuery Query Engine]
-        M1[Metadata scan<br>thousands of ORC files]
-        R1[Read data from GCS<br>ORC partitions]
-    end
-
-    Q1 --> M1 --> R1
-
-    %% --- BigLake Path ---
-    subgraph BL["BigLake with Metadata Caching"]
-        direction TB
-        Q2[BigQuery Query Engine]
-        M2[Cached metadata<br>partition + schema]
-        R2[Read only relevant ORC files<br>from GCS]
-    end
-
-    Q2 --> M2 --> R2
-
-    %% --- Styles ---
-    classDef slow fill:#ffe6e6,stroke:#c00,stroke-width:1px;
-    classDef fast fill:#e6ffe6,stroke:#090,stroke-width:1px;
-
-    class M1 slow
-    class M2 fast
-```
-
 **Options:**  
 A. BigQuery with sensorID+timestamp primary key.  
 B. <mark>**Bigtable** with row key **sensorID#timestamp**; **daily export to BigQuery**.</mark> ✅  
@@ -7896,6 +7866,33 @@ D. <mark>Move data to **GCS**; run Spark on **Dataproc**.</mark> ✅
 
 **Question:**  
 Shared datasets/views; marketing wants **predictable monthly** analytics spend.
+
+```mermaid
+flowchart TB
+    subgraph Demand["Workload Demand"]
+        U1[Low query load]
+        U2[High query load]
+    end
+
+    subgraph OptionA["Option A/D: Reservation + Autoscale"]
+        B1[Base slots<br>predictable cost]
+        B2[Autoscale slots<br>extra variable cost ❌]
+    end
+
+    subgraph OptionB["Option B: Quota on Scans"]
+        Q1[Custom quotas<br>Blocks queries if exceeded ❌]
+    end
+
+    subgraph OptionC["Option C: Fixed Reservation (500 slots) ✅"]
+        F1[Fixed slots<br>Predictable monthly spend ✅]
+    end
+
+    U1 --> B1
+    U2 --> B1 --> B2
+    U2 --> Q1
+    U2 --> F1
+    U1 --> F1
+```
 
 **Options:**  
 A. Enterprise reservation 250 baseline + autoscale 500.  
@@ -7957,6 +7954,18 @@ D. BigQuery SQL scheduled queries.
 **Question:**  
 Push subscriber may be down; need retries that **don’t overload** app and **store failed msgs** after **10 attempts**.
 
+```mermaid
+flowchart LR
+  T[Pub Sub topic main] --> S[Push subscription<br>retry policy exponential backoff<br>max delivery attempts 10]
+
+  S -- success ack --> APP[Push endpoint<br>subscriber service]
+  S -- fail then retry with backoff --> S
+
+  S -- after 10 failures --> DLT[Dead Letter Topic]
+  DLT --> DLS[DLQ subscription]
+  DLS --> HANDLER[DLQ consumer<br>store to GCS or BigQuery<br>create tickets alerts]
+```
+
 **Options:**  
 A. Increase ack deadline to 10 min.  
 B. Immediate redelivery + DLQ different topic (10).  
@@ -7977,6 +7986,30 @@ D. <mark>**Exponential backoff** retry + **DLQ to different topic**, **max attem
 
 **Question:**  
 Need a **self-service**, low-maintenance way to share sales data across BUs.
+
+```mermaid
+flowchart LR
+  subgraph Producer Project
+    PDS[BigQuery dataset sales]
+    EX[Analytics Hub private exchange]
+    PDS --> EX
+  end
+
+  subgraph Consumer BU A
+    LDA[Linked dataset from listing]
+    BI1[BI tools]
+  end
+
+  subgraph Consumer BU B
+    LDB[Linked dataset from listing]
+    BI2[BI tools]
+  end
+
+  EX -- subscribe listing --> LDA
+  EX -- subscribe listing --> LDB
+  LDA --> BI1
+  LDB --> BI2
+```
 
 **Options:**  
 A. <mark>Create an **Analytics Hub** private exchange; publish dataset.</mark> ✅  
