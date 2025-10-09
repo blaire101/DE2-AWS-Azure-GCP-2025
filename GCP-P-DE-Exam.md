@@ -8551,7 +8551,6 @@ D. New aggregate table refreshed hourly.
   <img src="docs/gcp_bq_omni.jpg" alt="Diagram" width="750">
 </div>
 
-
 **Question:**  
 Multi-cloud storage: **GCS + AWS S3**. Need to query both via **BigQuery** with **no direct bucket access**.
 
@@ -8593,6 +8592,24 @@ D. STS copy to GCS + external tables.
 **Question:**  
 Must preprocess **customer PII** in restricted bucket. Need **privacy compliance** but allow **consumer analytics**.
 
+```mermaid
+flowchart LR
+    subgraph GCS["Restricted GCS Bucket"]
+        PII["Raw Customer Data<br/>with PII"]
+    end
+
+    subgraph Pipeline["Data Processing"]
+        DF["Dataflow Pipeline"]
+        DLP["Cloud DLP<br/>Mask / Tokenize PII"]
+    end
+
+    subgraph BQ["BigQuery"]
+        Clean["Analytics-ready Data<br/>(PII masked)"]
+    end
+
+    PII --> DF --> DLP --> Clean
+```
+
 **Options:**  
 A. <mark>**Dataflow + Cloud DLP** to mask sensitive data; write to BQ.</mark> ✅  
 B. CMEK encrypt in GCS; federated query.  
@@ -8613,6 +8630,23 @@ D. Dataflow + KMS encrypt sensitive fields; share key.
 
 **Question:**  
 Apps with **dynamic public IPs** need secure access to **Cloud SQL (public IP)**.
+
+```mermaid
+flowchart LR
+    subgraph App["Applications<br/>(Dynamic Public IPs)"]
+        A["App Instance"]
+    end
+
+    subgraph Proxy["Cloud SQL Auth Proxy"]
+        P["IAM Auth + SSL Tunnel"]
+    end
+
+    subgraph SQL["Cloud SQL Instance<br/>(Public IP enabled)"]
+        DB["MySQL/Postgres"]
+    end
+
+    A --> P --> DB
+```
 
 **Options:**  
 A. Allow 0.0.0.0/0, control with IAM.  
@@ -8672,6 +8706,26 @@ D. Datetime column + scheduled DELETE.
 
 **Question:**  
 PB-scale BQ table. Need frequent **filtered aggregations** for users. Must be **fast + fresh**.
+
+```mermaid
+flowchart LR
+    subgraph BQ["BigQuery"]
+        T["PB-scale Table<br>(Raw sales data)"]
+        MV["Materialized View<br>(Pre-aggregated, auto-refresh)"]
+        U["User Queries<br>(Frequent filters + aggregates)"]
+    end
+
+    T --> MV --> U
+
+    %% Alternatives (crossed out)
+    SQ["Scheduled Query<br>(Static snapshot) ❌"]
+    QC["Query Cache<br>(Exact same query only) ❌"]
+    LC["Limit Columns<br>(Saves cost, not perf) ❌"]
+
+    T --> SQ
+    T --> QC
+    T --> LC
+```
 
 **Options:**  
 A. Scheduled query with table refresh.  
