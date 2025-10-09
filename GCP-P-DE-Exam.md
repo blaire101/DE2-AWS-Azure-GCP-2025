@@ -57,7 +57,6 @@
 ### F) Integration & BI (Looker Studio / Tools)
 
 
-
 ### G) Views & Materialized Views
 
 
@@ -69,6 +68,11 @@
 
 
 ## 6. Dataplex / Data Mesh / Governance
+
+<div align="center">
+  <img src="docs/GCP-Dataplex.avif" alt="Diagram" width="900">
+</div>
+
 
 ## 7. Pub/Sub & Messaging
 
@@ -8029,6 +8033,39 @@ D. Schedule DTS copies to other projects.
 **Question:**  
 Terabytes of behavioral data stream daily into **BigQuery**. Customer info is in **Cloud SQL MySQL** and CRM in **Cloud SQL PostgreSQL**. Marketing wants to combine all data for campaigns, running **100–300 queries/day**, while minimizing **load on Cloud SQL**.
 
+```mermaid
+flowchart LR
+  %% --- Sources ---
+  MYSQL[Cloud SQL MySQL<br>Customer Info]
+  PG[Cloud SQL PostgreSQL<br>CRM Data]
+  GA[Google Analytics<br>Behavioral Data Terabytes Daily]
+
+  %% --- Replication Layer ---
+  DS[Datastream<br>Change Data Capture]
+
+  %% --- Destination ---
+  BQ[BigQuery<br>Unified Analytics<br>Marketing Queries 100-300 per day]
+
+  %% --- Users ---
+  MKT[Marketing Team<br>Campaign Analysis]
+
+  %% Flows
+  MYSQL --> DS --> BQ
+  PG --> DS --> BQ
+  GA --> BQ --> MKT
+
+  %% Styles
+  classDef db fill:#ffe6e6,stroke:#c00,stroke-width:1px;
+  classDef stream fill:#e6ffe6,stroke:#090,stroke-width:1px;
+  classDef warehouse fill:#fff2cc,stroke:#333,stroke-width:1px;
+  classDef user fill:#d5b3ff,stroke:#333,stroke-width:1px;
+
+  class MYSQL,PG db
+  class DS stream
+  class BQ warehouse
+  class MKT user
+```
+
 **Options:**  
 A. BQ federated queries on both Cloud SQL DBs + GA data.  
 B. Dataproc Serverless Spark job to query Cloud SQL + BQ.  
@@ -8048,6 +8085,58 @@ D. Dataproc cluster with Trino to connect to Cloud SQL + BQ.
 
 **Question:**  
 Need to modernize data in **Cloud Storage + BigQuery** with a **data mesh** approach for sales, product design, and marketing.
+
+```mermaid
+flowchart LR
+  %% Departments
+  subgraph SalesDept["Sales Dept Project"]
+    GCS1[Sales Data in GCS]
+    BQ1[Sales Data in BigQuery]
+  end
+
+  subgraph ProductDept["Product Design Dept Project"]
+    GCS2[Product Data in GCS]
+    BQ2[Product Data in BigQuery]
+  end
+
+  subgraph MarketingDept["Marketing Dept Project"]
+    GCS3[Marketing Data in GCS]
+    BQ3[Marketing Data in BigQuery]
+  end
+
+  %% Dataplex
+  subgraph Dataplex["Central Dataplex Lake"]
+    ZoneSales[Sales Zone]
+    ZoneProduct[Product Zone]
+    ZoneMarketing[Marketing Zone]
+  end
+
+  %% Users
+  User[Business Analysts & Data Scientists]
+
+  %% Flows
+  GCS1 --> ZoneSales
+  BQ1 --> ZoneSales
+  GCS2 --> ZoneProduct
+  BQ2 --> ZoneProduct
+  GCS3 --> ZoneMarketing
+  BQ3 --> ZoneMarketing
+
+  ZoneSales --> User
+  ZoneProduct --> User
+  ZoneMarketing --> User
+
+  %% Styles
+  classDef storage fill:#ffe6e6,stroke:#c00,stroke-width:1px;
+  classDef warehouse fill:#fff2cc,stroke:#333,stroke-width:1px;
+  classDef dataplex fill:#e6ffe6,stroke:#090,stroke-width:1px;
+  classDef user fill:#d5b3ff,stroke:#333,stroke-width:1px;
+
+  class GCS1,GCS2,GCS3 storage
+  class BQ1,BQ2,BQ3 warehouse
+  class ZoneSales,ZoneProduct,ZoneMarketing dataplex
+  class User user
+```
 
 **Options:**  
 A. One central project; buckets + datasets + IAM groups.  
@@ -8069,6 +8158,34 @@ D. <mark>Multiple projects; map GCS + BQ into **Dataplex lakes/zones**; each dep
 **Question:**  
 New subscribers can’t read old messages. For a sale, new subs must read the **last 30 days**.
 
+```mermaid
+flowchart LR
+    %% --- Topic ---
+    subgraph Topic["Pub/Sub Topic<br/>Retention = 30 days"]
+      M1[Message Day 1]
+      M2[Message Day 2]
+      M30[Message Day 30]
+    end
+
+    %% --- Subscriptions ---
+    subgraph Sub1["Existing Subscriber"]
+      C1[Consume messages daily]
+    end
+
+    subgraph Sub2["New Subscriber<br/>joins at Day 30"]
+      C2[Reads all 30 days backlog]
+    end
+
+    %% --- Flows ---
+    M1 --> Sub1
+    M2 --> Sub1
+    M30 --> Sub1
+
+    M1 --> Sub2
+    M2 --> Sub2
+    M30 --> Sub2
+```
+
 **Options:**  
 A. Create new topic and republish 30 days each time.  
 B. <mark>Set **topic retention policy** to 30 days.</mark> ✅  
@@ -8088,6 +8205,26 @@ D. Ask source to re-push data.
 
 **Question:**  
 Pipelines must run on a **Shared VPC** subnet.
+
+```mermaid
+flowchart TB
+    %% --- Shared VPC ---
+    subgraph VPC["Shared VPC Project"]
+      subnet["Subnet (Shared VPC)"]
+    end
+
+    %% --- Dataflow ---
+    subgraph DF["Dataflow Project"]
+      SA["Pipeline Service Account\n(needs compute.networkUser)"]
+      Agent["Dataflow Service Agent\n(job management)"]
+      Workers["Worker VMs\n(created for pipeline)"]
+    end
+
+    %% --- Flows ---
+    SA -->|launch VM| Workers
+    Workers -->|use network| subnet
+    Agent -.->|job mgmt only| DF
+```
 
 **Options:**  
 A. Grant `compute.networkUser` to **Dataflow service agent**.  
@@ -8109,6 +8246,20 @@ D. Grant `dataflow.admin` to pipeline service account.
 **Question:**  
 On-prem Kafka cluster, connected via **Interconnect**. Need **high-throughput, low-latency** streaming to BigQuery.
 
+```mermaid
+flowchart LR
+    subgraph OnPrem["On-Premises"]
+        K["Kafka Cluster"]
+    end
+
+    subgraph GCP["Google Cloud"]
+        DF["Dataflow<br>(KafkaIO → BigQueryIO)"]
+        BQ["BigQuery<br>(Storage Write API)"]
+    end
+
+    K -- Interconnect --> DF --> BQ
+```
+
 **Options:**  
 A. Kafka Connect → Pub/Sub → Dataflow template → BQ.  
 B. Proxy host in VPC → Dataflow → BQ.  
@@ -8128,6 +8279,31 @@ D. Kafka Connect → Pub/Sub → custom Dataflow → BQ.
 
 **Question:**  
 HDFS lake migrated to **Cloud Storage**. Need Spark + SQL access, enforce **column-level security**, cost-effective, data mesh ready.
+
+```mermaid
+flowchart LR
+    subgraph GCS["Google Cloud Storage (Data Lake)"]
+        files["Raw data files<br>(Parquet/ORC/CSV)"]
+    end
+
+    subgraph BigLake["BigLake (Unified access layer)"]
+        table["BigLake Table<br>(on GCS)"]
+    end
+
+    subgraph Catalog["Data Catalog"]
+        tags["Policy Tags<br>(Column-level security)"]
+    end
+
+    subgraph Processing["Processing & Access"]
+        spark["Spark<br>(Dataproc / Spark-BQ Connector)"]
+        bqsql["BigQuery SQL"]
+    end
+
+    files --> table
+    table --> spark
+    table --> bqsql
+    tags --> table
+```
 
 **Options:**  
 A. Dataproc + Hive + Ranger.  
