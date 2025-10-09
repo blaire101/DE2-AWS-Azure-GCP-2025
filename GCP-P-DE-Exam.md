@@ -8349,6 +8349,24 @@ D. <mark>New key; new bucket (default CMEK); copy objects without specifying key
 **Question:**  
 Spark jobs run on **Dataproc in us-central1**, data in **Cloud Storage (US regions)**. Need **DR plan** with **≤15 min RPO** and **low latency** in normal ops.
 
+```mermaid
+flowchart LR
+    subgraph Central["us-central1"]
+        DP["Dataproc Cluster"]
+        B1["Cloud Storage<br>(Dual-region bucket copy)"]
+    end
+
+    subgraph South["us-south1"]
+        B2["Cloud Storage<br>(Dual-region bucket copy)"]
+        DR["Dataproc Cluster (Failover)"]
+    end
+
+    DP --> B1
+    DR --> B2
+
+    B1 <-. "Turbo Replication<br>(<15 min RPO)" .-> B2
+```
+
 **Options:**  
 A. Two regional buckets + STS hourly copy + redeploy clusters in us-south1.  
 B. US multi-region bucket + redeploy cluster in us-central2.  
@@ -8399,6 +8417,37 @@ D. Composer DAGs with BQ operators.
 
 **Correct Answer:** A  
 
+gcp_dataform_diagram.jpg
+
+```mermaid
+flowchart LR
+    subgraph Dev["Developers"]
+        SQL["SQL Code<br>(in Git repo)"]
+    end
+
+    subgraph DF["Dataform (SQL-as-code)"]
+        Build["Build & Transform<br>(ELT in BigQuery)"]
+        VC["Version Control<br>(Git Integration)"]
+        Sch["Scheduling & Tests"]
+    end
+
+    subgraph BQ["BigQuery"]
+        Raw["Raw Tables"]
+        Models["Transformed Models<br>(Views / Tables)"]
+    end
+
+    SQL --> DF
+    DF --> Build
+    Raw --> Build --> Models
+    VC --> DF
+    Sch --> DF
+```
+
+<div align="center">
+  <img src="docs/gcp_dataform_diagram.jpg" alt="Diagram" width="750">
+</div>
+
+
 **Explanation:**  
 - ✅ **A**: **Dataform** is purpose-built for **SQL pipelines in BigQuery**, supports **ELT, version control, scheduling, testing**. Best fit for SQL developers.  
 - ❌ **B**: Dataflow requires **Java/Python**, not SQL-first.  
@@ -8432,6 +8481,23 @@ D. Separate metrics table + UPDATE every 30s.
 **Question:**  
 JSON + CSV uploaded to **curated zone** in Dataplex. Files not discovered.
 
+```mermaid
+flowchart LR
+    subgraph RawZone["Dataplex Raw Zone"]
+        J["JSON files"]
+        C["CSV files"]
+    end
+
+    subgraph CuratedZone["Dataplex Curated Zone<br/>(Parquet, Avro, ORC only)"]
+        P["Parquet"]
+        Avo["Avro"]
+        O["ORC"]
+    end
+
+    J -->|Transform ETL| P
+    C -->|Transform ETL| Avo
+```
+
 **Options:**  
 A. <mark>Move JSON/CSV to **raw zone**.</mark> ✅  
 B. Enable auto-discovery in curated zone.  
@@ -8451,6 +8517,17 @@ D. Grant object-level IAM on files.
 
 **Question:**  
 Sales table (partitioned), petabytes of data. Queries = **AVG, MAX, SUM** over **last year only**. Need low-cost, fresh results.
+
+```mermaid
+flowchart LR
+    subgraph BQ["BigQuery"]
+        T["Sales Table<br/>PB-scale, partitioned"]
+        MV["Materialized View<br/>Filter: last 1 year<br/>Precomputed Aggregations"]
+    end
+
+    U["Analysts / BI Queries"] --> MV
+    T --> MV
+```
 
 **Options:**  
 A. <mark>Create a **materialized view** with filter on last year partitions.</mark> ✅  
@@ -8472,6 +8549,24 @@ D. New aggregate table refreshed hourly.
 
 **Question:**  
 Multi-cloud storage: **GCS + AWS S3**. Need to query both via **BigQuery** with **no direct bucket access**.
+
+```mermaid
+flowchart LR
+    subgraph AWS["AWS Cloud"]
+        S3["Amazon S3<br/>Data Lake"]
+    end
+
+    subgraph GCP["Google Cloud"]
+        GCS["Google Cloud Storage"]
+        BL["BigLake Tables<br/>Unified Access + Governance"]
+        BQ["BigQuery Omni<br/>Cross-cloud SQL"]
+    end
+
+    U["Analysts / BI Tools"] --> BQ
+    BQ --> BL
+    BL --> GCS
+    BL --> S3
+```
 
 **Options:**  
 A. <mark>Set up **BigQuery Omni** + **BigLake tables**.</mark> ✅  
