@@ -8547,6 +8547,11 @@ D. New aggregate table refreshed hourly.
 
 #### Q305: Query GCS + AWS S3 via BigQuery, no direct bucket access
 
+<div align="center">
+  <img src="docs/gcp_bq_omni.jpg" alt="Diagram" width="750">
+</div>
+
+
 **Question:**  
 Multi-cloud storage: **GCS + AWS S3**. Need to query both via **BigQuery** with **no direct bucket access**.
 
