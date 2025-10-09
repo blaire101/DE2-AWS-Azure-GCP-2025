@@ -23,6 +23,10 @@
 
 ## 1. Machine Learning & TensorFlow
 
+<div align="center">
+  <img src="docs/GCP-BigLake.png" alt="Diagram" width="500">
+</div>
+
 ## 2. BigQuery Basics
 
 <div align="center">
