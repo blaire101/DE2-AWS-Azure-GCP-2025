@@ -7,13 +7,6 @@
   <img src="docs/snowflake-original.jpg" alt="Diagram" width="900">
 </div>
 
----
-
-<div align="center">
-  <img src="docs/snowflake-architecture-overview.png" alt="Diagram" width="900">
-</div>
-
-
 ## ❄️ Snowflake – Key Points
 
 * **Cloud-agnostic** → Runs on AWS, Azure, or GCP.
