@@ -16,37 +16,6 @@
 | **Cost Model**          | Pay-per-second compute (<mark>Warehouses</mark>) + storage billed separately  | <mark>Serverless</mark> (per-query for BigQuery, per-job for Dataflow)   | Pay for provisioned resources (compute + storage separate in S3)         |
 | **Positioning**         | <mark>Cloud-agnostic Data Cloud</mark> (lake + warehouse + governance unified) | <mark>Cloud-native analytics</mark> + <mark>ML-first design</mark> (BigQuery, Vertex AI) | Broad <mark>cloud ecosystem</mark> (IaaS + PaaS) with integrated data services |
 
-
-```mermaid
-mindmap
-  direction LR
-  root((❄️ Snowflake))
-    🏛️ Architecture
-      ☁️ Cloud-agnostic
-      🗄️ Micro-partition Storage
-      ⚙️ Virtual Warehouses
-    ✨ Core Features
-      🪓 Separation of Storage & Compute
-      📈 Elastic Scaling
-      ⏳ Time Travel & Cloning
-      🔗 Data Sharing
-    📊 Data Management
-      📥 Snowpipe Ingest
-      🔄 Streams & Tasks
-      🔒 Governance & Security
-    🚀 Performance
-      🔑 Clustering Keys
-      📑 Materialized Views
-      ⚡ Result Caching
-    🔌 Integration
-      🧑‍💻 Snowpark
-      📈 BI Tools
-      🌐 Data Marketplace
-    💰 Cost
-      ⏱️ Pay-per-second
-      🛑 Auto-suspend
-```
-
 **🔑 Key Takeaways**
 
 - **AWS** → Flexible, mature ecosystem, but often more <mark>complex to integrate</mark> (S3 + Glue + Redshift + EMR + Kinesis).  
@@ -67,28 +36,28 @@ mindmap
 
 ```mermaid
 flowchart LR
-    subgraph L1[🔁 Data Ingestion]
-        KAFKA[[📡 Kafka / Confluent<br>(Streaming Ingest)]]:::ing
-        PIPE[[⛓️ Snowpipe<br>(Batch / Auto-Ingest)]]:::ing
+    subgraph L1["🔁 Data Ingestion"]
+        KAFKA[["📡 Kafka / Confluent<br>(Streaming Ingest)"]]:::ing
+        PIPE[["⛓️ Snowpipe<br>(Batch / Auto-Ingest)"]]:::ing
     end
 
-    subgraph L2[🗃️ Storage & Raw Zone]
-        RAW[(❄️ Snowflake Internal Storage<br>(Raw Stage))]:::stor
+    subgraph L2["🗃️ Storage & Raw Zone"]
+        RAW[("❄️ Snowflake Internal Storage<br>(Raw Stage)")]:::stor
     end
 
-    subgraph L3[⚙️ Processing]
-        STG[(Staging Tables)]:::proc
-        STREAMS[[🔀 Streams & Tasks<br>(CDC / ELT Automation)]]:::proc
+    subgraph L3["⚙️ Processing"]
+        STG[("Staging Tables")]:::proc
+        STREAMS[["🔀 Streams & Tasks<br>(CDC / ELT Automation)"]]:::proc
     end
 
-    subgraph L4[🏛️ Warehouse & Modeling]
-        CORE[(Core Tables: DIM / FACT)]:::wh
-        MART[(Data Marts: BI / Analytics)]:::wh
+    subgraph L4["🏛️ Warehouse & Modeling"]
+        CORE[("Core Tables: DIM / FACT")]:::wh
+        MART[("Data Marts: BI / Analytics")]:::wh
     end
 
-    subgraph L5[📊 Serving]
-        BI[[📈 Tableau / Looker / PowerBI]]:::srv
-        API[[🔌 Data Sharing / SQL API]]:::srv
+    subgraph L5["📊 Serving"]
+        BI[["📈 Tableau / Looker / PowerBI"]]:::srv
+        API[["🔌 Data Sharing / SQL API"]]:::srv
     end
 
     KAFKA --> RAW
@@ -163,41 +132,41 @@ flowchart LR
 flowchart LR
     %% === Ingestion Sources ===
     subgraph ING["🔁 Ingestion"]
-        KAFKA[[📡 Kafka / Confluent<br>(Streaming Events)]]:::ing
-        PIPE[[⛓️ Snowpipe<br>(Batch / Auto-Ingest from S3/GCS/ADLS)]]:::ing
-        ETL[[⚙️ dbt Cloud / Fivetran / Airbyte<br>(ELT Orchestration)]]:::ing
+        KAFKA[["📡 Kafka / Confluent<br>(Streaming Events)"]]:::ing
+        PIPE[["⛓️ Snowpipe<br>(Batch / Auto-Ingest from S3/GCS/ADLS)"]]:::ing
+        ETL[["⚙️ dbt Cloud / Fivetran / Airbyte<br>(ELT Orchestration)"]]:::ing
     end
 
     %% === Storage / Zones ===
     subgraph STGZ["🗃️ Snowflake Zones"]
-        RAW[(Raw Zone - Semi Structured)]:::stor
-        ODS[(Staging / ODS Zone)]:::stor
-        CUR[(Curated Zone - DIM / FACT / Vault)]:::stor
+        RAW[["Raw Zone<br>(Semi Structured)"]]:::stor
+        ODS[["Staging / ODS Zone"]]:::stor
+        CUR[["Curated Zone<br>(DIM / FACT / Vault)"]]:::stor
     end
 
     %% === Processing ===
     subgraph PROC["⚙️ Processing"]
-        STREAMS[[🔀 Streams<br>(CDC tracking)]]:::proc
-        TASKS[[⏰ Tasks<br>(Scheduling & Automation)]]:::proc
-        PROC_ELT[[🧪 ELT SQL / dbt Transformations]]:::proc
+        STREAMS[["🔀 Streams<br>(CDC tracking)"]]:::proc
+        TASKS[["⏰ Tasks<br>(Scheduling & Automation)"]]:::proc
+        PROC_ELT[["🧪 ELT SQL / dbt<br>(Transformations)"]]:::proc
     end
 
     %% === Warehouse & Serving ===
     subgraph WH["🏛️ Snowflake Warehouse"]
-        CORE[(Core Models - Star Schema)]:::wh
-        MART[(Data Marts - Domain-specific)]:::wh
+        CORE[["Core Models<br>(Star Schema)"]]:::wh
+        MART[["Data Marts<br>(Domain-specific)"]]:::wh
     end
 
-    subgraph SRV["📊 Serving & ML"]
-        BI[[📈 Tableau / PowerBI / Looker]]:::srv
-        API[[🔌 External API / Secure Data Sharing]]:::srv
-        AI[[🤖 Snowpark + ML / Python / Java UDF]]:::srv
+    subgraph SRV["📊 Serving"]
+        BI[["📈 Tableau / PowerBI / Looker"]]:::srv
+        API[["🔌 External API<br>/ Secure Data Sharing"]]:::srv
+        AI[["🤖 Snowpark + ML<br>(Python / Java UDF)"]]:::srv
     end
 
     %% === Governance ===
     subgraph GOV["🗂️ Governance"]
-        POLICIES[[🔒 Row/Column Masking<br>Access Policies]]:::gov
-        TAGS[[🏷️ Tags & Lineage<br>(Data Governance)]]:::gov
+        POLICIES[["🔒 Row/Column Masking<br>Access Policies"]]:::gov
+        TAGS[["🏷️ Tags & Lineage<br>(Data Governance)"]]:::gov
     end
 
     %% === Flows ===
@@ -223,14 +192,12 @@ flowchart LR
     TAGS -.-> MART
 
     %% Styles
-    classDef ing  fill:#d0f0fd,stroke:#007acc,stroke-width:2px,rx:10,ry:10;
-    classDef proc fill:#e6d0fd,stroke:#7e3ff2,stroke-width:2px,rx:10,ry:10;
-    classDef stor fill:#fde2d0,stroke:#cc5200,stroke-width:2px,rx:10,ry:10;
-    classDef wh   fill:#ffe8b3,stroke:#aa7a00,stroke-width:2px,rx:10,ry:10;
-    classDef srv  fill:#d9f7be,stroke:#237804,stroke-width:2px,rx:10,ry:10;
-    classDef gov  fill:#f0f5ff,stroke:#2f54eb,stroke-width:2px,rx:10,ry:10;
+    classDef ing  fill:#d0f0fd,stroke:#007acc,stroke-width:2px,rx:10,ry:10,color:#000;
+    classDef proc fill:#e6d0fd,stroke:#7e3ff2,stroke-width:2px,rx:10,ry:10,color:#000;
+    classDef stor fill:#fde2d0,stroke:#cc5200,stroke-width:2px,rx:10,ry:10,color:#000;
+    classDef wh   fill:#ffe8b3,stroke:#aa7a00,stroke-width:2px,rx:10,ry:10,color:#000;
+    classDef srv  fill:#d9f7be,stroke:#237804,stroke-width:2px,rx:10,ry:10,color:#000;
+    classDef gov  fill:#f0f5ff,stroke:#2f54eb,stroke-width:2px,rx:10,ry:10,color:#000;
 ```
-
----
 
 
