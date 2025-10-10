@@ -1,5 +1,22 @@
 # ❄️ Snowflake – Data Engineering 
 
+## ❄️ Snowflake vs 🌐 GCP vs ☁️ AWS – Data Engineering
+
+| **Layer**               | **Snowflake**                                                                 | **GCP**                                                                 | **AWS**                                                                 |
+|--------------------------|-------------------------------------------------------------------------------|-------------------------------------------------------------------------|-------------------------------------------------------------------------|
+| **Storage (Data Lake)** | <mark>Internal Storage (Micro-partitions)</mark> <br> (abstracted, built on S3/ADLS/GCS, fully managed) | <mark>Cloud Storage (GCS)</mark> <br> (object storage, raw/staging/curated zones) | <mark>Amazon S3</mark> <br> (object storage, foundation for Lake)        |
+| **Batch ETL / ELT**     | <mark>Snowpipe</mark> (continuous ingest) <br> <mark>Streams + Tasks</mark> (ELT automation) <br> <mark>SQL/dbt</mark> (in-warehouse transformations) | <mark>Dataflow</mark> (Beam, serverless) <br> <mark>Dataproc</mark> (Spark/Hadoop) <br> <mark>Data Fusion</mark> (visual pipelines) | <mark>AWS Glue</mark> (serverless ETL, Spark) <br> <mark>EMR</mark> (Hadoop/Spark cluster) |
+| **Streaming ETL**       | <mark>Snowpipe Streaming</mark> + Kafka Connector                             | <mark>Pub/Sub</mark> + Dataflow (streaming)                             | <mark>Kinesis</mark>, <mark>MSK (Kafka)</mark>                          |
+| **Data Warehouse**      | <mark>Snowflake Warehouse</mark> (storage-compute separation, multi-cluster elasticity) | <mark>BigQuery</mark> (serverless DW)                                   | <mark>Amazon Redshift</mark> (scalable DW)                              |
+| **Compute Model**       | <mark>Virtual Warehouses</mark> (pay-per-second, scale up/down independently) | Serverless (<mark>BigQuery / Dataflow</mark>) + managed clusters (<mark>Dataproc</mark>) | Provisioned clusters (<mark>EC2 / EMR / Redshift</mark>)                 |
+| **Governance / Catalog**| <mark>Snowflake Governance</mark> (RBAC, masking, row policies, tags, lineage) | <mark>Dataplex</mark> + <mark>Data Catalog</mark>                        | <mark>AWS Glue Data Catalog</mark> <br> <mark>Lake Formation</mark>       |
+| **BI & Serving**        | <mark>Tableau</mark>, <mark>Power BI</mark>, <mark>Looker</mark> <br> Secure Data Sharing / SQL API | <mark>Looker Studio</mark>, BigQuery BI Engine, external BI              | <mark>Amazon QuickSight</mark> <br> External BI (Tableau, Power BI)      |
+| **Machine Learning**    | <mark>Snowpark</mark> (Python/Scala/Java UDFs) <br> External ML integration (SageMaker/Vertex) | <mark>Vertex AI</mark> (training, serving, pipelines)                    | <mark>SageMaker</mark> (end-to-end ML platform)                          |
+| **Orchestration**       | <mark>Snowflake Tasks</mark> + <mark>Streams</mark> <br> dbt Cloud / Airflow (external) | <mark>Cloud Composer</mark> (Airflow), Data Fusion                       | <mark>Step Functions</mark>, <mark>MWAA</mark> (Managed Airflow)         |
+| **Cost Model**          | Pay-per-second compute (<mark>Warehouses</mark>) + storage billed separately  | <mark>Serverless</mark> (per-query for BigQuery, per-job for Dataflow)   | Pay for provisioned resources (compute + storage separate in S3)         |
+| **Positioning**         | <mark>Cloud-agnostic Data Cloud</mark> (lake + warehouse + governance unified) | <mark>Cloud-native analytics</mark> + <mark>ML-first design</mark> (BigQuery, Vertex AI) | Broad <mark>cloud ecosystem</mark> (IaaS + PaaS) with integrated data services |
+
+
 ```mermaid
 mindmap
   root((❄️ Snowflake))
@@ -28,23 +45,6 @@ mindmap
       ((⏱️ Pay-per-second))
       ((🛑 Auto-suspend))
 ```
-
-
-## ☁️ AWS vs 🌐 GCP vs ❄️ Snowflake – Data Engineering
-
-| **Layer**               | **AWS**                                                                 | **GCP**                                                                 | **Snowflake**                                                                 |
-|--------------------------|-------------------------------------------------------------------------|-------------------------------------------------------------------------|-------------------------------------------------------------------------------|
-| **Storage (Data Lake)** | <mark>Amazon S3</mark> <br> (object storage, foundation for Lake)        | <mark>Cloud Storage (GCS)</mark> <br> (object storage, raw/staging/curated zones) | <mark>Internal Storage (Micro-partitions)</mark> <br> (abstracted, built on S3/ADLS/GCS, fully managed) |
-| **Batch ETL / ELT**     | <mark>AWS Glue</mark> (serverless ETL, Spark) <br> <mark>EMR</mark> (Hadoop/Spark cluster) | <mark>Dataflow</mark> (Beam, serverless) <br> <mark>Dataproc</mark> (Spark/Hadoop) <br> <mark>Data Fusion</mark> (visual pipelines) | <mark>Snowpipe</mark> (continuous ingest) <br> <mark>Streams + Tasks</mark> (ELT automation) <br> <mark>SQL/dbt</mark> (in-warehouse transformations) |
-| **Streaming ETL**       | <mark>Kinesis</mark>, <mark>MSK (Kafka)</mark>                          | <mark>Pub/Sub</mark> + Dataflow (streaming)                             | <mark>Snowpipe Streaming</mark> + Kafka Connector                             |
-| **Data Warehouse**      | <mark>Amazon Redshift</mark> (scalable DW)                              | <mark>BigQuery</mark> (serverless DW)                                   | <mark>Snowflake Warehouse</mark> (storage-compute separation, multi-cluster elasticity) |
-| **Compute Model**       | Provisioned clusters (<mark>EC2 / EMR / Redshift</mark>)                 | Serverless (<mark>BigQuery / Dataflow</mark>) + managed clusters (<mark>Dataproc</mark>) | <mark>Virtual Warehouses</mark> (pay-per-second, scale up/down independently) |
-| **Governance / Catalog**| <mark>AWS Glue Data Catalog</mark> <br> <mark>Lake Formation</mark>       | <mark>Dataplex</mark> + <mark>Data Catalog</mark>                        | <mark>Snowflake Governance</mark> (RBAC, masking, row policies, tags, lineage) |
-| **BI & Serving**        | <mark>Amazon QuickSight</mark> <br> External BI (Tableau, Power BI)      | <mark>Looker Studio</mark>, BigQuery BI Engine, external BI              | <mark>Tableau</mark>, <mark>Power BI</mark>, <mark>Looker</mark> <br> Secure Data Sharing / SQL API |
-| **Machine Learning**    | <mark>SageMaker</mark> (end-to-end ML platform)                          | <mark>Vertex AI</mark> (training, serving, pipelines)                    | <mark>Snowpark</mark> (Python/Scala/Java UDFs) <br> External ML integration (SageMaker/Vertex) |
-| **Orchestration**       | <mark>Step Functions</mark>, <mark>MWAA</mark> (Managed Airflow)         | <mark>Cloud Composer</mark> (Airflow), Data Fusion                       | <mark>Snowflake Tasks</mark> + <mark>Streams</mark> <br> dbt Cloud / Airflow (external) |
-| **Cost Model**          | Pay for provisioned resources (compute + storage separate in S3)         | <mark>Serverless</mark> (per-query for BigQuery, per-job for Dataflow)   | Pay-per-second compute (<mark>Warehouses</mark>) + storage billed separately  |
-| **Positioning**         | Broad <mark>cloud ecosystem</mark> (IaaS + PaaS) with integrated data services | <mark>Cloud-native analytics</mark> + <mark>ML-first design</mark> (BigQuery, Vertex AI) | <mark>Cloud-agnostic Data Cloud</mark> (lake + warehouse + governance unified) |
 
 **🔑 Key Takeaways**
 
