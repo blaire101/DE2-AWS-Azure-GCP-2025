@@ -1,5 +1,42 @@
 # ❄️ Snowflake – Data Engineering 
 
+❄️ Snowflake is a <mark>**cloud-native data platform**</mark> designed for analytics, data warehousing, and data sharing. Unlike traditional databases, it <mark>**separates storage and compute**</mark>, runs entirely in the cloud (on AWS, Azure, or GCP), and is delivered as a <mark>**sfully managed service**</mark>.
+
+
+<div align="center">
+  <img src="docs/snowflake-original.jpg" alt="Diagram" width="900">
+</div>
+
+---
+
+<div align="center">
+  <img src="docs/snowflake-architecture-overview.png" alt="Diagram" width="900">
+</div>
+
+
+## ❄️ Snowflake – Key Points
+
+* **Cloud-agnostic** → Runs on AWS, Azure, or GCP.
+* **Separation of storage & compute** → Scale independently.
+* **Elastic & auto-suspend** → Virtual Warehouses scale up/down on demand.
+* **Micro-partitioned storage** → Compressed, columnar, efficient.
+* **Multi-cluster architecture** → High concurrency, no contention.
+* **Governance & security** → RBAC, masking, encryption built-in.
+* **Time Travel & Cloning** → Query history, clone without extra storage.
+* **Data Sharing** → Share live data securely, no ETL.
+* **Snowpark** → Data engineering & ML with Python/Java/Scala.
+
+
+| **Aspect**      | **Snowflake** ❄️                                     | **GCP** 🌐                                                    | **Apache Spark** 🔥                                         |
+| --------------- | ---------------------------------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------- |
+| **What it is**  | Cloud Data Platform (Warehouse + Lakehouse)          | Cloud-native Analytics Platform (BigQuery, Dataflow, Pub/Sub) | Open-source distributed processing engine                   |
+| **Storage**     | Internal micro-partitions (on S3/ADLS/GCS)           | Cloud Storage (GCS) + BigQuery storage                        | External (HDFS, S3, GCS, ADLS)                              |
+| **Compute**     | Virtual Warehouses (scale, auto-suspend)             | Serverless (BigQuery, Dataflow) + Dataproc clusters           | Executors on YARN, Kubernetes, Standalone                   |
+| **Strengths**   | Simplicity, SQL-first BI, governance, secure sharing | Strong serverless analytics + ML integration (Vertex AI)      | Flexible batch/stream/ML engine                             |
+| **Programming** | SQL (Snowpark adds Python/Java/Scala)                | SQL (BigQuery), Beam SDKs (Java/Python)                       | PySpark, Scala, Java, R                                     |
+| **Use Cases**   | BI, governed DW, data sharing                        | Serverless analytics, streaming ETL, ML pipelines             | ETL, batch/stream jobs, MLlib, engine inside Databricks/EMR |
+
+
 ## ❄️ Snowflake vs 🌐 GCP vs ☁️ AWS – Data Engineering
 
 | **Layer**               | **Snowflake**                                                                 | **GCP**                                                                 | **AWS**                                                                 |
