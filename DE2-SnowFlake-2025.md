@@ -1,6 +1,6 @@
 # ❄️ Snowflake – Data Engineering 
 
-❄️ Snowflake is a <mark>**cloud-native data platform**</mark> designed for analytics, data warehousing, and data sharing. Unlike traditional databases, it <mark>**separates storage** and **compute</mark>, runs entirely in the cloud (on AWS, Azure, or GCP), and is delivered as a <mark>**fully managed service**</mark>.
+❄️ Snowflake is a <mark>**cloud-native data platform**</mark> designed for analytics, data warehousing, and data sharing. Unlike traditional databases, it <mark>**separates storage**</mark> and <mark>**compute**</mark> , runs entirely in the cloud (on AWS, Azure, or GCP), and is delivered as a <mark>**fully managed service**</mark>.
 
 
 <div align="center">
@@ -12,10 +12,10 @@
 * **Cloud-agnostic** → Runs on AWS, Azure, or GCP.
 * **Separation of storage & compute** → Scale independently.
 * **Elastic & auto-suspend** → Virtual Warehouses scale up/down on demand.
-* **Micro-partitioned storage** → Compressed, columnar, efficient.
+* <mark>**Micro-partitioned storage**</mark> → Compressed, columnar, efficient.
 * **Multi-cluster architecture** → High concurrency, no contention.
 * **Governance & security** → RBAC, masking, encryption built-in.
-* **Time Travel & Cloning** → Query history, clone without extra storage.
+* <mark>**Time Travel & Cloning**</mark> → Query history, clone without extra storage.
 * **Data Sharing** → Share live data securely, no ETL.
 * **Snowpark** → Data engineering & ML with Python/Java/Scala.
 
