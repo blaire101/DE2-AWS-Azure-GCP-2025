@@ -8997,7 +8997,7 @@ flowchart LR
 **Options:**  
 A. DLP + Dataflow → remove sensitive fields.  
 B. CMEK encrypt in GCS + federated queries.  
-C. <mark>Dataflow + DLP → **mask sensitive fields**, load to BQ.</mark> ✅  
+C. <mark>Dataflow + DLP → **mask sensitive fields**, load to **BQ（analytics-friendly）**.</mark> ✅  
 D. Dataflow + KMS encrypt sensitive fields + share key.  
 
 **Correct Answer:** C  
