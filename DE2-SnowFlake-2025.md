@@ -1,6 +1,6 @@
 # ❄️ Snowflake – Data Engineering 
 
-❄️ Snowflake is a <mark>**cloud-native data platform**</mark> designed for analytics, data warehousing, and data sharing. Unlike traditional databases, it <mark>**separates storage and compute**</mark>, runs entirely in the cloud (on AWS, Azure, or GCP), and is delivered as a <mark>**sfully managed service**</mark>.
+❄️ Snowflake is a <mark>**cloud-native data platform**</mark> designed for analytics, data warehousing, and data sharing. Unlike traditional databases, it <mark>**separates storage** and **compute</mark>, runs entirely in the cloud (on AWS, Azure, or GCP), and is delivered as a <mark>**sfully managed service**</mark>.
 
 
 <div align="center">
