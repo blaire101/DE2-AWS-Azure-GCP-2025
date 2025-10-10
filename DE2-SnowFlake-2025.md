@@ -71,22 +71,28 @@ mindmap
       ((Warehouse auto-suspend))
 ```
 
-## ❄️ Snowflake vs 🌐 GCP – Data Engineering Mapping
 
-| **Layer**                 | **GCP Service**                                                                          | **Snowflake Equivalent**                                                    | **Notes**                                                                   |
-| ------------------------- | ---------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| **Ingestion (Batch/CDC)** | Datastream (CDC from OLTP → GCS / BigQuery)                                              | **Snowpipe + Streams**                                                      | Snowpipe handles continuous file ingest; Streams track CDC changes.         |
-| **Ingestion (Streaming)** | Pub/Sub (event streaming)                                                                | **Kafka Connector → Snowpipe Streaming**                                    | Pub/Sub replaced by Kafka/Confluent; ingested via Snowpipe Streaming.       |
-| **Batch ETL / ELT**       | Dataflow (Beam, batch ETL) <br> Dataproc (Spark/Hadoop) <br> Data Fusion (GUI pipelines) | **ELT SQL in Snowflake + Tasks + dbt / Fivetran / Airbyte**                 | Snowflake favors in-database ELT rather than external Spark jobs.           |
-| **Data Lake (Storage)**   | Cloud Storage (Raw / Staging / Curated Zones)                                            | **Snowflake Internal Micro-partition Storage** (on S3/ADLS/GCS, abstracted) | Users don’t manage storage directly; fully managed by Snowflake.            |
-| **Warehouse**             | BigQuery (serverless DWH)                                                                | **Snowflake Warehouse (virtual compute + storage separation)**              | Core analytical engine.                                                     |
-| **Analytics / Serving**   | BigQuery BI Engine, Looker Studio, BigQuery External Tables                              | **Data Marts in Snowflake + Tableau / PowerBI / Looker**                    | BI tools connect directly to Snowflake.                                     |
-| **Real-time Search**      | Elastic (optional in GCP flows)                                                          | **Snowflake External Functions / Data Sharing**                             | Snowflake integrates with Elastic or APIs for search if needed.             |
-| **Orchestration**         | Cloud Composer (Airflow)                                                                 | **Snowflake Tasks + Streams + dbt Cloud Orchestration**                     | Composer replaced by native Tasks or external orchestrators (dbt, Airflow). |
-| **Machine Learning**      | Vertex AI (training & inference)                                                         | **Snowpark + UDFs / Stored Procedures**                                     | Snowpark runs Python/Java/Scala; ML can be embedded or pushed to external.  |
-| **Governance**            | Dataplex + Data Catalog                                                                  | **Snowflake Governance (Masking, Row/Column Policies, Tags, Lineage)**      | Built-in fine-grained access + lineage capabilities.                        |
+## ☁️ AWS vs 🌐 GCP vs ❄️ Snowflake – Data Engineering
 
----
+| **Layer**               | **AWS**                                                                 | **GCP**                                                                 | **Snowflake**                                                                 |
+|--------------------------|-------------------------------------------------------------------------|-------------------------------------------------------------------------|-------------------------------------------------------------------------------|
+| **Storage (Data Lake)** | <mark>Amazon S3</mark> <br> (object storage, foundation for Lake)        | <mark>Cloud Storage (GCS)</mark> <br> (object storage, raw/staging/curated zones) | <mark>Internal Storage (Micro-partitions)</mark> <br> (abstracted, built on S3/ADLS/GCS, fully managed) |
+| **Batch ETL / ELT**     | <mark>AWS Glue</mark> (serverless ETL, Spark) <br> <mark>EMR</mark> (Hadoop/Spark cluster) | <mark>Dataflow</mark> (Beam, serverless) <br> <mark>Dataproc</mark> (Spark/Hadoop) <br> <mark>Data Fusion</mark> (visual pipelines) | <mark>Snowpipe</mark> (continuous ingest) <br> <mark>Streams + Tasks</mark> (ELT automation) <br> <mark>SQL/dbt</mark> (in-warehouse transformations) |
+| **Streaming ETL**       | <mark>Kinesis</mark>, <mark>MSK (Kafka)</mark>                          | <mark>Pub/Sub</mark> + Dataflow (streaming)                             | <mark>Snowpipe Streaming</mark> + Kafka Connector                             |
+| **Data Warehouse**      | <mark>Amazon Redshift</mark> (scalable DW)                              | <mark>BigQuery</mark> (serverless DW)                                   | <mark>Snowflake Warehouse</mark> (storage-compute separation, multi-cluster elasticity) |
+| **Compute Model**       | Provisioned clusters (<mark>EC2 / EMR / Redshift</mark>)                 | Serverless (<mark>BigQuery / Dataflow</mark>) + managed clusters (<mark>Dataproc</mark>) | <mark>Virtual Warehouses</mark> (pay-per-second, scale up/down independently) |
+| **Governance / Catalog**| <mark>AWS Glue Data Catalog</mark> <br> <mark>Lake Formation</mark>       | <mark>Dataplex</mark> + <mark>Data Catalog</mark>                        | <mark>Snowflake Governance</mark> (RBAC, masking, row policies, tags, lineage) |
+| **BI & Serving**        | <mark>Amazon QuickSight</mark> <br> External BI (Tableau, Power BI)      | <mark>Looker Studio</mark>, BigQuery BI Engine, external BI              | <mark>Tableau</mark>, <mark>Power BI</mark>, <mark>Looker</mark> <br> Secure Data Sharing / SQL API |
+| **Machine Learning**    | <mark>SageMaker</mark> (end-to-end ML platform)                          | <mark>Vertex AI</mark> (training, serving, pipelines)                    | <mark>Snowpark</mark> (Python/Scala/Java UDFs) <br> External ML integration (SageMaker/Vertex) |
+| **Orchestration**       | <mark>Step Functions</mark>, <mark>MWAA</mark> (Managed Airflow)         | <mark>Cloud Composer</mark> (Airflow), Data Fusion                       | <mark>Snowflake Tasks</mark> + <mark>Streams</mark> <br> dbt Cloud / Airflow (external) |
+| **Cost Model**          | Pay for provisioned resources (compute + storage separate in S3)         | <mark>Serverless</mark> (per-query for BigQuery, per-job for Dataflow)   | Pay-per-second compute (<mark>Warehouses</mark>) + storage billed separately  |
+| **Positioning**         | Broad <mark>cloud ecosystem</mark> (IaaS + PaaS) with integrated data services | <mark>Cloud-native analytics</mark> + <mark>ML-first design</mark> (BigQuery, Vertex AI) | <mark>Cloud-agnostic Data Cloud</mark> (lake + warehouse + governance unified) |
+
+**🔑 Key Takeaways**
+
+- **AWS** → Flexible, mature ecosystem, but often more <mark>complex to integrate</mark> (S3 + Glue + Redshift + EMR + Kinesis).  
+- **GCP** → Strong in <mark>serverless analytics</mark> (BigQuery + Dataflow + Pub/Sub), tight integration with <mark>AI/ML</mark>.  
+- **Snowflake** → Focused <mark>Data Cloud</mark>, excels at <mark>simplicity</mark>, <mark>elasticity</mark>, <mark>governance</mark>, and <mark>data sharing</mark>.  
 
 👉 This way, you can show **conceptual parity**:
 
