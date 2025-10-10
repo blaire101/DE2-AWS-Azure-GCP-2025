@@ -8791,6 +8791,32 @@ D. Add push subscription.
 **Question:**  
 Migrate DW → BigQuery. Need **cross-team collaboration**, secure, fresh, self-service.
 
+```mermaid
+flowchart LR
+    subgraph Provider["📊 Data Provider (Team A)"]
+        A["BigQuery Dataset<br/>(Fresh, Secure)"]
+    end
+
+    A --> B["📢 Publish via Analytics Hub"]
+
+    subgraph Hub["🔗 BigQuery Analytics Hub"]
+        C["Dataset Listings<br/>Access Policies<br/>Metadata Discovery"]
+    end
+
+    B --> C
+
+    subgraph Consumer["👥 Data Consumers (Team B, Team C, etc.)"]
+        D["🔍 Browse & Subscribe<br/>(Self-Service Access)"]
+        E["📊 Query in BigQuery<br/>(Always Fresh, No Copy)"]
+    end
+
+    C --> D --> E
+
+    style Provider fill:#e6f3ff,stroke:#333,stroke-width:1px
+    style Hub fill:#fff2cc,stroke:#aa7a00,stroke-width:1px
+    style Consumer fill:#e6ffe6,stroke:#1b7f1b,stroke-width:1px
+```
+
 **Options:**  
 A. <mark>Use **Analytics Hub**.</mark> ✅  
 B. Authorized datasets.  
