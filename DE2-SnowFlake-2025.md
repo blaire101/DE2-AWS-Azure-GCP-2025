@@ -23,7 +23,7 @@ mindmap
       ((Materialized Views))
       ((Result Caching))
     ((Integration & Ecosystem))
-      ((Snowpark (Python/Scala/Java)))
+      ((Snowpark - Python/Scala/Java))
       ((BI Tools: Tableau, Power BI, Looker))
       ((Data Marketplace))
     ((Use Cases))
