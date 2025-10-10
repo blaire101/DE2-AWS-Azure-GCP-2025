@@ -8668,6 +8668,30 @@ D. Allow 0.0.0.0/0 + Auth Proxy.
 **Question:**  
 Migrating HTTPS-signed URLs → GCS with **STS**. Job fails after long run with **403s**.
 
+```mermaid
+flowchart LR
+    subgraph Source["Source Storage (HTTPS-signed URLs)"]
+        F["Files<br>Signed URLs (expire)"]
+    end
+
+    subgraph STS["Storage Transfer Service"]
+        J1["Job Part 1<br>(before expiry)"]
+        J2["Job Part 2<br>(after expiry) ❌ 403"]
+    end
+
+    subgraph GCS["Google Cloud Storage"]
+        B["Target Bucket"]
+    end
+
+    F --> J1 --> B
+    F --> J2 -. "Expired URL → 403" .-> X["Failure ❌"]
+
+    %% Fix Path
+    F --> N["New Signed URLs<br>(longer validity)"]
+    N --> P["Parallel Jobs<br>(split TSV)"]
+    P --> B
+```
+
 **Options:**  
 A. Mount GCS with FUSE + shell script.  
 B. Renew TLS cert.  
@@ -8882,6 +8906,27 @@ D. <mark>**Cloud Data Fusion** (GUI + CMEK).</mark> ✅
 **Question:**  
 Regional BQ dataset, updated multiple times/day. Need **RPO < 24h** backup against regional failure, cost-effective.
 
+```mermaid
+flowchart LR
+    subgraph BQ["📊 BigQuery (Regional Dataset)"]
+        A["Customer Data<br/>(Updated Multiple Times/Day)"]
+    end
+
+    A --> B["⚙️ Daily Export"]
+
+    subgraph GCS["🌍 Google Cloud Storage (Dual/Multi-Region)"]
+        C["📦 Exported Data Backup<br/>RPO < 24h, Cost-Effective"]
+    end
+
+    B --> C
+
+    C --> D["☁️ Disaster Recovery<br/>(Import Back to BQ in another region if failure)"]
+
+    style BQ fill:#e6f3ff,stroke:#333,stroke-width:1px
+    style GCS fill:#fff2cc,stroke:#aa7a00,stroke-width:1px
+    style D fill:#e6ffe6,stroke:#1b7f1b,stroke-width:1px
+```
+
 **Options:**  
 A. <mark>Daily export to **dual/multi-region GCS**.</mark> ✅  
 B. Daily copy dataset to backup region.  
@@ -8902,6 +8947,26 @@ D. Modify ETL to dual-load.
 
 **Question:**  
 Restricted GCS bucket with customer data. Must **protect sensitive fields**, but **retain all data** for future.
+
+```mermaid
+flowchart LR
+    subgraph GCS["🔒 Google Cloud Storage (Restricted Bucket)"]
+        A["📂 Customer Data<br/>(Raw, contains Personally Identifiable Information & Payment Card Information)"]
+    end
+
+    A --> B["⚙️ Dataflow Pipeline"]
+
+    subgraph DLP["🔐 Data Loss Prevention (DLP) Service"]
+        C["Detect Sensitive Fields<br/>(Personally Identifiable Information, Payment Card Information, etc.)"]
+        D["Mask / Tokenize Fields<br/>Example: 4111-1111-1111-1111 → 4111-****-****-1111"]
+    end
+
+    B --> C --> D --> E["📊 BigQuery (Masked Data Warehouse)"]
+
+    style GCS fill:#e6f3ff,stroke:#333,stroke-width:1px
+    style DLP fill:#fff2cc,stroke:#aa7a00,stroke-width:1px
+    style BQ fill:#e6ffe6,stroke:#1b7f1b,stroke-width:1px
+```
 
 **Options:**  
 A. DLP + Dataflow → remove sensitive fields.  
